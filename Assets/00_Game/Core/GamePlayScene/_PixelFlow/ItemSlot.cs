@@ -3,14 +3,13 @@ using DG.Tweening;
 
 public class ItemSlot : MonoBehaviour
 {
+    public Transform itemParent;
     public float returnDuration = 0.5f;
 
-    public void Return(Transform returnPoint, float targetX)
+    public void Return(float targetX)
     {
-        transform.position = returnPoint.position;
-        transform.DOMoveX(targetX, returnDuration);
-        transform.rotation = Quaternion.identity;
-
+        transform.DOMoveX(targetX, returnDuration).SetEase(Ease.Linear);
+        transform.DORotate(Vector3.zero, returnDuration).SetEase(Ease.Linear);
     }
 
     public void MoveAlongPath(Vector3[] points, float duration, TweenCallback onComplete)
@@ -19,6 +18,5 @@ public class ItemSlot : MonoBehaviour
             .SetEase(Ease.Linear)
             .SetLookAt(0.01f, Vector3.forward, Vector3.up)
             .OnComplete(onComplete);
-        transform.rotation = Quaternion.Euler(0, 0, 90f);
     }
 }

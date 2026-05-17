@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaitAreaController : MonoBehaviour
+public class WaitAreaController : StaffSingleton<WaitAreaController>
 {
     public int initialItemCount = 4;
     public float spacing;
@@ -40,5 +40,41 @@ public class WaitAreaController : MonoBehaviour
                 DestroyImmediate(waitAreas[i].gameObject);
         }
         waitAreas.Clear();
+    }
+
+    public WaitArea FindEmptyWaitArea()
+    {
+        foreach (var wa in waitAreas)
+            if (wa != null && wa.IsEmpty) return wa;
+        return null;
+    }
+    public void ShiftForward()
+    {
+        int writeIdx = 0;
+
+        for (int readIdx = 0; readIdx < waitAreas.Count; readIdx++)
+        {
+            WaitArea readArea = waitAreas[readIdx];
+            if (readArea == null || readArea.Occupant == null) continue;
+
+            Shooter shooter = readArea.Occupant;
+
+            if (readIdx == writeIdx)
+            {
+                writeIdx++;
+                continue;
+            }
+
+            WaitArea writeArea = waitAreas[writeIdx];
+            readArea.ResetToDefault();
+            writeArea.AddOccupant(shooter);
+            shooter.transform.SetParent(writeArea.transform);
+            shooter.JumpTo(writeArea.transform.position);
+            writeIdx++;
+        }
+    }
+    public override void Init()
+    {
+
     }
 }

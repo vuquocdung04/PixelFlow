@@ -7,12 +7,12 @@ public partial class Conveyor
     public List<Transform> itemPath;
     public float itemPathSpeed = 10f;
 
-    void SendSlotAlongPath(ItemSlot slot)
+    void SendSlotAlongPath(ItemSlot slot, Shooter shooter)
     {
         int count = itemPath.Count;
         if (count < 2)
         {
-            ReturnSlot(slot);
+            OnSlotPathComplete(slot, shooter);
             return;
         }
 
@@ -26,8 +26,25 @@ public partial class Conveyor
 
         float duration = itemPathSpeed > 0.0001f ? length / itemPathSpeed : 0f;
 
-        slot.transform.position = points[0];
-        slot.MoveAlongPath(points, duration, () => ReturnSlot(slot));
+        slot.MoveAlongPath(points, duration, () => OnSlotPathComplete(slot, shooter));
+    }
+
+    void OnSlotPathComplete(ItemSlot slot, Shooter shooter)
+    {
+        DispatchShooterToWaitArea(shooter);
+        ReturnSlot(slot);
+    }
+
+    void DispatchShooterToWaitArea(Shooter shooter)
+    {
+        WaitArea empty = WaitAreaController.Instance.FindEmptyWaitArea();
+        if (empty == null) return;
+
+        empty.AddOccupant(shooter);
+        shooter.transform.SetParent(empty.transform);
+        shooter.transform.localScale = Vector3.one;
+        shooter.transform.rotation = Quaternion.identity;
+        shooter.JumpTo(empty.transform.position);
     }
 
     void OnDrawGizmos()

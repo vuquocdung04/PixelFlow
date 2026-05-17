@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ public partial class Conveyor
     {
         SpawnItems();
     }
-    public void SpawnItems()
+    private void SpawnItems()
     {
         if (initialItemCount > 1)
             spacing = Mathf.Abs(returnPoint.position.x - firstPoint.position.x) / (initialItemCount - 1);
@@ -29,27 +30,41 @@ public partial class Conveyor
             ReturnSlot(slot);
         }
     }
-
     public void ReturnSlot(ItemSlot slot)
     {
+        slot.transform.position = returnPoint.position;
         itemSlots.Add(slot);
-        slot.Return(returnPoint, GetSlotTargetX(itemSlots.Count - 1));
-
+        slot.Return(GetSlotTargetX(itemSlots.Count - 1));
         UpdateCountText();
     }
-
-    [ContextMenu("Take First Slot")]
-    public void TakeFirstSlot()
+    public void TakeFirstSlot(Shooter shooter)
     {
-        if (itemSlots.Count == 0) return;
+        WaitArea currentArea = shooter.GetComponentInParent<WaitArea>();
+        if (currentArea != null)
+        {
+            currentArea.ResetToDefault();
+            WaitAreaController.Instance.ShiftForward();
+        }
 
         ItemSlot first = itemSlots[0];
         itemSlots.RemoveAt(0);
+        Vector3 pathStart = itemPath[0].position;
 
-        SendSlotAlongPath(first);
+        float durationSlot = shooter.jumpDuration * 0.8f;
+
+        first.transform.DOMove(pathStart, durationSlot).SetEase(Ease.Linear);
+        first.transform.DORotate(new Vector3(0f, 0f, 90f), durationSlot).SetEase(Ease.Linear);
+
+        shooter.JumpTo(pathStart, () =>
+        {
+            shooter.transform.SetParent(first.itemParent);
+            shooter.transform.localScale = Vector3.one;
+            shooter.transform.localRotation = Quaternion.identity;
+            SendSlotAlongPath(first, shooter);
+        });
 
         for (int i = 0; i < itemSlots.Count; i++)
-            itemSlots[i].Return(returnPoint, GetSlotTargetX(i));
+            itemSlots[i].Return(GetSlotTargetX(i));
 
         UpdateCountText();
     }

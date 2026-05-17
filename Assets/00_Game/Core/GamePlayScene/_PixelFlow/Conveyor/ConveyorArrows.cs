@@ -1,61 +1,80 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ConveyorArrows : MonoBehaviour
 {
-    public List<ConveyorArrow> conveyorArrows;
+    public Transform[] arrows;
     public float speed = 1f;
     public float rotationSpeed = 360f;
+    public float lastSegmentRotationMultiplier = 3f;
 
-    private List<Vector3> pathPositions;
-    private List<Quaternion> pathRotations;
+    private Vector3[] pathPositions;
+    private Quaternion[] pathRotations;
+    private float[] segmentLengths;
     private int[] targetIndex;
     private float[] segmentProgress;
+    private int count;
+    private int lastIdx;
 
     void Start()
     {
-        conveyorArrows.AddRange(GetComponentsInChildren<ConveyorArrow>());
+        if (arrows == null || arrows.Length == 0)
+        {
+            arrows = new Transform[transform.childCount];
+            for (int i = 0; i < arrows.Length; i++)
+                arrows[i] = transform.GetChild(i);
+        }
 
-        int count = conveyorArrows.Count;
-        pathPositions = new List<Vector3>(count);
-        pathRotations = new List<Quaternion>(count);
+        count = arrows.Length;
+        lastIdx = count - 1;
+        pathPositions = new Vector3[count];
+        pathRotations = new Quaternion[count];
+        segmentLengths = new float[count];
         targetIndex = new int[count];
         segmentProgress = new float[count];
 
         for (int i = 0; i < count; i++)
         {
-            pathPositions.Add(conveyorArrows[i].transform.position);
-            pathRotations.Add(conveyorArrows[i].transform.rotation);
-            targetIndex[i] = (i + 1) % count;
+            pathPositions[i] = arrows[i].position;
+            pathRotations[i] = arrows[i].rotation;
+            targetIndex[i] = i == lastIdx ? 0 : i + 1;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            int next = i == lastIdx ? 0 : i + 1;
+            segmentLengths[i] = Vector3.Distance(pathPositions[i], pathPositions[next]);
         }
     }
 
     void Update()
     {
-        int count = pathPositions.Count;
+        float dt = Time.deltaTime;
+        float speedDt = speed * dt;
+        float rotDt = rotationSpeed * dt;
+        float rotDtFast = rotDt * lastSegmentRotationMultiplier;
 
-        for (int i = 0; i < conveyorArrows.Count; i++)
+        for (int i = 0; i < count; i++)
         {
-            Transform t = conveyorArrows[i].transform;
             int to = targetIndex[i];
-            int from = (to - 1 + count) % count;
+            int from = to == 0 ? lastIdx : to - 1;
 
-            float segLen = Vector3.Distance(pathPositions[from], pathPositions[to]);
+            float segLen = segmentLengths[from];
             if (segLen > 0.0001f)
-                segmentProgress[i] += (speed * Time.deltaTime) / segLen;
+                segmentProgress[i] += speedDt / segLen;
 
             while (segmentProgress[i] >= 1f)
             {
                 segmentProgress[i] -= 1f;
-                targetIndex[i] = (targetIndex[i] + 1) % count;
-                to = targetIndex[i];
-                from = (to - 1 + count) % count;
+                to = to == lastIdx ? 0 : to + 1;
+                targetIndex[i] = to;
+                from = to == 0 ? lastIdx : to - 1;
+                segLen = segmentLengths[from];
             }
 
-            int prev = (from - 1 + count) % count;
-            int next = (to + 1) % count;
+            int prev = from == 0 ? lastIdx : from - 1;
+            int next = to == lastIdx ? 0 : to + 1;
 
-            t.position = CatmullRom(
+            arrows[i].position = CatmullRom(
                 pathPositions[prev],
                 pathPositions[from],
                 pathPositions[to],
@@ -63,11 +82,12 @@ public class ConveyorArrows : MonoBehaviour
                 segmentProgress[i]
             );
 
-            t.rotation = Quaternion.RotateTowards(t.rotation, pathRotations[to], rotationSpeed * Time.deltaTime);
+            float currentRotDt = (from == 0 || from == 1) ? rotDtFast : rotDt;
+            arrows[i].rotation = Quaternion.RotateTowards(arrows[i].rotation, pathRotations[to], currentRotDt);
         }
     }
 
-    Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {
         float t2 = t * t;
         float t3 = t2 * t;

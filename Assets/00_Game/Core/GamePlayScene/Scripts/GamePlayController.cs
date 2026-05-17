@@ -10,10 +10,15 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
     public HandAnimation handAnimation;
     public GameFlow gameFlow;
     public InputController inputController;
+
+    public WaitAreaController waitAreaController;
+    public Conveyor conveyor;
     protected override void OnAwake()
     {
         base.OnAwake();
         //Init();
+        inputController.Init();
+
     }
 
     private void Init()
