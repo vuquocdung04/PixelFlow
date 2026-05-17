@@ -13,7 +13,7 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
     protected override void OnAwake()
     {
         base.OnAwake();
-        Init();
+        //Init();
     }
 
     private void Init()
