@@ -93,7 +93,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
 
         float tolSq = similarity * similarity;
 
-        // Pass 1: greedy
         for (int row = 0; row < H; row++)
         {
             int texY = H - 1 - row;
@@ -129,7 +128,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
             }
         }
 
-        // Pass 2: refinement
         for (int c = 0; c < sums.Count; c++) { sums[c] = Vector4.zero; counts[c] = 0; }
         for (int row = 0; row < H; row++)
         {
@@ -198,7 +196,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
         Repaint();
     }
 
-    // Background row
     [HorizontalGroup("Top/Right/Bg")]
     [ToggleLeft, LabelText("Replace")]
     public bool bgReplace;
@@ -216,11 +213,7 @@ public class PixelImageAnalyzer : OdinEditorWindow
         int M = gridX, N = gridY;
         int texW = sourceTexture.width;
         int texH = sourceTexture.height;
-
-        // Per-axis: nếu texture <= grid → center, không stretch (rìa transparent).
-        //          nếu texture > grid → sample down như cũ.
-        bool fitX = texW <= M;
-        bool fitY = texH <= N;
+        bool fitX = texW <= M, fitY = texH <= N;
         int offX = fitX ? (M - texW) / 2 : 0;
         int offY = fitY ? (N - texH) / 2 : 0;
 
@@ -237,26 +230,18 @@ public class PixelImageAnalyzer : OdinEditorWindow
             {
                 bool outside = false;
                 int tx, ty;
-
                 if (fitX)
                 {
                     tx = x - offX;
                     if (tx < 0 || tx >= texW) outside = true;
                 }
-                else
-                {
-                    tx = Mathf.Clamp((int)((x + 0.5f) / M * texW), 0, texW - 1);
-                }
-
+                else tx = Mathf.Clamp((int)((x + 0.5f) / M * texW), 0, texW - 1);
                 if (fitY)
                 {
                     ty = y - offY;
                     if (ty < 0 || ty >= texH) outside = true;
                 }
-                else
-                {
-                    ty = Mathf.Clamp((int)((y + 0.5f) / N * texH), 0, texH - 1);
-                }
+                else ty = Mathf.Clamp((int)((y + 0.5f) / N * texH), 0, texH - 1);
 
                 Color c = outside ? new Color(0, 0, 0, 0) : sourceTexture.GetPixel(tx, ty);
 
@@ -280,11 +265,9 @@ public class PixelImageAnalyzer : OdinEditorWindow
     [LabelText("Y"), LabelWidth(15), MinValue(1)]
     public int gridY = 32;
 
-    // ===================== Row 3: Similarity =====================
     [LabelText("Similarity (for LOG SIMPLE)"), Range(0.01f, 1f)]
     public float similarity = 0.2f;
 
-    // ===================== Row 4: Folder | IndexLevel | SAVE JSON =====================
     [HorizontalGroup("Save")]
     [FolderPath(AbsolutePath = true), OnValueChanged("SaveFolderPref")]
     [LabelText("Folder"), LabelWidth(50)]
@@ -298,11 +281,7 @@ public class PixelImageAnalyzer : OdinEditorWindow
     [Button("SAVE JSON", ButtonSizes.Medium), GUIColor(1f, 0.8f, 0.5f)]
     public void SaveJson()
     {
-        if (colorRows == null || colorRows.Count == 0)
-        {
-            Warn("Chưa có data. Bấm LOG TABLE hoặc LOG SIMPLE trước.");
-            return;
-        }
+        if (colorRows == null || colorRows.Count == 0) { Warn("Chưa có data. Bấm LOG TABLE/SIMPLE trước."); return; }
         if (sampledTex == null) { Warn("Chưa có grid."); return; }
 
         string folder = EnsureOutputFolder();
@@ -315,7 +294,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
         sb.Append($"  \"gridX\": {W},\n");
         sb.Append($"  \"gridY\": {H},\n");
         sb.Append("  \"colors\": {\n");
-
         for (int i = 0; i < colorRows.Count; i++)
         {
             var r = colorRows[i];
@@ -329,7 +307,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
             if (i < colorRows.Count - 1) sb.Append(",");
             sb.Append("\n");
         }
-
         sb.Append("  }\n");
         sb.Append("}\n");
 
@@ -455,13 +432,312 @@ public class PixelImageAnalyzer : OdinEditorWindow
 
             string posStr = string.Join(",", rowData.indices);
             GUILayout.Label(posStr, wrapStyle, GUILayout.Width(posW));
-
             GUILayout.Label(rowData.indices.Count.ToString(), GUILayout.Width(countW));
-
             EditorGUILayout.EndHorizontal();
         }
 
         GUILayout.EndScrollView();
+    }
+
+    // =======================================================================
+    // ============================= BOTTOM ==================================
+    // =======================================================================
+
+    [OnInspectorGUI, PropertyOrder(100)]
+    private void DrawSeparator()
+    {
+        if (sampledTex == null) return;
+        GUILayout.Space(10);
+        Rect r = EditorGUILayout.GetControlRect(false, 2f);
+        EditorGUI.DrawRect(r, new Color(0.45f, 0.45f, 0.45f, 0.8f));
+        GUILayout.Space(6);
+    }
+
+    [HideInInspector] public int bottomX = 16;
+    [HideInInspector] public int bottomY = 16;
+
+    [OnInspectorGUI, PropertyOrder(110)]
+    private void DrawBottomTopRow()
+    {
+        if (sampledTex == null) return;
+
+        GUILayout.BeginHorizontal();
+
+        GUILayout.Label("Bottom X", GUILayout.Width(60));
+        bottomX = Mathf.Max(1, EditorGUILayout.IntField(bottomX, GUILayout.Width(50)));
+
+        GUILayout.Space(15);
+        GUILayout.Label("Y", GUILayout.Width(15));
+        bottomY = Mathf.Max(1, EditorGUILayout.IntField(bottomY, GUILayout.Width(50)));
+
+        GUILayout.Space(25);
+        GUILayout.Label("Selected:", GUILayout.Width(60));
+        Rect sel = GUILayoutUtility.GetRect(36, 20, GUILayout.Width(36), GUILayout.Height(20));
+        EditorGUI.DrawRect(sel, selectedColor);
+        EditorGUI.DrawRect(new Rect(sel.x, sel.y, sel.width, 1), Color.black);
+        EditorGUI.DrawRect(new Rect(sel.x, sel.yMax - 1, sel.width, 1), Color.black);
+        EditorGUI.DrawRect(new Rect(sel.x, sel.y, 1, sel.height), Color.black);
+        EditorGUI.DrawRect(new Rect(sel.xMax - 1, sel.y, 1, sel.height), Color.black);
+
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+    }
+
+    [HorizontalGroup("BottomBtns"), PropertyOrder(120)]
+    [Button("VIEW", ButtonSizes.Medium), GUIColor(0.4f, 0.9f, 0.5f)]
+    public void BottomViewBtn()
+    {
+        if (bottomTex != null) DestroyImmediate(bottomTex);
+        bottomTex = new Texture2D(bottomX, bottomY, TextureFormat.RGBA32, false)
+        {
+            filterMode = FilterMode.Point,
+            wrapMode = TextureWrapMode.Clamp
+        };
+        var clear = new Color(0, 0, 0, 0);
+        var pixels = new Color[bottomX * bottomY];
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = clear;
+        bottomTex.SetPixels(pixels);
+        bottomTex.Apply();
+        Repaint();
+    }
+
+    [HorizontalGroup("BottomBtns"), PropertyOrder(120)]
+    [Button("GET COLOR", ButtonSizes.Medium), GUIColor(0.9f, 0.7f, 1f)]
+    [EnableIf("@colorRows != null && colorRows.Count > 0")]
+    public void GetColorBtn()
+    {
+        if (colorRows == null || colorRows.Count == 0)
+        {
+            Warn("Color table trống. Bấm LOG TABLE hoặc LOG SIMPLE trước.");
+            return;
+        }
+        bottomPalette = new List<Color>();
+        paletteQuantities = new List<int>();
+        foreach (var r in colorRows)
+        {
+            bottomPalette.Add(r.color);
+            paletteQuantities.Add(1); // default = 1
+        }
+        if (bottomPalette.Count > 0) selectedColor = bottomPalette[0];
+        Repaint();
+    }
+
+    [HorizontalGroup("BottomBtns"), PropertyOrder(120)]
+    [Button("AUTO COLOR", ButtonSizes.Medium), GUIColor(1f, 0.65f, 0.85f)]
+    [EnableIf("@bottomPalette != null && bottomPalette.Count > 0")]
+    public void AutoColorBtn()
+    {
+        if (bottomPalette == null || bottomPalette.Count == 0) { Warn("Bấm GET COLOR trước."); return; }
+        if (paletteQuantities == null || paletteQuantities.Count != bottomPalette.Count) { Warn("Palette không đồng bộ. Bấm GET COLOR lại."); return; }
+
+        // Tổng quantity từ palette (user nhập)
+        int totalCells = 0;
+        for (int i = 0; i < paletteQuantities.Count; i++) totalCells += Mathf.Max(0, paletteQuantities[i]);
+        if (totalCells == 0) { Warn("Tổng quantity = 0."); return; }
+
+        // Y tự tính: ceil(total / X). X giữ nguyên theo user nhập.
+        int newY = Mathf.CeilToInt((float)totalCells / bottomX);
+        bottomY = newY;
+
+        if (bottomTex != null) DestroyImmediate(bottomTex);
+        bottomTex = new Texture2D(bottomX, newY, TextureFormat.RGBA32, false)
+        {
+            filterMode = FilterMode.Point,
+            wrapMode = TextureWrapMode.Clamp
+        };
+
+        var pixels = new Color[bottomX * newY];
+        var clear = new Color(0, 0, 0, 0);
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = clear;
+
+        // Fill top-down theo thứ tự palette × quantity
+        int filled = 0;
+        for (int i = 0; i < bottomPalette.Count; i++)
+        {
+            int qty = Mathf.Max(0, paletteQuantities[i]);
+            Color c = bottomPalette[i];
+            for (int k = 0; k < qty; k++)
+            {
+                int row = filled / bottomX;
+                int col = filled % bottomX;
+                int texY = newY - 1 - row;
+                pixels[texY * bottomX + col] = c;
+                filled++;
+            }
+        }
+
+        bottomTex.SetPixels(pixels);
+        bottomTex.Apply();
+
+        Debug.Log($"<color=cyan>[Auto Color]</color> X={bottomX}, total qty={totalCells} → Y={newY} (filled {filled})");
+        Repaint();
+    }
+
+    private Texture2D bottomTex;
+    private List<Color> bottomPalette;
+    private List<int> paletteQuantities;
+    private Color selectedColor = Color.white;
+
+    [OnInspectorGUI, PropertyOrder(130)]
+    private void DrawBottomSection()
+    {
+        if (bottomTex == null && (bottomPalette == null || bottomPalette.Count == 0)) return;
+
+        GUILayout.Space(6);
+
+        GUILayout.BeginHorizontal();
+
+        // ============ LEFT: palettes ============
+        if (bottomPalette != null && bottomPalette.Count > 0)
+        {
+            GUILayout.BeginVertical();
+            DrawPaletteBlock();
+            GUILayout.EndVertical();
+        }
+
+        GUILayout.Space(20);
+
+        // ============ RIGHT: canvas ============
+        if (bottomTex != null)
+        {
+            GUILayout.BeginVertical();
+            DrawBottomGrid();
+            GUILayout.EndVertical();
+        }
+
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+    }
+
+    private void DrawPaletteBlock()
+    {
+        if (paletteQuantities == null || paletteQuantities.Count != bottomPalette.Count)
+        {
+            paletteQuantities = new List<int>();
+            for (int i = 0; i < bottomPalette.Count; i++) paletteQuantities.Add(1);
+        }
+
+        const int CHUNK = 10;
+        const float CELL_W = 32f;
+        const float CELL_GAP = 1f;
+        const float SWATCH_H = 22f;
+        const float QTY_H = 18f;
+        const float ROW_GAP = 2f;
+        const float LABEL_W = 65f;
+
+        int total = bottomPalette.Count;
+        int chunks = Mathf.CeilToInt((float)total / CHUNK);
+
+        for (int chunk = 0; chunk < chunks; chunk++)
+        {
+            int startIdx = chunk * CHUNK;
+            int endIdx = Mathf.Min(startIdx + CHUNK, total);
+            int chunkSize = endIdx - startIdx;
+
+            float blockW = chunkSize * CELL_W + (chunkSize - 1) * CELL_GAP;
+            float blockH = SWATCH_H + ROW_GAP + QTY_H;
+
+            GUILayout.BeginHorizontal();
+
+            // Labels
+            GUILayout.BeginVertical(GUILayout.Width(LABEL_W));
+            string label = chunks > 1 ? $"Palette {chunk + 1}:" : "Palette:";
+            GUILayout.Label(label, GUILayout.Height(SWATCH_H));
+            GUILayout.Space(ROW_GAP);
+            GUILayout.Label("Qty:", GUILayout.Height(QTY_H));
+            GUILayout.EndVertical();
+
+            // Block
+            Rect block = GUILayoutUtility.GetRect(blockW, blockH, GUILayout.Width(blockW), GUILayout.Height(blockH));
+
+            for (int j = 0; j < chunkSize; j++)
+            {
+                int i = startIdx + j;
+                float x = block.x + j * (CELL_W + CELL_GAP);
+                Rect sR = new Rect(x, block.y, CELL_W, SWATCH_H);
+                Rect qR = new Rect(x, block.y + SWATCH_H + ROW_GAP, CELL_W, QTY_H);
+
+                Color c = bottomPalette[i];
+                EditorGUI.DrawRect(sR, c);
+
+                bool isSelected = ColorsEqual(c, selectedColor);
+                Color border = isSelected ? Color.yellow : new Color(0, 0, 0, 0.5f);
+                int bw = isSelected ? 2 : 1;
+                EditorGUI.DrawRect(new Rect(sR.x, sR.y, sR.width, bw), border);
+                EditorGUI.DrawRect(new Rect(sR.x, sR.yMax - bw, sR.width, bw), border);
+                EditorGUI.DrawRect(new Rect(sR.x, sR.y, bw, sR.height), border);
+                EditorGUI.DrawRect(new Rect(sR.xMax - bw, sR.y, bw, sR.height), border);
+
+                if (Event.current.type == EventType.MouseDown && sR.Contains(Event.current.mousePosition))
+                {
+                    selectedColor = c;
+                    Event.current.Use();
+                    Repaint();
+                }
+
+                int nv = EditorGUI.IntField(qR, paletteQuantities[i]);
+                if (nv < 0) nv = 0;
+                paletteQuantities[i] = nv;
+            }
+
+            GUILayout.EndHorizontal();
+
+            if (chunk < chunks - 1) GUILayout.Space(4);
+        }
+    }
+
+    private void DrawBottomGrid()
+    {
+        int W = bottomTex.width, H = bottomTex.height;
+        var titleStyle = new GUIStyle(EditorStyles.boldLabel) { richText = true };
+        GUILayout.Label($"<b>Bottom Canvas</b> — {W} × {H}    <color=#aaa>(L-click: paint  •  R-click: erase)</color>", titleStyle);
+
+        // Cell size cố định ~ 32px. Canvas nhỏ vì game thường X = 4–5.
+        // Nếu Y rất lớn dẫn tới height > viewport, window tự scroll.
+        float cellPx = 32f;
+        float displayW = W * cellPx;
+        float displayH = H * cellPx;
+
+        Rect r = GUILayoutUtility.GetRect(displayW, displayH, GUILayout.Width(displayW), GUILayout.Height(displayH));
+        EditorGUI.DrawRect(r, new Color(0.12f, 0.12f, 0.12f));
+        GUI.DrawTexture(r, bottomTex, ScaleMode.ScaleToFit);
+
+        if (cellPx >= 4f)
+        {
+            var lc = new Color(0, 0, 0, 0.35f);
+            for (int x = 1; x < W; x++) EditorGUI.DrawRect(new Rect(r.x + x * cellPx, r.y, 1, displayH), lc);
+            for (int y = 1; y < H; y++) EditorGUI.DrawRect(new Rect(r.x, r.y + y * cellPx, displayW, 1), lc);
+        }
+
+        // Mouse paint
+        Event e = Event.current;
+        if (r.Contains(e.mousePosition))
+        {
+            if (e.type == EventType.MouseDown || e.type == EventType.MouseDrag)
+            {
+                Vector2 local = e.mousePosition - new Vector2(r.x, r.y);
+                int cellX = Mathf.Clamp((int)(local.x / cellPx), 0, W - 1);
+                int cellYTop = Mathf.Clamp((int)(local.y / cellPx), 0, H - 1);
+                int cellYTex = H - 1 - cellYTop;
+
+                if (e.button == 0) // left: paint
+                {
+                    bottomTex.SetPixel(cellX, cellYTex, selectedColor);
+                    bottomTex.Apply();
+                    e.Use();
+                    Repaint();
+                }
+                else if (e.button == 1) // right: erase
+                {
+                    bottomTex.SetPixel(cellX, cellYTex, new Color(0, 0, 0, 0));
+                    bottomTex.Apply();
+                    e.Use();
+                    Repaint();
+                }
+            }
+        }
     }
 
     // ===================== Folder pref / save helpers =====================
@@ -496,6 +772,12 @@ public class PixelImageAnalyzer : OdinEditorWindow
         if (sampledTex != null) { DestroyImmediate(sampledTex); sampledTex = null; }
         colorRows = null;
         tableMode = "";
+    }
+
+    private static bool ColorsEqual(Color a, Color b)
+    {
+        Color32 x = a, y = b;
+        return x.r == y.r && x.g == y.g && x.b == y.b && x.a == y.a;
     }
 
     private static Color AvgFromSum(Vector4 s, int c)
