@@ -28,6 +28,8 @@ public partial class Shooter
     }
     public void SetAnimState(AnimState state)
     {
+        AnimState prev = currentAnimState;
+
         if (!baseScaleCached)
         {
             baseScale = transform.localScale;
@@ -42,22 +44,21 @@ public partial class Shooter
         {
             case AnimState.Idle:
                 stateTween = transform.DOScale(baseScale * (1f + idleScaleAmount), idleDuration)
-                    .SetEase(Ease.InOutSine)
-                    .SetLoops(-1, LoopType.Yoyo);
+                    .SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
                 break;
             case AnimState.Combat:
                 stateTween = transform.DOScale(baseScale * (1f + combatScaleAmount), combatDuration)
-                    .SetEase(Ease.InOutSine)
-                    .SetLoops(-1, LoopType.Yoyo);
+                    .SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
                 break;
             case AnimState.Blocked:
                 stateTween = transform.DOPunchRotation(
-                    new Vector3(0f, 0f, wobbleAngle),
-                    wobbleDuration,
-                    10,
-                    1f
-                );
+                    new Vector3(0f, 0f, wobbleAngle), wobbleDuration, 10, 1f);
                 break;
         }
+
+        if (state == AnimState.Combat && prev != AnimState.Combat)
+            ShooterController.Instance.RegisterCombat(this);
+        else if (prev == AnimState.Combat && state != AnimState.Combat)
+            ShooterController.Instance.UnregisterCombat(this);
     }
 }

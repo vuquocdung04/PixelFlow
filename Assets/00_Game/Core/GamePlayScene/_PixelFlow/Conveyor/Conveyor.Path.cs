@@ -44,7 +44,10 @@ public partial class Conveyor
         shooter.transform.SetParent(empty.transform);
         shooter.transform.localScale = Vector3.one;
         shooter.transform.rotation = Quaternion.identity;
-        shooter.JumpTo(empty.transform.position);
+        shooter.JumpTo(empty.transform.position, () =>
+        {
+            shooter.SetAnimState(Shooter.AnimState.Idle);
+        });
     }
 
     void OnDrawGizmos()

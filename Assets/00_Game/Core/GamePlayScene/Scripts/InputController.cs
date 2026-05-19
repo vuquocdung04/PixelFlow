@@ -50,10 +50,40 @@ public class InputController : StaffSingleton<InputController>
 
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
+        // Booster: click vào Block thì destroy all same color
+        Block block = hit.collider.GetComponentInParent<Block>();
+        if (block != null && block.IsAlive)
+        {
+            // Tại đây check booster mode đang active không, sau đó:
+            BrickGrid.Instance.DestroyAllSameColor(block.colorHex);
+            return;
+        }
+
+        // Click vào Shooter
         Shooter shooter = hit.collider.GetComponentInParent<Shooter>();
         if (shooter == null) return;
+
+        if (shooter.IsBlocked)
+        {
+            Debug.LogError($"Shooter '{shooter.name}' is BLOCKED");
+            return;
+        }
+
         if (Conveyor.Instance.itemSlots.Count == 0) return;
 
+        int shooterIdx = FindShooterIdx(shooter);
+
         Conveyor.Instance.TakeFirstSlot(shooter);
+        shooter.SetAnimState(Shooter.AnimState.Combat);
+
+        if (shooterIdx >= 0)
+            LevelController.Instance.OnShooterTaken(shooterIdx);
+    }
+
+    private int FindShooterIdx(Shooter shooter)
+    {
+        foreach (var kv in LevelController.Instance.shooterMap)
+            if (kv.Value == shooter) return kv.Key;
+        return -1;
     }
 }

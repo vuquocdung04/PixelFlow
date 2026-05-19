@@ -4,6 +4,7 @@ public partial class LevelController : StaffSingleton<LevelController>
 {
     public override void Init()
     {
-        Generate();
+        GenerateTop();
+        GenerateBottom();
     }
 }
