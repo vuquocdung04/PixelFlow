@@ -198,8 +198,7 @@ public class PixelImageAnalyzer : OdinEditorWindow
         Repaint();
     }
 
-    // Background row: [Replace toggle] [Skip toggle] [Color]
-    // Cả 2 toggle tắt = mặc định (giữ nguyên transparent pixels)
+    // Background row
     [HorizontalGroup("Top/Right/Bg")]
     [ToggleLeft, LabelText("Replace")]
     public bool bgReplace;
@@ -215,6 +214,16 @@ public class PixelImageAnalyzer : OdinEditorWindow
     private void SampleTexture()
     {
         int M = gridX, N = gridY;
+        int texW = sourceTexture.width;
+        int texH = sourceTexture.height;
+
+        // Per-axis: nếu texture <= grid → center, không stretch (rìa transparent).
+        //          nếu texture > grid → sample down như cũ.
+        bool fitX = texW <= M;
+        bool fitY = texH <= N;
+        int offX = fitX ? (M - texW) / 2 : 0;
+        int offY = fitY ? (N - texH) / 2 : 0;
+
         if (sampledTex != null) DestroyImmediate(sampledTex);
         sampledTex = new Texture2D(M, N, TextureFormat.RGBA32, false)
         {
@@ -226,9 +235,30 @@ public class PixelImageAnalyzer : OdinEditorWindow
         {
             for (int x = 0; x < M; x++)
             {
-                int px = Mathf.Clamp((int)((x + 0.5f) / M * sourceTexture.width), 0, sourceTexture.width - 1);
-                int py = Mathf.Clamp((int)((y + 0.5f) / N * sourceTexture.height), 0, sourceTexture.height - 1);
-                Color c = sourceTexture.GetPixel(px, py);
+                bool outside = false;
+                int tx, ty;
+
+                if (fitX)
+                {
+                    tx = x - offX;
+                    if (tx < 0 || tx >= texW) outside = true;
+                }
+                else
+                {
+                    tx = Mathf.Clamp((int)((x + 0.5f) / M * texW), 0, texW - 1);
+                }
+
+                if (fitY)
+                {
+                    ty = y - offY;
+                    if (ty < 0 || ty >= texH) outside = true;
+                }
+                else
+                {
+                    ty = Mathf.Clamp((int)((y + 0.5f) / N * texH), 0, texH - 1);
+                }
+
+                Color c = outside ? new Color(0, 0, 0, 0) : sourceTexture.GetPixel(tx, ty);
 
                 if (bgReplace && c.a < BG_ALPHA_THRESHOLD)
                 {

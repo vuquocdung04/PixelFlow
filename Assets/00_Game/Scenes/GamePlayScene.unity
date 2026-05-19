@@ -12220,8 +12220,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelController
   levelTest: {fileID: 4900000, guid: 4d3928740726841f482727a03c03a7a8, type: 3}
-  spacingX: 0.15
-  spacingY: 0.15
+  spacingX: 0.17
+  spacingY: 0.17
   blockPrefab: {fileID: 4306729939389547}
 --- !u!1 &771364075
 GameObject:
@@ -68035,6 +68035,7 @@ GameObject:
   - component: {fileID: 4086990805547551}
   - component: {fileID: 33929096032956668}
   - component: {fileID: 23007769151392777}
+  - component: {fileID: 33929096032956669}
   m_Layer: 0
   m_Name: Model_PixelDown
   m_TagString: Untagged
@@ -68121,23 +68122,6 @@ GameObject:
   - component: {fileID: 4155171042773125}
   m_Layer: 0
   m_Name: Surprise Shooter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1214200045007186
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4707855555831004}
-  - component: {fileID: 114323524888118640}
-  m_Layer: 0
-  m_Name: Pixel Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -68934,7 +68918,7 @@ Transform:
   m_LocalScale: {x: 1.2, y: 1.1, z: 1.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4707855555831004}
+  m_Father: {fileID: 4306729939389546}
   m_LocalEulerAnglesHint: {x: 0.000002504478, y: -0, z: 0}
 --- !u!4 &4018335130239529
 Transform:
@@ -69013,7 +68997,7 @@ Transform:
   m_LocalScale: {x: 1.2, y: 1.1, z: 1.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4707855555831004}
+  m_Father: {fileID: 4306729939389546}
   m_LocalEulerAnglesHint: {x: 0.000002504478, y: -0, z: 0}
 --- !u!4 &4105248612422146
 Transform:
@@ -69187,7 +69171,8 @@ Transform:
   m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 4707855555831004}
+  - {fileID: 4086990805547551}
+  - {fileID: 4014247538223904}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -0, z: -0}
 --- !u!114 &4306729939389547
@@ -69696,23 +69681,6 @@ Transform:
   - {fileID: 4682669652381979}
   m_Father: {fileID: 4641182851899664}
   m_LocalEulerAnglesHint: {x: 0.0000025642187, y: -89.99983, z: -0.000000016504623}
---- !u!4 &4707855555831004
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1214200045007186}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4086990805547551}
-  - {fileID: 4014247538223904}
-  m_Father: {fileID: 4306729939389546}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4763434318257533
 Transform:
   m_ObjectHideFlags: 0
@@ -70576,6 +70544,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1084868871268571}
   m_Mesh: {fileID: 4300000, guid: 78ababcbfa9e6f141a58503be36869d1, type: 2}
+--- !u!65 &33929096032956669
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084868871268571}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.49999997, y: 1.35, z: 0.49999997}
+  m_Center: {x: 0.00000047683716, y: 0.675, z: -0.0000019073486}
 --- !u!65 &65653399422517924
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70664,18 +70653,6 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1327033430333478}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114323524888118640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1214200045007186}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
