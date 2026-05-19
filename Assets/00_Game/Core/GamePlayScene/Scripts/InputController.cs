@@ -74,7 +74,6 @@ public class InputController : StaffSingleton<InputController>
         int shooterIdx = FindShooterIdx(shooter);
 
         Conveyor.Instance.TakeFirstSlot(shooter);
-        shooter.SetAnimState(Shooter.AnimState.Combat);
 
         if (shooterIdx >= 0)
             LevelController.Instance.OnShooterTaken(shooterIdx);

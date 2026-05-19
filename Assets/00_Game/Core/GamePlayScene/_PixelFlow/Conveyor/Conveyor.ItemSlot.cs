@@ -60,6 +60,7 @@ public partial class Conveyor
             shooter.transform.SetParent(first.itemParent);
             shooter.transform.localScale = Vector3.one;
             shooter.transform.localRotation = Quaternion.identity;
+            shooter.SetAnimState(Shooter.AnimState.Combat);
             SendSlotAlongPath(first, shooter);
         });
 

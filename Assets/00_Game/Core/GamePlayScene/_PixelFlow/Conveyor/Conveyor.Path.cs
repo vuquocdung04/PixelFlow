@@ -39,15 +39,12 @@ public partial class Conveyor
     {
         WaitArea empty = WaitAreaController.Instance.FindEmptyWaitArea();
         if (empty == null) return;
-
+        shooter.SetAnimState(Shooter.AnimState.Idle);
         empty.AddOccupant(shooter);
         shooter.transform.SetParent(empty.transform);
         shooter.transform.localScale = Vector3.one;
         shooter.transform.rotation = Quaternion.identity;
-        shooter.JumpTo(empty.transform.position, () =>
-        {
-            shooter.SetAnimState(Shooter.AnimState.Idle);
-        });
+        shooter.JumpTo(empty.transform.position);
     }
 
     void OnDrawGizmos()
