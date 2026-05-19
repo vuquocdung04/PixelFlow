@@ -1,6 +1,7 @@
 // Assets/Editor/PixelImageAnalyzer.cs
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
@@ -11,42 +12,209 @@ public class PixelImageAnalyzer : OdinEditorWindow
     [MenuItem("Tools/Pixel Image Analyzer")]
     private static void Open() => GetWindow<PixelImageAnalyzer>("Pixel Image Analyzer").Show();
 
-    public enum PaintMode { Off, Paint, Pick }
+    private const string PREF_OUTPUT_FOLDER = "PixelImageAnalyzer.OutputFolder";
+    private const float BG_ALPHA_THRESHOLD = 0.5f;
 
-    // ===================== Input =====================
-    [Title("Input", bold: true)]
-    [Required, PreviewField(100), LabelText("Texture")]
+    // ===================== Row 1: texture | (Auto / [LogTable | LogSimple] / [Replace, Skip, Color]) =====================
+    [HorizontalGroup("Top", Width = 110)]
+    [PreviewField(100, Alignment = ObjectFieldAlignment.Left), HideLabel]
     [OnValueChanged("OnTextureChanged")]
     public Texture2D sourceTexture;
 
-    [HorizontalGroup("size")]
-    [LabelText("Logical Grid Size"), MinValue(1)]
-    [InfoBox("Click 'Auto Detect' để tool tự đoán logical size từ texture (yêu cầu texture không compression).")]
-    public Vector2Int logicalSize = new Vector2Int(32, 32);
-
-    [HorizontalGroup("size", width: 120)]
-    [Button("Auto Detect"), GUIColor(1f, 0.85f, 0.4f)]
+    [VerticalGroup("Top/Right")]
+    [Button("Auto Detect", ButtonSizes.Medium), GUIColor(1f, 0.85f, 0.4f)]
     private void AutoDetect()
     {
         if (sourceTexture == null) { Warn("Cần texture."); return; }
         if (!EnsureReadable(sourceTexture)) return;
         var d = DetectLogicalSize(sourceTexture);
-        logicalSize = d;
+        gridX = d.x; gridY = d.y;
+        SampleTexture();
         Debug.Log($"<color=cyan>[Auto Detect]</color> {sourceTexture.name}: " +
-                  $"texture {sourceTexture.width}×{sourceTexture.height} → logical <b>{d.x}×{d.y}</b> " +
-                  $"(block = {sourceTexture.width / d.x}×{sourceTexture.height / d.y})");
-        View(); // auto-view sau khi detect
+                  $"texture {sourceTexture.width}×{sourceTexture.height} → logical <b>{d.x}×{d.y}</b>");
+        Repaint();
     }
 
-    [LabelText("Hiện grid lines")] public bool showGridLines = true;
-
-    [Button("VIEW & SAMPLE", ButtonSizes.Gigantic), GUIColor(0.4f, 0.9f, 0.5f)]
-    public void View()
+    [HorizontalGroup("Top/Right/Logs")]
+    [Button("LOG TABLE", ButtonSizes.Medium), GUIColor(0.9f, 0.7f, 1f)]
+    public void LogTable()
     {
         if (sourceTexture == null) { Warn("Cần texture."); return; }
         if (!EnsureReadable(sourceTexture)) return;
+        SampleTexture();
 
-        int M = logicalSize.x, N = logicalSize.y;
+        int W = sampledTex.width, H = sampledTex.height;
+        var dict = new Dictionary<string, ColorRow>();
+
+        for (int row = 0; row < H; row++)
+        {
+            int texY = H - 1 - row;
+            for (int x = 0; x < W; x++)
+            {
+                int idx = row * W + x;
+                Color c = sampledTex.GetPixel(x, texY);
+
+                if (bgSkip && c.a < BG_ALPHA_THRESHOLD) continue;
+
+                string hex = ColorToHexRGB(c);
+                if (!dict.TryGetValue(hex, out var r))
+                {
+                    r = new ColorRow { color = c, hex = hex, indices = new List<int>() };
+                    dict[hex] = r;
+                }
+                r.indices.Add(idx);
+            }
+        }
+
+        colorRows = new List<ColorRow>(dict.Values);
+        colorRows.Sort((a, b) => b.indices.Count.CompareTo(a.indices.Count));
+        tableMode = "full";
+
+        Debug.Log($"<color=cyan>[Log Table]</color> grid {W}×{H}  |  <b>{colorRows.Count}</b> màu unique");
+        Repaint();
+    }
+
+    [HorizontalGroup("Top/Right/Logs")]
+    [Button("LOG SIMPLE", ButtonSizes.Medium), GUIColor(1f, 0.65f, 0.85f)]
+    public void LogSimple()
+    {
+        if (sourceTexture == null) { Warn("Cần texture."); return; }
+        if (!EnsureReadable(sourceTexture)) return;
+        SampleTexture();
+
+        int W = sampledTex.width, H = sampledTex.height;
+        int n = W * H;
+        var pixels = sampledTex.GetPixels();
+
+        var assignment = new int[n];
+        var sums = new List<Vector4>();
+        var counts = new List<int>();
+        var centroids = new List<Color>();
+
+        float tolSq = similarity * similarity;
+
+        // Pass 1: greedy
+        for (int row = 0; row < H; row++)
+        {
+            int texY = H - 1 - row;
+            for (int x = 0; x < W; x++)
+            {
+                int readingIdx = row * W + x;
+                Color p = pixels[texY * W + x];
+
+                if (bgSkip && p.a < BG_ALPHA_THRESHOLD) { assignment[readingIdx] = -1; continue; }
+
+                int best = -1;
+                float bestDsq = float.MaxValue;
+                for (int c = 0; c < centroids.Count; c++)
+                {
+                    float dsq = ColorDistSq(p, centroids[c]);
+                    if (dsq < bestDsq) { bestDsq = dsq; best = c; }
+                }
+
+                if (best == -1 || bestDsq > tolSq)
+                {
+                    sums.Add(new Vector4(p.r, p.g, p.b, p.a));
+                    counts.Add(1);
+                    centroids.Add(p);
+                    assignment[readingIdx] = sums.Count - 1;
+                }
+                else
+                {
+                    sums[best] += new Vector4(p.r, p.g, p.b, p.a);
+                    counts[best]++;
+                    centroids[best] = AvgFromSum(sums[best], counts[best]);
+                    assignment[readingIdx] = best;
+                }
+            }
+        }
+
+        // Pass 2: refinement
+        for (int c = 0; c < sums.Count; c++) { sums[c] = Vector4.zero; counts[c] = 0; }
+        for (int row = 0; row < H; row++)
+        {
+            int texY = H - 1 - row;
+            for (int x = 0; x < W; x++)
+            {
+                int readingIdx = row * W + x;
+                if (assignment[readingIdx] == -1) continue;
+
+                Color p = pixels[texY * W + x];
+                int best = 0;
+                float bestDsq = float.MaxValue;
+                for (int c = 0; c < centroids.Count; c++)
+                {
+                    float dsq = ColorDistSq(p, centroids[c]);
+                    if (dsq < bestDsq) { bestDsq = dsq; best = c; }
+                }
+                assignment[readingIdx] = best;
+                sums[best] += new Vector4(p.r, p.g, p.b, p.a);
+                counts[best]++;
+            }
+        }
+        for (int c = 0; c < centroids.Count; c++)
+            if (counts[c] > 0) centroids[c] = AvgFromSum(sums[c], counts[c]);
+
+        var clusterIndices = new List<int>[centroids.Count];
+        for (int i = 0; i < clusterIndices.Length; i++) clusterIndices[i] = new List<int>();
+        for (int i = 0; i < n; i++)
+        {
+            if (assignment[i] == -1) continue;
+            clusterIndices[assignment[i]].Add(i);
+        }
+
+        for (int row = 0; row < H; row++)
+        {
+            int texY = H - 1 - row;
+            for (int x = 0; x < W; x++)
+            {
+                int readingIdx = row * W + x;
+                int arrIdx = texY * W + x;
+                if (assignment[readingIdx] == -1)
+                    pixels[arrIdx] = new Color(0, 0, 0, 0);
+                else
+                    pixels[arrIdx] = centroids[assignment[readingIdx]];
+            }
+        }
+        sampledTex.SetPixels(pixels);
+        sampledTex.Apply();
+
+        colorRows = new List<ColorRow>();
+        for (int c = 0; c < centroids.Count; c++)
+        {
+            if (clusterIndices[c].Count == 0) continue;
+            colorRows.Add(new ColorRow
+            {
+                color = centroids[c],
+                hex = ColorToHexRGB(centroids[c]),
+                indices = clusterIndices[c]
+            });
+        }
+        colorRows.Sort((a, b) => b.indices.Count.CompareTo(a.indices.Count));
+        tableMode = $"simple (tol={similarity:F2})";
+
+        Debug.Log($"<color=cyan>[Log Simple]</color> tolerance={similarity:F2}  |  " +
+                  $"clusters: <b>{colorRows.Count}</b>");
+        Repaint();
+    }
+
+    // Background row: [Replace toggle] [Skip toggle] [Color]
+    // Cả 2 toggle tắt = mặc định (giữ nguyên transparent pixels)
+    [HorizontalGroup("Top/Right/Bg")]
+    [ToggleLeft, LabelText("Replace")]
+    public bool bgReplace;
+
+    [HorizontalGroup("Top/Right/Bg")]
+    [ToggleLeft, LabelText("Skip")]
+    public bool bgSkip;
+
+    [HorizontalGroup("Top/Right/Bg", Width = 80)]
+    [HideLabel]
+    public Color bgColor = new Color(0.55f, 0.4f, 0.25f, 1f);
+
+    private void SampleTexture()
+    {
+        int M = gridX, N = gridY;
         if (sampledTex != null) DestroyImmediate(sampledTex);
         sampledTex = new Texture2D(M, N, TextureFormat.RGBA32, false)
         {
@@ -60,111 +228,244 @@ public class PixelImageAnalyzer : OdinEditorWindow
             {
                 int px = Mathf.Clamp((int)((x + 0.5f) / M * sourceTexture.width), 0, sourceTexture.width - 1);
                 int py = Mathf.Clamp((int)((y + 0.5f) / N * sourceTexture.height), 0, sourceTexture.height - 1);
-                sampledTex.SetPixel(x, y, sourceTexture.GetPixel(px, py));
+                Color c = sourceTexture.GetPixel(px, py);
+
+                if (bgReplace && c.a < BG_ALPHA_THRESHOLD)
+                {
+                    Color cc = bgColor; cc.a = 1f; c = cc;
+                }
+
+                sampledTex.SetPixel(x, y, c);
             }
         }
         sampledTex.Apply();
-        Debug.Log($"<color=cyan>[Viewer]</color> Sampled <b>{M}×{N}</b> from {sourceTexture.name}");
-        Repaint();
     }
 
-    // ===================== Color Quantize =====================
-    [Title("Color Quantize", bold: true), ShowIf("@sampledTex != null")]
-    [LabelText("Tolerance"), Range(0.01f, 1f)]
-    [InfoBox("Càng cao càng gom mạnh. ~0.15–0.25 phù hợp để gộp các shade (đỏ nhạt, đỏ đậm,...) về 1 màu chung.\n" +
-             "Lưu ý: pixel trong suốt (alpha = 0) sẽ được giữ nguyên, không bị gộp.")]
-    public float colorTolerance = 0.2f;
+    // ===================== Row 2: X | Y =====================
+    [HorizontalGroup("Size")]
+    [LabelText("X"), LabelWidth(15), MinValue(1)]
+    public int gridX = 32;
 
-    [ShowIf("@sampledTex != null"), LabelText("Bỏ qua pixel trong suốt")]
-    public bool ignoreTransparent = true;
+    [HorizontalGroup("Size")]
+    [LabelText("Y"), LabelWidth(15), MinValue(1)]
+    public int gridY = 32;
 
-    [ShowIf("@sampledTex != null")]
-    [Button("QUANTIZE COLORS", ButtonSizes.Large), GUIColor(1f, 0.6f, 0.9f)]
-    public void QuantizeColors()
+    // ===================== Row 3: Similarity =====================
+    [LabelText("Similarity (for LOG SIMPLE)"), Range(0.01f, 1f)]
+    public float similarity = 0.2f;
+
+    // ===================== Row 4: Folder | IndexLevel | SAVE JSON =====================
+    [HorizontalGroup("Save")]
+    [FolderPath(AbsolutePath = true), OnValueChanged("SaveFolderPref")]
+    [LabelText("Folder"), LabelWidth(50)]
+    public string outputFolder = "";
+
+    [HorizontalGroup("Save", Width = 140)]
+    [LabelText("IndexLevel"), LabelWidth(75), MinValue(0)]
+    public int indexLevel = 1;
+
+    [HorizontalGroup("Save", Width = 130)]
+    [Button("SAVE JSON", ButtonSizes.Medium), GUIColor(1f, 0.8f, 0.5f)]
+    public void SaveJson()
     {
-        if (sampledTex == null) { Warn("Chưa có grid. Bấm VIEW & SAMPLE trước."); return; }
-
-        var pixels = sampledTex.GetPixels();
-        int n = pixels.Length;
-        int beforeUnique = CountUnique(pixels);
-
-        // ----- Pass 1: greedy clustering -----
-        var sums = new List<Vector4>();
-        var counts = new List<int>();
-        var centroids = new List<Color>();
-        var assignment = new int[n];
-
-        float tolSq = colorTolerance * colorTolerance;
-
-        for (int i = 0; i < n; i++)
+        if (colorRows == null || colorRows.Count == 0)
         {
-            Color p = pixels[i];
+            Warn("Chưa có data. Bấm LOG TABLE hoặc LOG SIMPLE trước.");
+            return;
+        }
+        if (sampledTex == null) { Warn("Chưa có grid."); return; }
 
-            // Pixel trong suốt được giữ làm cluster riêng (nếu ignoreTransparent)
-            if (ignoreTransparent && p.a <= 0.001f)
-            {
-                assignment[i] = -1;
-                continue;
-            }
+        string folder = EnsureOutputFolder();
+        if (string.IsNullOrEmpty(folder)) return;
 
-            int best = -1;
-            float bestDsq = float.MaxValue;
-            for (int c = 0; c < centroids.Count; c++)
-            {
-                float dsq = ColorDistSq(p, centroids[c]);
-                if (dsq < bestDsq) { bestDsq = dsq; best = c; }
-            }
+        int W = sampledTex.width, H = sampledTex.height;
 
-            if (best == -1 || bestDsq > tolSq)
+        var sb = new StringBuilder();
+        sb.Append("{\n");
+        sb.Append($"  \"gridX\": {W},\n");
+        sb.Append($"  \"gridY\": {H},\n");
+        sb.Append("  \"colors\": {\n");
+
+        for (int i = 0; i < colorRows.Count; i++)
+        {
+            var r = colorRows[i];
+            sb.Append($"    \"{r.hex}\": [");
+            for (int k = 0; k < r.indices.Count; k++)
             {
-                sums.Add(new Vector4(p.r, p.g, p.b, p.a));
-                counts.Add(1);
-                centroids.Add(p);
-                assignment[i] = sums.Count - 1;
+                if (k > 0) sb.Append(",");
+                sb.Append(r.indices[k]);
             }
-            else
-            {
-                sums[best] += new Vector4(p.r, p.g, p.b, p.a);
-                counts[best]++;
-                centroids[best] = AvgFromSum(sums[best], counts[best]);
-                assignment[i] = best;
-            }
+            sb.Append("]");
+            if (i < colorRows.Count - 1) sb.Append(",");
+            sb.Append("\n");
         }
 
-        // ----- Pass 2: 1 vòng k-means refinement để kết quả ổn định -----
-        for (int c = 0; c < sums.Count; c++) { sums[c] = Vector4.zero; counts[c] = 0; }
-        for (int i = 0; i < n; i++)
-        {
-            if (assignment[i] == -1) continue;
-            Color p = pixels[i];
-            int best = 0;
-            float bestDsq = float.MaxValue;
-            for (int c = 0; c < centroids.Count; c++)
-            {
-                float dsq = ColorDistSq(p, centroids[c]);
-                if (dsq < bestDsq) { bestDsq = dsq; best = c; }
-            }
-            assignment[i] = best;
-            sums[best] += new Vector4(p.r, p.g, p.b, p.a);
-            counts[best]++;
-        }
-        for (int c = 0; c < centroids.Count; c++)
-            if (counts[c] > 0) centroids[c] = AvgFromSum(sums[c], counts[c]);
+        sb.Append("  }\n");
+        sb.Append("}\n");
 
-        // ----- Apply -----
-        for (int i = 0; i < n; i++)
-        {
-            if (assignment[i] == -1) continue; // giữ pixel trong suốt
-            pixels[i] = centroids[assignment[i]];
-        }
-        sampledTex.SetPixels(pixels);
-        sampledTex.Apply();
+        string fileName = $"level_{indexLevel}.json";
+        string path = Path.Combine(folder, fileName);
+        File.WriteAllText(path, sb.ToString());
+        RefreshAssetsIfInProject(path);
+        Debug.Log($"<color=cyan>[Save JSON]</color> {path}  |  {colorRows.Count} màu, grid {W}×{H}");
+    }
 
-        int afterUnique = CountUnique(pixels);
-        Debug.Log($"<color=cyan>[Quantize]</color> tolerance = {colorTolerance:F2}  |  " +
-                  $"unique colors: <b>{beforeUnique}</b> → <b>{afterUnique}</b>  " +
-                  $"(clusters tạo ra: {centroids.Count})");
-        Repaint();
+    // ===================== State =====================
+    private Texture2D sampledTex;
+    private Vector2 tableScroll;
+    private string tableMode = "";
+
+    private class ColorRow
+    {
+        public Color color;
+        public string hex;
+        public List<int> indices;
+    }
+    private List<ColorRow> colorRows;
+
+    // ===================== Preview (grid | table) =====================
+    [OnInspectorGUI]
+    private void DrawPreview()
+    {
+        if (sampledTex == null) return;
+
+        GUILayout.Space(10);
+
+        float totalAvail = EditorGUIUtility.currentViewWidth - 30f;
+        float gridW = Mathf.Clamp(totalAvail * 0.5f, 250f, 500f);
+        float tableW = Mathf.Max(200f, totalAvail - gridW - 12f);
+
+        GUILayout.BeginHorizontal();
+
+        GUILayout.BeginVertical(GUILayout.Width(gridW));
+        DrawGrid(gridW);
+        GUILayout.EndVertical();
+
+        GUILayout.Space(8);
+
+        GUILayout.BeginVertical(GUILayout.Width(tableW));
+        DrawTable(tableW);
+        GUILayout.EndVertical();
+
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+    }
+
+    private void DrawGrid(float displayW)
+    {
+        int W = sampledTex.width, H = sampledTex.height;
+        var style = new GUIStyle(EditorStyles.boldLabel) { richText = true };
+        string modeLabel = string.IsNullOrEmpty(tableMode) ? "" : $" [{tableMode}]";
+        GUILayout.Label($"<b>Grid Preview</b> — {W} × {H}{modeLabel}", style);
+
+        float displayH = displayW * (float)H / W;
+        Rect r = GUILayoutUtility.GetRect(displayW, displayH, GUILayout.Width(displayW), GUILayout.Height(displayH));
+        EditorGUI.DrawRect(r, new Color(0.12f, 0.12f, 0.12f));
+        GUI.DrawTexture(r, sampledTex, ScaleMode.ScaleToFit);
+
+        float cellPx = displayW / W;
+        if (cellPx >= 4f)
+        {
+            var lc = new Color(0, 0, 0, 0.35f);
+            for (int x = 1; x < W; x++) EditorGUI.DrawRect(new Rect(r.x + x * cellPx, r.y, 1, displayH), lc);
+            for (int y = 1; y < H; y++) EditorGUI.DrawRect(new Rect(r.x, r.y + y * cellPx, displayW, 1), lc);
+        }
+    }
+
+    private void DrawTable(float width)
+    {
+        var titleStyle = new GUIStyle(EditorStyles.boldLabel) { richText = true };
+
+        if (colorRows == null || colorRows.Count == 0)
+        {
+            GUILayout.Label("<b>Color Table</b>", titleStyle);
+            GUILayout.Space(4);
+            EditorGUILayout.HelpBox("Chưa có data.\nBấm LOG TABLE hoặc LOG SIMPLE.", MessageType.None);
+            return;
+        }
+
+        string modeLabel = string.IsNullOrEmpty(tableMode) ? "" : $" [{tableMode}]";
+        GUILayout.Label($"<b>Color Table</b> — {colorRows.Count} màu{modeLabel}", titleStyle);
+
+        float colorW = 110f;
+        float countW = 50f;
+        float posW = width - colorW - countW - 24f;
+        if (posW < 80f) posW = 80f;
+
+        var header = new GUIStyle(EditorStyles.toolbarButton) { alignment = TextAnchor.MiddleLeft };
+        GUILayout.BeginHorizontal(EditorStyles.toolbar);
+        GUILayout.Label("Color", header, GUILayout.Width(colorW));
+        GUILayout.Label("Positions", header, GUILayout.Width(posW));
+        GUILayout.Label("Count", header, GUILayout.Width(countW));
+        GUILayout.EndHorizontal();
+
+        tableScroll = GUILayout.BeginScrollView(tableScroll, GUILayout.Width(width), GUILayout.MinHeight(200));
+
+        var wrapStyle = new GUIStyle(EditorStyles.label) { wordWrap = true };
+        var monoStyle = new GUIStyle(EditorStyles.label) { fontStyle = FontStyle.Bold };
+
+        for (int i = 0; i < colorRows.Count; i++)
+        {
+            var rowData = colorRows[i];
+            Rect rowRect = EditorGUILayout.BeginHorizontal(GUILayout.MinHeight(22));
+            if (i % 2 == 0) EditorGUI.DrawRect(rowRect, new Color(1, 1, 1, 0.03f));
+
+            GUILayout.BeginHorizontal(GUILayout.Width(colorW));
+            GUILayout.Space(2);
+            Rect swatch = GUILayoutUtility.GetRect(18, 18, GUILayout.Width(18), GUILayout.Height(18));
+            EditorGUI.DrawRect(swatch, rowData.color);
+            EditorGUI.DrawRect(new Rect(swatch.x, swatch.y, swatch.width, 1), new Color(0, 0, 0, 0.4f));
+            EditorGUI.DrawRect(new Rect(swatch.x, swatch.yMax - 1, swatch.width, 1), new Color(0, 0, 0, 0.4f));
+            EditorGUI.DrawRect(new Rect(swatch.x, swatch.y, 1, swatch.height), new Color(0, 0, 0, 0.4f));
+            EditorGUI.DrawRect(new Rect(swatch.xMax - 1, swatch.y, 1, swatch.height), new Color(0, 0, 0, 0.4f));
+            GUILayout.Space(4);
+            GUILayout.Label(rowData.hex, monoStyle, GUILayout.Width(colorW - 28));
+            GUILayout.EndHorizontal();
+
+            string posStr = string.Join(",", rowData.indices);
+            GUILayout.Label(posStr, wrapStyle, GUILayout.Width(posW));
+
+            GUILayout.Label(rowData.indices.Count.ToString(), GUILayout.Width(countW));
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        GUILayout.EndScrollView();
+    }
+
+    // ===================== Folder pref / save helpers =====================
+    private void SaveFolderPref()
+    {
+        EditorPrefs.SetString(PREF_OUTPUT_FOLDER, outputFolder ?? "");
+    }
+
+    private string EnsureOutputFolder()
+    {
+        if (!string.IsNullOrEmpty(outputFolder) && Directory.Exists(outputFolder))
+            return outputFolder;
+
+        string start = !string.IsNullOrEmpty(outputFolder) ? outputFolder : Application.dataPath;
+        string picked = EditorUtility.OpenFolderPanel("Chọn output folder", start, "");
+        if (string.IsNullOrEmpty(picked)) return null;
+        outputFolder = picked;
+        SaveFolderPref();
+        return picked;
+    }
+
+    private static void RefreshAssetsIfInProject(string path)
+    {
+        string norm = path.Replace('\\', '/');
+        string proj = Application.dataPath.Replace('\\', '/');
+        if (norm.StartsWith(proj)) AssetDatabase.Refresh();
+    }
+
+    // ===================== Helpers =====================
+    private void OnTextureChanged()
+    {
+        if (sampledTex != null) { DestroyImmediate(sampledTex); sampledTex = null; }
+        colorRows = null;
+        tableMode = "";
     }
 
     private static Color AvgFromSum(Vector4 s, int c)
@@ -179,149 +480,12 @@ public class PixelImageAnalyzer : OdinEditorWindow
         return dr * dr + dg * dg + db * db + da * da;
     }
 
-    private static int CountUnique(Color[] arr)
-    {
-        var set = new HashSet<uint>();
-        for (int i = 0; i < arr.Length; i++)
-        {
-            Color32 c = arr[i];
-            uint k = ((uint)c.r << 24) | ((uint)c.g << 16) | ((uint)c.b << 8) | c.a;
-            set.Add(k);
-        }
-        return set.Count;
-    }
-
-    // ===================== Paint Tool =====================
-    [Title("Paint Tool", bold: true), ShowIf("@sampledTex != null")]
-    [LabelText("Mode"), EnumToggleButtons]
-    public PaintMode mode = PaintMode.Off;
-
-    [ShowIf("@sampledTex != null && mode != PaintMode.Off")]
-    [InfoBox("Paint: click hoặc drag để tô màu cell.\nPick: click vào cell để lấy màu của nó vào 'Paint Color'.", InfoMessageType.None)]
-    [LabelText("Paint Color")]
-    public Color paintColor = Color.white;
-
-    [ShowIf("@sampledTex != null"), HorizontalGroup("actions")]
-    [Button("Reset (re-sample)"), GUIColor(0.9f, 0.9f, 0.5f)]
-    public void Reset() => View();
-
-    [ShowIf("@sampledTex != null"), HorizontalGroup("actions")]
-    [Button("SAVE AS PNG", ButtonSizes.Medium), GUIColor(0.5f, 0.8f, 1f)]
-    public void SavePng()
-    {
-        if (sampledTex == null) { Warn("Chưa có grid."); return; }
-        string defaultName = (sourceTexture != null ? sourceTexture.name : "grid") + "_corrected.png";
-        string path = EditorUtility.SaveFilePanel("Save corrected PNG", "Assets", defaultName, "png");
-        if (string.IsNullOrEmpty(path)) return;
-        File.WriteAllBytes(path, sampledTex.EncodeToPNG());
-        AssetDatabase.Refresh();
-        Debug.Log($"<color=cyan>[Save]</color> {path}");
-        EditorUtility.RevealInFinder(path);
-    }
-
-    // ===================== Internal =====================
-    private Texture2D sampledTex;
-    private int hoverX = -1, hoverY = -1;
-
-    [OnInspectorGUI]
-    private void DrawPreview()
-    {
-        if (sampledTex == null) return;
-
-        GUILayout.Space(10);
-        int W = sampledTex.width, H = sampledTex.height;
-        var style = new GUIStyle(EditorStyles.boldLabel) { richText = true };
-        string hoverInfo = (hoverX >= 0 && hoverY >= 0)
-            ? $"   |   cell <b>({hoverX}, {hoverY})</b> = {ColorToHex(sampledTex.GetPixel(hoverX, hoverY))}"
-            : "";
-        GUILayout.Label($"<b>Grid Preview</b> — {W} × {H}{hoverInfo}", style);
-
-        float maxSize = 600f;
-        float available = EditorGUIUtility.currentViewWidth - 60f;
-        float displayW = Mathf.Min(maxSize, available);
-        float displayH = displayW * (float)H / W;
-
-        Rect r = GUILayoutUtility.GetRect(displayW, displayH, GUILayout.ExpandWidth(false));
-        EditorGUI.DrawRect(r, new Color(0.12f, 0.12f, 0.12f));
-        GUI.DrawTexture(r, sampledTex, ScaleMode.ScaleToFit);
-
-        float cellPx = displayW / W;
-
-        // Grid lines
-        if (showGridLines && cellPx >= 4f)
-        {
-            var lc = new Color(0, 0, 0, 0.35f);
-            for (int x = 1; x < W; x++) EditorGUI.DrawRect(new Rect(r.x + x * cellPx, r.y, 1, displayH), lc);
-            for (int y = 1; y < H; y++) EditorGUI.DrawRect(new Rect(r.x, r.y + y * cellPx, displayW, 1), lc);
-        }
-
-        // Mouse handling
-        Event e = Event.current;
-        if (r.Contains(e.mousePosition))
-        {
-            Vector2 local = e.mousePosition - new Vector2(r.x, r.y);
-            int cellX = Mathf.Clamp((int)(local.x / cellPx), 0, W - 1);
-            int cellYTop = Mathf.Clamp((int)(local.y / cellPx), 0, H - 1);
-            int cellYTex = H - 1 - cellYTop; // texture là bottom-up, GUI là top-down
-            hoverX = cellX; hoverY = cellYTex;
-
-            // Highlight hover cell (chỉ khi đang active mode)
-            if (mode != PaintMode.Off)
-            {
-                var hRect = new Rect(r.x + cellX * cellPx, r.y + cellYTop * cellPx, cellPx, cellPx);
-                EditorGUI.DrawRect(hRect, new Color(1, 1, 1, 0.2f));
-                // Outline trắng
-                EditorGUI.DrawRect(new Rect(hRect.x, hRect.y, hRect.width, 1), Color.white);
-                EditorGUI.DrawRect(new Rect(hRect.x, hRect.yMax - 1, hRect.width, 1), Color.white);
-                EditorGUI.DrawRect(new Rect(hRect.x, hRect.y, 1, hRect.height), Color.white);
-                EditorGUI.DrawRect(new Rect(hRect.xMax - 1, hRect.y, 1, hRect.height), Color.white);
-            }
-
-            // Paint
-            if (mode == PaintMode.Paint && e.button == 0 &&
-                (e.type == EventType.MouseDown || e.type == EventType.MouseDrag))
-            {
-                Color cur = sampledTex.GetPixel(cellX, cellYTex);
-                if (!ColorsEqual(cur, paintColor))
-                {
-                    sampledTex.SetPixel(cellX, cellYTex, paintColor);
-                    sampledTex.Apply();
-                }
-                e.Use();
-                Repaint();
-            }
-            // Pick
-            else if (mode == PaintMode.Pick && e.type == EventType.MouseDown && e.button == 0)
-            {
-                paintColor = sampledTex.GetPixel(cellX, cellYTex);
-                e.Use();
-                Repaint();
-            }
-
-            if (e.type == EventType.MouseMove) Repaint();
-        }
-        else if (hoverX >= 0)
-        {
-            hoverX = -1; hoverY = -1; Repaint();
-        }
-
-        GUILayout.Space(10);
-    }
-
-    // ===================== Helpers =====================
-    private void OnTextureChanged()
-    {
-        if (sampledTex != null) { DestroyImmediate(sampledTex); sampledTex = null; }
-        hoverX = hoverY = -1;
-    }
-
     private static Vector2Int DetectLogicalSize(Texture2D tex)
     {
         int w = tex.width, h = tex.height;
         var pixels = tex.GetPixels32();
         int blockW = w, blockH = h;
 
-        // Quét tất cả hàng để tìm các vị trí đổi màu theo X
         for (int y = 0; y < h && blockW > 1; y++)
         {
             Color32 prev = pixels[y * w];
@@ -336,7 +500,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
                 }
             }
         }
-        // Quét tất cả cột theo Y
         for (int x = 0; x < w && blockH > 1; x++)
         {
             Color32 prev = pixels[x];
@@ -356,12 +519,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
 
     private static int GCD(int a, int b) { while (b != 0) { int t = b; b = a % b; a = t; } return a; }
 
-    private static bool ColorsEqual(Color a, Color b)
-    {
-        Color32 x = a, y = b;
-        return x.r == y.r && x.g == y.g && x.b == y.b && x.a == y.a;
-    }
-
     private bool EnsureReadable(Texture2D tex)
     {
         var imp = AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(tex)) as TextureImporter;
@@ -372,10 +529,10 @@ public class PixelImageAnalyzer : OdinEditorWindow
         return true;
     }
 
-    private static string ColorToHex(Color c)
+    private static string ColorToHexRGB(Color c)
     {
         Color32 c32 = c;
-        return $"#{c32.r:X2}{c32.g:X2}{c32.b:X2}{c32.a:X2}";
+        return $"#{c32.r:X2}{c32.g:X2}{c32.b:X2}";
     }
 
     private static void Warn(string msg) => EditorUtility.DisplayDialog("⚠", msg, "OK");
@@ -383,6 +540,6 @@ public class PixelImageAnalyzer : OdinEditorWindow
     protected override void OnEnable()
     {
         base.OnEnable();
-        wantsMouseMove = true; // để hover update mượt
+        outputFolder = EditorPrefs.GetString(PREF_OUTPUT_FOLDER, "");
     }
 }

@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public partial class LevelController : MonoBehaviour
+public partial class LevelController : StaffSingleton<LevelController>
 {
-    
+    public override void Init()
+    {
+        Generate();
+    }
 }

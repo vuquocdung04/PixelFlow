@@ -16,3 +16,6 @@ MonoBehaviour:
   - color: {r: 0.2980392, g: 1, b: 0.98042655, a: 1}
     folder: {fileID: 102900000, guid: bf39f322a82a1004f8029c5b0df07f3e, type: 3}
     folderGuid: bf39f322a82a1004f8029c5b0df07f3e
+  - color: {r: 1, g: 0.03836772, b: 0, a: 0.6156863}
+    folder: {fileID: 102900000, guid: 594c7ffa899584c15b0e47d8f3ea48bf, type: 3}
+    folderGuid: 594c7ffa899584c15b0e47d8f3ea48bf
