@@ -14,12 +14,17 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
     public WaitAreaController waitAreaController;
     public Conveyor conveyor;
     public LevelController levelController;
+    public ShooterController shooterController;
+    public BrickGrid brickGrid;
     protected override void OnAwake()
     {
         base.OnAwake();
         //Init();
         levelController.Init();
         inputController.Init();
+
+        FXManager.Instance.isNextSceneReady = true;
+
 
     }
 

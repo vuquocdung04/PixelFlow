@@ -2,17 +2,12 @@ using UnityEngine;
 
 public enum Side { Top, Bottom, Left, Right }
 
-public class BrickGrid : MonoBehaviour
+public class BrickGrid : StaffSingleton<BrickGrid>
 {
-    public static BrickGrid Instance;
-
     private Block[,] grid;
     private int width, height;
     private float spacingX, spacingY;
     private float minX, maxX, minZ, maxZ;
-
-    void Awake() => Instance = this;
-
     public void Initialize(int w, int h, float sx, float sy, Vector3 worldOrigin)
     {
         width = w;
@@ -109,5 +104,10 @@ public class BrickGrid : MonoBehaviour
             for (int r = 0; r < height; r++)
                 if (grid[c, r] != null && grid[c, r].IsAlive && grid[c, r].colorHex == hex)
                     grid[c, r].Break();
+    }
+
+    public override void Init()
+    {
+        
     }
 }

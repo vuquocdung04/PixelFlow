@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShooterController : MonoBehaviour
+public class ShooterController : StaffSingleton<ShooterController>
 {
-    public static ShooterController Instance;
-
     private List<Shooter> combatShooters = new List<Shooter>();
 
-    void Awake() => Instance = this;
-
+    public override void Init()
+    {
+        
+    }
     public void RegisterCombat(Shooter s)
     {
         if (!combatShooters.Contains(s)) combatShooters.Add(s);
@@ -25,4 +25,6 @@ public class ShooterController : MonoBehaviour
             s.TickCombat();
         }
     }
+
+
 }
