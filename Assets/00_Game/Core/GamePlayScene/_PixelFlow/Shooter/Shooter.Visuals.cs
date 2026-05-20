@@ -4,7 +4,7 @@ using UnityEngine;
 public partial class Shooter
 {
     [Space(10), Header("Visual")]
-    public Renderer body;
+    public MeshRenderer body;
 
 
     [Space(10), Header("Prop Visuals")]
@@ -21,12 +21,6 @@ public partial class Shooter
 
     public void SetColor(Color color)
     {
-        if (body == null)
-        {
-            Debug.LogWarning($"[Shooter] '{name}' chưa gán body Renderer.", this);
-            return;
-        }
-
         if (_mpb == null) _mpb = new MaterialPropertyBlock();
         body.GetPropertyBlock(_mpb);
         _mpb.SetColor(BaseColorID, color);

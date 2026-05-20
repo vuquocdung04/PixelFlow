@@ -2,28 +2,24 @@ using UnityEngine;
 
 public partial class Block
 {
-    public Renderer body;
+    public MeshRenderer body;
+    public MeshRenderer bodyBot;
 
-    private static readonly int ColorID = Shader.PropertyToID("_Color");        // Built-in / Standard
-    private static readonly int BaseColorID = Shader.PropertyToID("_BaseColor"); // URP / HDRP / Lit
+    private static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
     private static MaterialPropertyBlock _mpb;
 
     public void SetColor(Color c)
     {
-        if (body == null) return;
+        ApplyColorToRenderer(body, c);
+        ApplyColorToRenderer(bodyBot, c);
+    }
 
-        // SpriteRenderer dùng .color trực tiếp (MaterialPropertyBlock không work với sprite)
-        if (body is SpriteRenderer sr)
-        {
-            sr.color = c;
-            return;
-        }
-
-        // Mesh / Skinned / etc → dùng MaterialPropertyBlock để không sinh material instance
+    private void ApplyColorToRenderer(Renderer targetRenderer, Color c)
+    {
         if (_mpb == null) _mpb = new MaterialPropertyBlock();
-        body.GetPropertyBlock(_mpb);
-        _mpb.SetColor(ColorID, c);     // shader Built-in
-        _mpb.SetColor(BaseColorID, c); // shader URP/HDRP
-        body.SetPropertyBlock(_mpb);
+
+        targetRenderer.GetPropertyBlock(_mpb);
+        _mpb.SetColor(BaseColorID, c);
+        targetRenderer.SetPropertyBlock(_mpb);
     }
 }

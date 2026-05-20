@@ -27,14 +27,19 @@ public partial class Conveyor
         for (int i = 0; i < initialItemCount; i++)
         {
             ItemSlot slot = Instantiate(itemSlotPrefab, transform);
+            slot.Init();
             ReturnSlot(slot);
         }
     }
     public void ReturnSlot(ItemSlot slot)
     {
+        slot.transform.rotation = Quaternion.identity; 
         slot.transform.position = returnPoint.position;
         itemSlots.Add(slot);
-        slot.Return(GetSlotTargetX(itemSlots.Count - 1));
+
+        slot.MoveToX(GetSlotTargetX(itemSlots.Count - 1));
+        slot.ResetVisualRotation();
+
         UpdateCountText();
     }
     public void TakeFirstSlot(Shooter shooter)
@@ -52,20 +57,18 @@ public partial class Conveyor
 
         float durationSlot = shooter.jumpDuration * 0.8f;
 
-        first.transform.DOMove(pathStart, durationSlot).SetEase(Ease.Linear);
-        first.transform.DORotate(new Vector3(0f, 0f, 90f), durationSlot).SetEase(Ease.Linear);
+        first.PrepareToReceive(pathStart, durationSlot);
+
 
         shooter.JumpTo(pathStart, () =>
         {
-            shooter.transform.SetParent(first.itemParent);
-            shooter.transform.localScale = Vector3.one;
-            shooter.transform.localRotation = Quaternion.identity;
+            first.DockShooter(shooter);
             shooter.SetAnimState(ShooterAnimState.Combat);
             SendSlotAlongPath(first, shooter);
         });
 
         for (int i = 0; i < itemSlots.Count; i++)
-            itemSlots[i].Return(GetSlotTargetX(i));
+            itemSlots[i].MoveToX(GetSlotTargetX(i));
 
         UpdateCountText();
     }

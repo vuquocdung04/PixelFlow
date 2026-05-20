@@ -5,8 +5,6 @@ public partial class Shooter
     public string colorHex;
     public Transform shootPoint;
     public Projectile projectilePrefab;
-    public float projectileDuration = 0.4f;
-
     public void TickCombat()
     {
         if (!BrickGrid.Instance.GetSideAndLine(transform.position, out var side, out int line))
@@ -20,7 +18,7 @@ public partial class Shooter
         Fire(outer);
     }
 
-    void Fire(Block target)
+    private void Fire(Block target)
     {
         target.Claim();
 
@@ -28,13 +26,16 @@ public partial class Shooter
             projectilePrefab,
             shootPoint.position,
             Quaternion.identity);
-        p.Fire(target, projectileDuration);
+
+        //p.transform.position = shootPoint.position;
+
+        p.Fire(target);
 
         PlayShootFeedback();
-        EventDispatcher.EventDispatcher.Instance.PostEvent(EventID.SHOOTER_FIRED, this);
+        //EventDispatcher.EventDispatcher.Instance.PostEvent(EventID.SHOOTER_FIRED, this);
     }
 
-    void PlayShootFeedback()
+    private void PlayShootFeedback()
     {
     }
 }

@@ -48,6 +48,13 @@ public class WaitAreaController : StaffSingleton<WaitAreaController>
             if (wa != null && wa.IsEmpty) return wa;
         return null;
     }
+    public bool AreAllFull() => !waitAreas[waitAreas.Count - 1].IsEmpty;
+
+    public void  PlayAllWarningBlink()
+    {
+        foreach (var wa in waitAreas)
+            wa.PlayWarningBlink();
+    }
     public void ShiftForward()
     {
         int writeIdx = 0;
@@ -55,7 +62,7 @@ public class WaitAreaController : StaffSingleton<WaitAreaController>
         for (int readIdx = 0; readIdx < waitAreas.Count; readIdx++)
         {
             WaitArea readArea = waitAreas[readIdx];
-            if (readArea == null || readArea.Occupant == null) continue;
+            if (readArea.Occupant == null) continue;
 
             Shooter shooter = readArea.Occupant;
 

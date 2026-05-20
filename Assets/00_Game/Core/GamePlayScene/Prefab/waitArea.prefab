@@ -173,7 +173,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 58c7f859db39b7a418748e682b56df97, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.091103174, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -229,6 +229,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 403170fed6c3a494e87ded8af82472f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaitArea
+  <Occupant>k__BackingField: {fileID: 0}
+  strokeWarning: {fileID: 4226004565522074678}
+  blinkDuration: 0.25
+  blinkCount: 2
 --- !u!1 &5041943696901209082
 GameObject:
   m_ObjectHideFlags: 0
