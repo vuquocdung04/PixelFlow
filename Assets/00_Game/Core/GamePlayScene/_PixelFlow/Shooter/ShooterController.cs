@@ -4,18 +4,24 @@ using UnityEngine;
 public class ShooterController : StaffSingleton<ShooterController>
 {
     private List<Shooter> combatShooters = new List<Shooter>();
+    private List<Shooter> aliveShooters = new List<Shooter>();
 
+    public int TotalAlive => aliveShooters.Count;
     public override void Init()
     {
-        
+
     }
     public void RegisterCombat(Shooter s)
     {
-        if (!combatShooters.Contains(s)) combatShooters.Add(s);
+        combatShooters.Add(s);
     }
 
     public void UnregisterCombat(Shooter s) => combatShooters.Remove(s);
-
+    public void RegisterAlive(Shooter s)
+    {
+        aliveShooters.Add(s);
+    }
+    public void UnregisterAlive(Shooter s) => aliveShooters.Remove(s);
     void Update()
     {
         for (int i = combatShooters.Count - 1; i >= 0; i--)

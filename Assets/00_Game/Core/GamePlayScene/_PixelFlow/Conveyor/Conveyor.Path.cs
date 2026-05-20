@@ -31,9 +31,25 @@ public partial class Conveyor
 
     void OnSlotPathComplete(ItemSlot slot, Shooter shooter)
     {
-        if (shooter != null)
+        if (shooter == null)
+        {
+            ReturnSlot(slot);
+            return;
+        }
+
+        if (ShooterController.Instance.TotalAlive <= initialItemCount)
+            LoopSlot(slot, shooter);
+        else
+        {
             DispatchShooterToWaitArea(shooter);
-        ReturnSlot(slot);
+            ReturnSlot(slot);
+        }
+    }
+
+    void LoopSlot(ItemSlot slot, Shooter shooter)
+    {
+        slot.transform.position = itemPath[0].position;
+        SendSlotAlongPath(slot, shooter);   // OnComplete sẽ gọi lại OnSlotPathComplete → loop tiếp
     }
 
     void DispatchShooterToWaitArea(Shooter shooter)

@@ -49,7 +49,7 @@ public partial class LevelController
 
                 int row = idx / gridBottomX;
                 shooter.SetAnimState(row == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
-
+                ShooterController.Instance.RegisterAlive(shooter);
                 shooterMap[idx] = shooter;
             }
         }

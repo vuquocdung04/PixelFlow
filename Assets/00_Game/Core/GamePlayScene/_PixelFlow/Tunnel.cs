@@ -52,7 +52,7 @@ public class Tunnel : MonoBehaviour
         shooter.SetColor(color);
         shooter.colorHex = data.hex;
         shooter.SetProjectileCount(data.count);
-
+        ShooterController.Instance.RegisterAlive(shooter);
         shooter.transform
             .DOLocalMove(spawnAtLocalPos, moveDuration)
             .SetEase(moveEase)

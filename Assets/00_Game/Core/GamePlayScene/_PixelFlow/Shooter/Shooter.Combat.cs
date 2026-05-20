@@ -62,6 +62,8 @@ public partial class Shooter
 
 
         ShooterController.Instance.UnregisterCombat(this);
+        ShooterController.Instance.UnregisterAlive(this);
+
         transform.SetParent(null);
 
         if (slot != null)
