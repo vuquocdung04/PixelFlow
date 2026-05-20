@@ -1,5 +1,6 @@
 using System;
 using EventDispatcher;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public enum GameState
@@ -21,6 +22,18 @@ public partial class GameFlow : StaffSingleton<GameFlow>
     private int pauseRequest;
 
     private Transform popupHolder;
+
+    [Button("Pause")]
+    private void TestingState()
+    {
+        RequestPause();
+    }
+
+    [Button("Resume")]
+    private void TestingState2()
+    {
+        RequestResume();
+    }
 
 
     public override void Init()

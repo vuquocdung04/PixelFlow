@@ -9,6 +9,11 @@ public class ShooterController : StaffSingleton<ShooterController>
     public int conveyorCapacity;
     private bool _loopEventPosted = false;
     public bool IsInLoopMode => _loopEventPosted;
+
+    private bool _paused = false;
+
+    public void Pause() => _paused = true;
+    public void Resume() => _paused = false;
     public override void Init()
     {
 
@@ -37,6 +42,8 @@ public class ShooterController : StaffSingleton<ShooterController>
 
     void Update()
     {
+        if (_paused) return;
+
         for (int i = combatShooters.Count - 1; i >= 0; i--)
         {
             var s = combatShooters[i];

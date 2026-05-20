@@ -47,4 +47,14 @@ public class ItemSlot : MonoBehaviour
         shooter.transform.SetParent(itemParent);
         shooter.transform.localPosition = Vector3.zero;
     }
+
+    public void Pause()
+    {
+        transform.DOPause();
+    }
+
+    public void Resume()
+    {
+        transform.DOPlay();
+    }
 }

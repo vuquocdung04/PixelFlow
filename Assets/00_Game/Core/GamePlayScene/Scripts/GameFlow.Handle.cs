@@ -7,10 +7,12 @@ public partial class GameFlow
         switch (state)
         {
             case GameState.Playing:
-                // resume input, AI tick
+                ShooterController.Instance.Resume();
+                Conveyor.Instance.Resume();
                 break;
             case GameState.Paused:
-                // show pause UI
+                ShooterController.Instance.Pause();
+                Conveyor.Instance.Pause();
                 break;
             case GameState.Win:
                 // show win popup, save progress

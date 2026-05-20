@@ -20,12 +20,16 @@ public class ConveyorArrows : MonoBehaviour
     private int count;
     private int lastIdx;
 
+
+    private bool _paused = false;
+
+    public void Pause() => _paused = true;
+    public void Resume() => _paused = false;
     public void Init()
     {
         OnStart();
         this.RegisterListener(EventID.LOOP_MODE_ENTERED, OnLoopEntered);
     }
-
     void OnDestroy()
     {
         this.RemoveListener(EventID.LOOP_MODE_ENTERED, OnLoopEntered);
@@ -64,6 +68,7 @@ public class ConveyorArrows : MonoBehaviour
 
     void Update()
     {
+        if (_paused) return;
         float dt = Time.deltaTime;
         float speedDt = speed * currentMultiplier * dt;
         float rotDt = rotationSpeed * currentMultiplier * dt;
