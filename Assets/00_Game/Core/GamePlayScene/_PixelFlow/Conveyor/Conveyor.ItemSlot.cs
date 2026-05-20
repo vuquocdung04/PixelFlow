@@ -12,13 +12,8 @@ public partial class Conveyor
     public float spacing;
     public int initialItemCount = 5;
     public TextMeshPro countText;
-
     public List<ItemSlot> itemSlots = new List<ItemSlot>();
-
-    void Start()
-    {
-        SpawnItems();
-    }
+    public int Capacity => initialItemCount;
     private void SpawnItems()
     {
         if (initialItemCount > 1)
@@ -33,7 +28,7 @@ public partial class Conveyor
     }
     public void ReturnSlot(ItemSlot slot)
     {
-        slot.transform.rotation = Quaternion.identity; 
+        slot.transform.rotation = Quaternion.identity;
         slot.transform.position = returnPoint.position;
         itemSlots.Add(slot);
 

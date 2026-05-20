@@ -29,9 +29,10 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
         boosterController.Init();
         inputController.Init();
         gameFlow.Init();
-        levelController.Init();
         inputController.Init();
         brickGrid.Init();
+        conveyor.Init();
+        levelController.Init();
         //FXManager.Instance.isNextSceneReady = true;
     }
 }

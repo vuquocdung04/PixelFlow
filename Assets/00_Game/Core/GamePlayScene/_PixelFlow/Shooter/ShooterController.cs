@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using EventDispatcher;
 using UnityEngine;
 
 public class ShooterController : StaffSingleton<ShooterController>
 {
     private List<Shooter> combatShooters = new List<Shooter>();
-    private List<Shooter> aliveShooters = new List<Shooter>();
-
-    public int TotalAlive => aliveShooters.Count;
+    public int aliveCount;
+    public int conveyorCapacity;
+    private bool _loopEventPosted = false;
+    public bool IsInLoopMode => _loopEventPosted;
     public override void Init()
     {
 
@@ -17,11 +19,22 @@ public class ShooterController : StaffSingleton<ShooterController>
     }
 
     public void UnregisterCombat(Shooter s) => combatShooters.Remove(s);
-    public void RegisterAlive(Shooter s)
+
+    public void OnShooterDespawn()
     {
-        aliveShooters.Add(s);
+        aliveCount--;
+        TryPostLoopEvent();
     }
-    public void UnregisterAlive(Shooter s) => aliveShooters.Remove(s);
+    public void TryPostLoopEvent()
+    {
+        if (_loopEventPosted) return;
+        if (aliveCount > conveyorCapacity) return;
+
+        _loopEventPosted = true;
+        this.PostEvent(EventID.LOOP_MODE_ENTERED);
+    }
+
+
     void Update()
     {
         for (int i = combatShooters.Count - 1; i >= 0; i--)

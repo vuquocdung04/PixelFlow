@@ -49,7 +49,6 @@ public partial class LevelController
 
                 int row = idx / gridBottomX;
                 shooter.SetAnimState(row == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
-                ShooterController.Instance.RegisterAlive(shooter);
                 shooterMap[idx] = shooter;
             }
         }
@@ -100,6 +99,17 @@ public partial class LevelController
                 }
             }
         }
+
+        int totalAlive = 0;
+        foreach (var kv in bottomData.colors)
+            totalAlive += kv.Value.Count;
+        foreach (var kv in bottomData.tunnels)
+            foreach (var c in kv.Value.colors)
+                totalAlive += c.count;
+
+        ShooterController.Instance.aliveCount = totalAlive;
+        ShooterController.Instance.conveyorCapacity = Conveyor.Instance.Capacity;
+        ShooterController.Instance.TryPostLoopEvent();
     }
 
     [Button("CLEAR BOTTOM", ButtonSizes.Medium), GUIColor(1f, 0.7f, 0.7f)]

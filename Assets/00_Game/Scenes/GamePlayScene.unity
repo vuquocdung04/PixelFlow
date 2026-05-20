@@ -5902,6 +5902,7 @@ MonoBehaviour:
   - {fileID: 566120766}
   - {fileID: 17600948}
   itemPathSpeed: 5
+  loopSpeedMultiplier: 2
 --- !u!1 &1110359818
 GameObject:
   m_ObjectHideFlags: 0
@@ -7401,6 +7402,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef99a5ebf8cac5d44a1418aed87d415a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShooterController
+  aliveCount: 0
+  conveyorCapacity: 0
 --- !u!1 &1343504205
 GameObject:
   m_ObjectHideFlags: 0
@@ -9627,6 +9630,7 @@ MonoBehaviour:
   speed: 0.5
   rotationSpeed: 20
   lastSegmentRotationMultiplier: 20
+  loopMultiplier: 2
 --- !u!1 &1613289792
 GameObject:
   m_ObjectHideFlags: 0

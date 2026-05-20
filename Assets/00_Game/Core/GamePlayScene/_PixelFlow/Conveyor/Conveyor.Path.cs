@@ -6,7 +6,12 @@ public partial class Conveyor
     [Space(10), Header("Item Path")]
     public List<Transform> itemPath;
     public float itemPathSpeed = 10f;
+    public float loopSpeedMultiplier = 2f;
 
+    void OnLoopEntered(object _)
+    {
+        itemPathSpeed *= loopSpeedMultiplier;
+    }
     void SendSlotAlongPath(ItemSlot slot, Shooter shooter)
     {
         int count = itemPath.Count;
@@ -31,13 +36,9 @@ public partial class Conveyor
 
     void OnSlotPathComplete(ItemSlot slot, Shooter shooter)
     {
-        if (shooter == null)
-        {
-            ReturnSlot(slot);
-            return;
-        }
+        if (shooter == null) { ReturnSlot(slot); return; }
 
-        if (ShooterController.Instance.TotalAlive <= initialItemCount)
+        if (ShooterController.Instance.IsInLoopMode)
             LoopSlot(slot, shooter);
         else
         {
@@ -45,7 +46,6 @@ public partial class Conveyor
             ReturnSlot(slot);
         }
     }
-
     void LoopSlot(ItemSlot slot, Shooter shooter)
     {
         slot.transform.position = itemPath[0].position;

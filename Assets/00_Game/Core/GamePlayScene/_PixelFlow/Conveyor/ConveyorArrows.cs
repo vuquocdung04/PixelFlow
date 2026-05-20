@@ -1,3 +1,4 @@
+using EventDispatcher;
 using UnityEngine;
 
 public class ConveyorArrows : MonoBehaviour
@@ -7,6 +8,10 @@ public class ConveyorArrows : MonoBehaviour
     public float rotationSpeed = 360f;
     public float lastSegmentRotationMultiplier = 3f;
 
+    [Header("Loop Boost")]
+    public float loopMultiplier = 2f;
+    private float currentMultiplier = 1f;
+
     private Vector3[] pathPositions;
     private Quaternion[] pathRotations;
     private float[] segmentLengths;
@@ -15,7 +20,18 @@ public class ConveyorArrows : MonoBehaviour
     private int count;
     private int lastIdx;
 
-    void Start()
+    public void Init()
+    {
+        OnStart();
+        this.RegisterListener(EventID.LOOP_MODE_ENTERED, OnLoopEntered);
+    }
+
+    void OnDestroy()
+    {
+        this.RemoveListener(EventID.LOOP_MODE_ENTERED, OnLoopEntered);
+    }
+
+    private void OnStart()
     {
         if (arrows == null || arrows.Length == 0)
         {
@@ -49,8 +65,8 @@ public class ConveyorArrows : MonoBehaviour
     void Update()
     {
         float dt = Time.deltaTime;
-        float speedDt = speed * dt;
-        float rotDt = rotationSpeed * dt;
+        float speedDt = speed * currentMultiplier * dt;
+        float rotDt = rotationSpeed * currentMultiplier * dt;
         float rotDtFast = rotDt * lastSegmentRotationMultiplier;
 
         for (int i = 0; i < count; i++)
@@ -86,7 +102,10 @@ public class ConveyorArrows : MonoBehaviour
             arrows[i].rotation = Quaternion.RotateTowards(arrows[i].rotation, pathRotations[to], currentRotDt);
         }
     }
-
+    void OnLoopEntered(object _)
+    {
+        currentMultiplier = loopMultiplier;
+    }
     static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {
         float t2 = t * t;

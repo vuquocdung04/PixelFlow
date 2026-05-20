@@ -62,7 +62,8 @@ public partial class Shooter
 
 
         ShooterController.Instance.UnregisterCombat(this);
-        ShooterController.Instance.UnregisterAlive(this);
+        
+        ShooterController.Instance.OnShooterDespawn();
 
         transform.SetParent(null);
 
