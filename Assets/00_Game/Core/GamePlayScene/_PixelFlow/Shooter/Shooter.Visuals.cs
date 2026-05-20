@@ -5,7 +5,8 @@ public partial class Shooter
 {
     [Space(10), Header("Visual")]
     public MeshRenderer body;
-
+    public GameObject bodyVisual;
+    public TextMeshPro txtBody;
 
     [Space(10), Header("Prop Visuals")]
     public GameObject blindVisual;
@@ -37,9 +38,11 @@ public partial class Shooter
         {
             case PropState.Blind:
                 blindVisual.SetActive(true);
+                bodyVisual.SetActive(false);
                 break;
             case PropState.Ice:
                 iceVisual.SetActive(true);
+                bodyVisual.SetActive(false);
                 break;
             case PropState.Link:
                 linkVisual.SetActive(true);
@@ -53,9 +56,11 @@ public partial class Shooter
         {
             case PropState.Blind:
                 blindVisual.SetActive(false);
+                bodyVisual.SetActive(true);
                 break;
             case PropState.Ice:
                 iceVisual.SetActive(false);
+                bodyVisual.SetActive(true);
                 break;
             case PropState.Link:
                 linkVisual.SetActive(false);

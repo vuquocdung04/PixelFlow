@@ -138,7 +138,4 @@ public partial class LevelController
 
         return new Vector3(lx, 0f, lz);
     }
-
-    public Shooter GetShooter(int idx) => shooterMap.TryGetValue(idx, out var s) ? s : null;
-    public Tunnel GetTunnel(int idx) => tunnelMap.TryGetValue(idx, out var t) ? t : null;
 }

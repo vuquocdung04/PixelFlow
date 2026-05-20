@@ -70,6 +70,4 @@ public partial class LevelController
             else DestroyImmediate(go);
         }
     }
-
-    public Block GetBlock(int idx) => blockMap.TryGetValue(idx, out var b) ? b : null;
 }
