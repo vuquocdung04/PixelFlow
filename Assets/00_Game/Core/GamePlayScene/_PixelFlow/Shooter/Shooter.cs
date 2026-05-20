@@ -7,7 +7,7 @@ public partial class Shooter : MonoBehaviour
     public HashSet<PropState> activeProps = new HashSet<PropState>();
 
     public bool IsBlocked =>
-    currentAnimState == AnimState.Blocked ||
+    currentAnimState == ShooterAnimState.Blocked ||
     activeProps.Contains(PropState.Ice);
     public void AddProps(PropState state)
     {

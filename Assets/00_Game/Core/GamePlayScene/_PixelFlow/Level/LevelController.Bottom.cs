@@ -46,7 +46,7 @@ public partial class LevelController
                 shooter.colorHex = kv.Key;
 
                 int row = idx / gridBottomX;
-                shooter.SetAnimState(row == 0 ? Shooter.AnimState.Idle : Shooter.AnimState.Blocked);
+                shooter.SetAnimState(row == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
 
                 shooterMap[idx] = shooter;
                 shootersSpawned++;
@@ -124,7 +124,7 @@ public partial class LevelController
             shooterMap[newIdx] = shooter;
 
             if (newIdx / gridBottomX == 0)
-                shooter.SetAnimState(Shooter.AnimState.Idle);
+                shooter.SetAnimState(ShooterAnimState.Idle);
         }
     }
     private Vector3 GridToLocalBottom(int idx)

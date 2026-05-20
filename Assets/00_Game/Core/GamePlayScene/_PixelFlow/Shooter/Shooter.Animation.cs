@@ -1,9 +1,9 @@
 using DG.Tweening;
 using UnityEngine;
+public enum ShooterAnimState { Idle, Combat, Blocked }
 
 public partial class Shooter
 {
-    public enum AnimState { Idle, Combat, Blocked }
 
     [Space(10), Header("Animation")]
     public float jumpPower = 1f;
@@ -15,7 +15,7 @@ public partial class Shooter
     public float wobbleAngle = 15f;
     public float wobbleDuration = 0.3f;
 
-    public AnimState currentAnimState = AnimState.Idle;
+    public ShooterAnimState currentAnimState = ShooterAnimState.Idle;
 
     Tween stateTween;
     Vector3 baseScale;
@@ -26,9 +26,9 @@ public partial class Shooter
         var tween = transform.DOJump(target, jumpPower, 1, jumpDuration).SetEase(Ease.OutCubic);
         if (onComplete != null) tween.OnComplete(onComplete);
     }
-    public void SetAnimState(AnimState state)
+    public void SetAnimState(ShooterAnimState state)
     {
-        AnimState prev = currentAnimState;
+        ShooterAnimState prev = currentAnimState;
 
         if (!baseScaleCached)
         {
@@ -42,23 +42,20 @@ public partial class Shooter
 
         switch (state)
         {
-            case AnimState.Idle:
-                stateTween = transform.DOScale(baseScale * (1f + idleScaleAmount), idleDuration)
-                    .SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+            case ShooterAnimState.Idle:
+
                 break;
-            case AnimState.Combat:
-                stateTween = transform.DOScale(baseScale * (1f + combatScaleAmount), combatDuration)
-                    .SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
+            case ShooterAnimState.Combat:
+
                 break;
-            case AnimState.Blocked:
-                stateTween = transform.DOPunchRotation(
-                    new Vector3(0f, 0f, wobbleAngle), wobbleDuration, 10, 1f);
+            case ShooterAnimState.Blocked:
+
                 break;
         }
 
-        if (state == AnimState.Combat && prev != AnimState.Combat)
+        if (state == ShooterAnimState.Combat && prev != ShooterAnimState.Combat)
             ShooterController.Instance.RegisterCombat(this);
-        else if (prev == AnimState.Combat && state != AnimState.Combat)
+        else if (prev == ShooterAnimState.Combat && state != ShooterAnimState.Combat)
             ShooterController.Instance.UnregisterCombat(this);
     }
 }

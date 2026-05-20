@@ -24,7 +24,7 @@ public partial class Shooter
     {
         target.Claim();
 
-        Projectile p = SimplePool2.Spawn<Projectile>(
+        Projectile p = SimplePool2.Spawn(
             projectilePrefab,
             shootPoint.position,
             Quaternion.identity);
