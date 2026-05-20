@@ -8,28 +8,29 @@ public class Tunnel : MonoBehaviour
     [Header("Data")]
     public int tunnelID;
     public int spawnAtID;
-    public List<Color> spawnColors = new List<Color>();
+    public List<TunnelColor> spawnColors = new List<TunnelColor>();
 
     [Tooltip("Local position (so với parent) của ô spawnAtID, set bởi LevelController.")]
     public Vector3 spawnAtLocalPos;
 
     [Header("Spawn")]
-    public Transform pointSpawn;       
-    public Shooter shooterPrefab;       
+    public Transform pointSpawn;
+    public Shooter shooterPrefab;
     public float moveDuration = 0.4f;
     public Ease moveEase = Ease.OutQuad;
 
     [Header("UI")]
-    public TMP_Text countTxt;       
+    public TMP_Text countTxt;
+
     public bool HasNext => spawnColors.Count > 0;
     public int RemainingCount => spawnColors.Count;
 
-    public void Setup(int tunnelID, int spawnAtID, Vector3 spawnAtLocalPos, List<Color> colors)
+    public void Setup(int tunnelID, int spawnAtID, Vector3 spawnAtLocalPos, List<TunnelColor> colors)
     {
         this.tunnelID = tunnelID;
         this.spawnAtID = spawnAtID;
         this.spawnAtLocalPos = spawnAtLocalPos;
-        this.spawnColors = colors != null ? new List<Color>(colors) : new List<Color>();
+        this.spawnColors = colors != null ? new List<TunnelColor>(colors) : new List<TunnelColor>();
 
         gameObject.name = $"Tunnel_{tunnelID}_to_{spawnAtID}";
         UpdateCountText();
@@ -41,17 +42,21 @@ public class Tunnel : MonoBehaviour
         if (shooterPrefab == null) { Debug.LogWarning($"[{name}] thiếu shooterPrefab"); return null; }
         if (pointSpawn == null) { Debug.LogWarning($"[{name}] thiếu pointSpawn"); return null; }
 
-        Color color = spawnColors[0];
+        TunnelColor data = spawnColors[0];
         spawnColors.RemoveAt(0);
+
+        ColorUtility.TryParseHtmlString(data.hex, out Color color);
 
         var parent = transform.parent;
         var shooter = Instantiate(shooterPrefab, pointSpawn.position, Quaternion.identity, parent);
         shooter.SetColor(color);
+        shooter.colorHex = data.hex;
+        shooter.SetProjectileCount(data.count);
 
         shooter.transform
             .DOLocalMove(spawnAtLocalPos, moveDuration)
             .SetEase(moveEase)
-            .SetLink(shooter.gameObject); 
+            .SetLink(shooter.gameObject);
 
         UpdateCountText();
         return shooter;

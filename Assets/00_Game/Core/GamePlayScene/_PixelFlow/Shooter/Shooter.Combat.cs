@@ -2,9 +2,14 @@ using UnityEngine;
 
 public partial class Shooter
 {
+    [Space(10), Header("Combat")]
     public string colorHex;
+    public int projectileCount;
     public Transform shootPoint;
     public Projectile projectilePrefab;
+
+    public void SetProjectileCount(int count) => projectileCount = count;
+    
     public void TickCombat()
     {
         if (!BrickGrid.Instance.GetSideAndLine(transform.position, out var side, out int line))

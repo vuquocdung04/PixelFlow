@@ -20,23 +20,19 @@ public class BottomData
 {
     public int gridX;
     public int gridY;
-    public Dictionary<string, List<int>> colors;
+    public Dictionary<string, Dictionary<int, int>> colors;
     public List<int> blinds;
-    public List<IceData> ices;
-    public List<TunnelData> tunnels;
+    public Dictionary<int, int> ices;
+    public Dictionary<int, TunnelData> tunnels;
+    public List<List<int>> links;
 }
 
 [System.Serializable]
-public class IceData
-{
-    public int id;
-    public int count;
-}
+public class TunnelColor { public string hex; public int count; }
 
 [System.Serializable]
 public class TunnelData
 {
-    public int tunnelID;
     public int spawnAtID;
-    public List<string> colors;
+     public List<TunnelColor> colors; 
 }

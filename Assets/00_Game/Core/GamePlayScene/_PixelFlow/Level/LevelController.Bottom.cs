@@ -30,26 +30,27 @@ public partial class LevelController
         gridBottomX = bottomData.gridX;
         gridBottomY = bottomData.gridY;
 
-        int shootersSpawned = 0, blindsApplied = 0, icesApplied = 0, tunnelsSpawned = 0;
-
         // ===== 1) COLORS → Shooter =====
         foreach (var kv in bottomData.colors)
         {
             ColorUtility.TryParseHtmlString(kv.Key, out Color color);
 
-            foreach (int idx in kv.Value)
+            foreach (var cellEntry in kv.Value)
             {
+                int idx = cellEntry.Key;
+                int projectileCount = cellEntry.Value;
+
                 var shooter = Instantiate(shooterPrefab, bottomParent);
                 shooter.name = $"Shooter_{idx}_{kv.Key}";
                 shooter.transform.localPosition = GridToLocalBottom(idx);
                 shooter.SetColor(color);
                 shooter.colorHex = kv.Key;
+                shooter.SetProjectileCount(projectileCount);
 
                 int row = idx / gridBottomX;
                 shooter.SetAnimState(row == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
 
                 shooterMap[idx] = shooter;
-                shootersSpawned++;
             }
         }
 
@@ -58,34 +59,46 @@ public partial class LevelController
         {
             if (!shooterMap.TryGetValue(idx, out var shooter)) continue;
             shooter.AddProps(PropState.Blind);
-            blindsApplied++;
         }
 
         // ===== 3) ICES =====
         foreach (var ice in bottomData.ices)
         {
-            if (!shooterMap.TryGetValue(ice.id, out var shooter)) continue;
+            if (!shooterMap.TryGetValue(ice.Key, out var shooter)) continue;
             shooter.AddProps(PropState.Ice);
-            shooter.SetIceCount(ice.count);
-            icesApplied++;
+            shooter.SetIceCount(ice.Value);
         }
 
         // ===== 4) TUNNELS =====
-        foreach (var t in bottomData.tunnels)
+        // ===== 4) TUNNELS =====
+        foreach (var kv in bottomData.tunnels)
         {
-            var colors = new List<Color>();
-            foreach (var hex in t.colors)
-            {
-                ColorUtility.TryParseHtmlString(hex, out Color c);
-                colors.Add(c);
-            }
+            int tunnelID = kv.Key;
+            var t = kv.Value;
 
             var tunnel = Instantiate(tunnelPrefab, bottomParent);
-            tunnel.transform.localPosition = GridToLocalBottom(t.tunnelID);
-            tunnel.Setup(t.tunnelID, t.spawnAtID, GridToLocalBottom(t.spawnAtID), colors);
+            tunnel.transform.localPosition = GridToLocalBottom(tunnelID);
+            tunnel.Setup(tunnelID, t.spawnAtID, GridToLocalBottom(t.spawnAtID), t.colors);
 
-            tunnelMap[t.tunnelID] = tunnel;
-            tunnelsSpawned++;
+            tunnelMap[tunnelID] = tunnel;
+        }
+        // ===== 5) LINKS =====
+        if (bottomData.links != null)
+        {
+            foreach (var group in bottomData.links)
+            {
+                for (int i = 0; i < group.Count - 1; i++)
+                {
+                    if (!shooterMap.TryGetValue(group[i], out var a)) continue;
+                    if (!shooterMap.TryGetValue(group[i + 1], out var b)) continue;
+
+                    // VD: spawn rope nối a ↔ b (dùng RopeLink prefab đã làm)
+                    // var rope = Instantiate(ropeLinkPrefab, bottomParent);
+                    // rope.Setup(a.transform, b.transform);
+                    // a.ropeLinks.Add(rope);
+                    // b.ropeLinks.Add(rope);
+                }
+            }
         }
     }
 
