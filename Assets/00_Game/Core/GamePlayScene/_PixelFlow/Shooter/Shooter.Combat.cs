@@ -9,6 +9,7 @@ public partial class Shooter
     public Transform shootPoint;
     public Projectile projectilePrefab;
     private bool _despawning;
+    private Sequence shootSeq;
     public void SetProjectileCount(int count)
     {
         projectileCount = count;
@@ -79,5 +80,17 @@ public partial class Shooter
     }
     private void PlayShootFeedback()
     {
+        if (shootSeq != null && shootSeq.IsActive() && shootSeq.IsPlaying()) return;
+
+        float recoilForce = 0.3f;
+        float feedbackDuration = 0.2f;
+
+        shootSeq = DOTween.Sequence();
+
+        shootSeq.Append(transform.DOLocalMoveZ(-recoilForce, feedbackDuration / 2f).SetEase(Ease.OutQuad));
+        shootSeq.Join(transform.DOScale(new Vector3(1.15f, 0.75f, 1.15f), feedbackDuration / 2f).SetEase(Ease.OutQuad));
+
+        shootSeq.Append(transform.DOLocalMoveZ(0f, feedbackDuration / 2f).SetEase(Ease.InOutSine));
+        shootSeq.Join(transform.DOScale(Vector3.one, feedbackDuration / 2f).SetEase(Ease.InOutSine));
     }
 }
