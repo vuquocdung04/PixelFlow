@@ -31,7 +31,8 @@ public partial class Conveyor
 
     void OnSlotPathComplete(ItemSlot slot, Shooter shooter)
     {
-        DispatchShooterToWaitArea(shooter);
+        if (shooter != null)
+            DispatchShooterToWaitArea(shooter);
         ReturnSlot(slot);
     }
 

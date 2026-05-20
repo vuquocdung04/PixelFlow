@@ -6,8 +6,13 @@ public class ItemSlot : MonoBehaviour
     public Transform itemParent;
     public Transform visual;
     public float returnDuration = 0.5f;
-
     private Vector3 nativeVisualRotation;
+
+    public void AbortAndReturn()
+    {
+        transform.DOKill();
+        Conveyor.Instance.ReturnSlot(this);
+    }
 
     public void Init()
     {
