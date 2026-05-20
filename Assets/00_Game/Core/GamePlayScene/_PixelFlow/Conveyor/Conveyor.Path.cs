@@ -39,7 +39,11 @@ public partial class Conveyor
     void DispatchShooterToWaitArea(Shooter shooter)
     {
         WaitArea empty = WaitAreaController.Instance.FindEmptyWaitArea();
-        if (empty == null) return;
+        if (empty == null)
+        {
+            GameFlow.Instance.TriggerLose();
+            return;
+        }
         shooter.SetAnimState(ShooterAnimState.Idle);
         empty.AddOccupant(shooter);
         shooter.transform.SetParent(empty.transform);

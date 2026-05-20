@@ -1,4 +1,5 @@
 using System;
+using EventDispatcher;
 using UnityEngine;
 
 public enum GameState
@@ -28,12 +29,16 @@ public partial class GameFlow : StaffSingleton<GameFlow>
 
         OnStateEntered += HandleStateEntered;
         OnStateExited += HandleStateExited;
+
+        this.RegisterListener(EventID.LEVEL_COMPLETE, OnLevelComplete);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
         OnStateEntered -= HandleStateEntered;
         OnStateExited -= HandleStateExited;
+
+        this.RemoveListener(EventID.LEVEL_COMPLETE, OnLevelComplete);
     }
 
     public bool ChangeState(GameState next)
@@ -81,8 +86,7 @@ public partial class GameFlow : StaffSingleton<GameFlow>
         if (pauseRequest == 0 && CurrentState == GameState.Paused)
             ChangeState(GameState.Playing);
     }
-
-    public void TriggerWin() => ChangeState(GameState.Win);
+    void OnLevelComplete(object _) => ChangeState(GameState.Win);
     public void TriggerLose() => ChangeState(GameState.Lose);
     public void EnterBooster() => ChangeState(GameState.BoosterActive);
     public void ExitBooster() => ChangeState(GameState.Playing);

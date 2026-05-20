@@ -54,6 +54,11 @@ public partial class LevelController
                 blockMap[idx] = block;
             }
         }
+
+        int totalBlocks = 0;
+        foreach (var kv in data.top.colors)
+            totalBlocks += kv.Value.Count;
+        BrickGrid.Instance.totalBlocks = totalBlocks;
     }
 
     [Button("CLEAR TOP", ButtonSizes.Medium), GUIColor(1f, 0.7f, 0.7f)]

@@ -1,3 +1,4 @@
+using EventDispatcher;
 using TMPro;
 using UnityEngine;
 
@@ -43,6 +44,7 @@ public partial class Shooter
             case PropState.Ice:
                 iceVisual.SetActive(true);
                 bodyVisual.SetActive(false);
+                this.RegisterListener(EventID.BLOCK_DESTROYED, OnBlockDestroyed);
                 break;
             case PropState.Link:
                 linkVisual.SetActive(true);
@@ -61,11 +63,20 @@ public partial class Shooter
             case PropState.Ice:
                 iceVisual.SetActive(false);
                 bodyVisual.SetActive(true);
+                this.RemoveListener(EventID.BLOCK_DESTROYED, OnBlockDestroyed);
                 break;
             case PropState.Link:
                 linkVisual.SetActive(false);
                 break;
         }
+    }
+    private void OnBlockDestroyed(object param)
+    {
+        iceCount--;
+        if (iceTxt != null) iceTxt.text = iceCount.ToString();
+
+        if (iceCount <= 0)
+            RemoveProps(PropState.Ice);
     }
 
     private void OnAllPropsCleared()

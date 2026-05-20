@@ -2,7 +2,7 @@ using UnityEngine;
 
 public partial class BoosterController
 {
-    public readonly int[] TutorialLevels = new int[] { 1, 6, 9 };
+    public readonly int[] TutorialLevels = new int[] { 3, 6, 9 };
     public int GetCurrentTutorialBoosterIndex()
     {
         return System.Array.IndexOf(TutorialLevels, UseProfile.Level.Value);

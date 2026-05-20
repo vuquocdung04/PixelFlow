@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
+
 public class PixelImageAnalyzer : OdinEditorWindow
 {
+
+
+
 
 
     [MenuItem("Tools/Pixel Image Analyzer")]
@@ -197,6 +202,8 @@ public class PixelImageAnalyzer : OdinEditorWindow
         indexLevel = Mathf.Max(0, EditorGUILayout.IntField(indexLevel, GUILayout.Width(60)));
         GUILayout.Space(8);
         if (DrawColorBtn("SAVE JSON", new Color(1f, 0.8f, 0.5f), 140f)) SaveJson();
+        GUILayout.Space(4);
+        if (DrawColorBtn("VIEW", new Color(0.4f, 0.9f, 0.5f), 70f)) LoadLevel();
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
@@ -1530,4 +1537,165 @@ public class PixelImageAnalyzer : OdinEditorWindow
     }
 
     private static void Warn(string msg) => EditorUtility.DisplayDialog("⚠", msg, "OK");
+
+
+
+    #region View
+
+    private class JsonLevelData { public JsonTopData top; public JsonBottomData bottom; }
+    private class JsonTopData
+    {
+        public int gridX, gridY;
+        public Dictionary<string, List<int>> colors;
+    }
+    private class JsonBottomData
+    {
+        public int gridX, gridY;
+        public Dictionary<string, Dictionary<int, int>> colors;
+        public List<int> blinds;
+        public Dictionary<int, int> ices;
+        public Dictionary<int, JsonTunnelData> tunnels;
+        public List<List<int>> links;
+    }
+    private class JsonTunnelData { public int spawnAtID; public List<JsonTunnelColor> colors; }
+    private class JsonTunnelColor { public string hex; public int count; }
+
+    public void LoadLevel()
+    {
+        if (string.IsNullOrEmpty(outputFolder)) { Warn("outputFolder chưa set."); return; }
+        string path = Path.Combine(outputFolder, $"level_{indexLevel}.json");
+        if (!File.Exists(path)) { Warn($"Không tìm thấy {path}"); return; }
+
+        JsonLevelData data;
+        try { data = JsonConvert.DeserializeObject<JsonLevelData>(File.ReadAllText(path)); }
+        catch (System.Exception e) { Warn($"Parse fail: {e.Message}"); return; }
+        if (data == null) { Warn("Data null"); return; }
+
+        // Reset (giữ outputFolder + indexLevel)
+        if (sampledTex != null) { DestroyImmediate(sampledTex); sampledTex = null; }
+        if (bottomTex != null) { DestroyImmediate(bottomTex); bottomTex = null; }
+        colorRows = null;
+        bottomPalette = null;
+        paletteQuantities = null;
+        ResetOverlays();
+        tableMode = "";
+
+        // ===== TOP =====
+        if (data.top != null && data.top.colors != null)
+        {
+            gridX = data.top.gridX;
+            gridY = data.top.gridY;
+
+            colorRows = new List<ColorRow>();
+            foreach (var kv in data.top.colors)
+            {
+                ColorUtility.TryParseHtmlString(kv.Key, out Color c);
+                colorRows.Add(new ColorRow { color = c, hex = kv.Key, indices = new List<int>(kv.Value) });
+            }
+            colorRows.Sort((a, b) => b.indices.Count.CompareTo(a.indices.Count));
+
+            sampledTex = new Texture2D(gridX, gridY, TextureFormat.RGBA32, false)
+            { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            var px = new Color[gridX * gridY];
+            for (int i = 0; i < px.Length; i++) px[i] = new Color(0, 0, 0, 0);
+            foreach (var rr in colorRows)
+                foreach (int idx in rr.indices)
+                {
+                    int row = idx / gridX, col = idx % gridX;
+                    int texY = gridY - 1 - row;
+                    if (texY >= 0 && texY < gridY && col >= 0 && col < gridX)
+                        px[texY * gridX + col] = rr.color;
+                }
+            sampledTex.SetPixels(px);
+            sampledTex.Apply();
+            tableMode = "loaded";
+
+            // Palette từ colorRows
+            bottomPalette = new List<Color>();
+            paletteQuantities = new List<int>();
+            foreach (var rr in colorRows) { bottomPalette.Add(rr.color); paletteQuantities.Add(0); }
+            if (bottomPalette.Count > 0) selectedColor = bottomPalette[0];
+        }
+
+        // ===== BOTTOM =====
+        if (data.bottom != null)
+        {
+            bottomX = data.bottom.gridX;
+            bottomY = data.bottom.gridY;
+
+            bottomTex = new Texture2D(bottomX, bottomY, TextureFormat.RGBA32, false)
+            { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            var bpx = new Color[bottomX * bottomY];
+            for (int i = 0; i < bpx.Length; i++) bpx[i] = new Color(0, 0, 0, 0);
+
+            EnsureOverlayCollections();
+
+            if (data.bottom.colors != null)
+                foreach (var kv in data.bottom.colors)
+                {
+                    ColorUtility.TryParseHtmlString(kv.Key, out Color c);
+                    foreach (var cell in kv.Value)
+                    {
+                        int cid = cell.Key, count = cell.Value;
+                        int row = cid / bottomX, col = cid % bottomX;
+                        int texY = bottomY - 1 - row;
+                        if (texY >= 0 && texY < bottomY && col >= 0 && col < bottomX)
+                            bpx[texY * bottomX + col] = c;
+                        if (count > 0) projectileCounts[cid] = count;
+                    }
+                }
+            bottomTex.SetPixels(bpx);
+            bottomTex.Apply();
+
+            if (data.bottom.blinds != null)
+                foreach (int b in data.bottom.blinds) blindCells.Add(b);
+
+            if (data.bottom.ices != null)
+                foreach (var kv in data.bottom.ices) iceCells[kv.Key] = kv.Value;
+
+            if (data.bottom.tunnels != null)
+                foreach (var kv in data.bottom.tunnels)
+                {
+                    var t = kv.Value;
+                    int n = t.colors != null ? t.colors.Count : 0;
+                    var colors = new Color[n];
+                    var counts = new int[n];
+                    for (int i = 0; i < n; i++)
+                    {
+                        ColorUtility.TryParseHtmlString(t.colors[i].hex, out colors[i]);
+                        counts[i] = t.colors[i].count;
+                    }
+                    tunnels.Add(new TunnelData
+                    {
+                        placeAtId = kv.Key,
+                        direction = DirectionFromSpawn(kv.Key, t.spawnAtID, bottomX, bottomY),
+                        colors = colors,
+                        counts = counts
+                    });
+                }
+
+            if (data.bottom.links != null)
+                for (int gi = 0; gi < data.bottom.links.Count; gi++)
+                    foreach (int cid in data.bottom.links[gi])
+                        linkGroups[cid] = gi + 1;
+        }
+
+        Debug.Log($"<color=cyan>[Load Level]</color> {path}");
+        Repaint();
+    }
+
+    private static int DirectionFromSpawn(int placeAtId, int spawnAtId, int W, int H)
+    {
+        if (spawnAtId < 0 || W == 0) return 0;
+        int pr = placeAtId / W, pc = placeAtId % W;
+        int sr = spawnAtId / W, sc = spawnAtId % W;
+        int dr = sr - pr, dc = sc - pc;
+        if (dr == -1 && dc == 0) return 0;
+        if (dr == 0 && dc == 1) return 1;
+        if (dr == 1 && dc == 0) return 2;
+        if (dr == 0 && dc == -1) return 3;
+        return 0;
+    }
+    #endregion
 }
+

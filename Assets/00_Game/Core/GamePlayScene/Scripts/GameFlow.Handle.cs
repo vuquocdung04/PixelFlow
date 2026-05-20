@@ -14,7 +14,7 @@ public partial class GameFlow
                 break;
             case GameState.Win:
                 // show win popup, save progress
-                _ = LoseBox.Setup(popupHolder, box =>
+                _ = WinBox.Setup(popupHolder, box =>
                {
                    box.Show();
                });

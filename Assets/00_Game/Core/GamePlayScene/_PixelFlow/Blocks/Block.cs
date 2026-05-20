@@ -1,4 +1,5 @@
 using DG.Tweening;
+using EventDispatcher;
 using UnityEngine;
 
 public partial class Block : MonoBehaviour
@@ -8,7 +9,7 @@ public partial class Block : MonoBehaviour
     public int gridRow;
     public bool IsAlive { get; private set; } = true;
     public bool IsClaimed { get; private set; } = false;
-
+    private Vector3 originalScale;
     public void SetupGrid(int col, int row, string hex)
     {
         gridCol = col;
@@ -16,9 +17,14 @@ public partial class Block : MonoBehaviour
         colorHex = hex;
         IsAlive = true;
         IsClaimed = false;
+        originalScale = transform.localScale;
 
     }
-    public void Claim() => IsClaimed = true;
+    public void Claim()
+    {
+        IsClaimed = true;
+        this.PostEvent(EventID.BLOCK_DESTROYED, this);
+    }
     public void Break()
     {
         if (!IsAlive) return;
@@ -33,9 +39,8 @@ public partial class Block : MonoBehaviour
     private void PlayBreakAnimation()
     {
         Sequence seq = DOTween.Sequence();
-        Vector3 originalScale = transform.localScale;
 
-        seq.Append(transform.DOScale(originalScale * 1.5f, 0.1f).SetEase(Ease.OutQuad));
+        seq.Append(transform.DOScale(originalScale * 1.3f, 0.1f).SetEase(Ease.OutQuad));
         seq.Append(transform.DOScale(Vector3.zero, 0.15f).SetEase(Ease.InBack));
 
         seq.OnComplete(() =>

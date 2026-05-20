@@ -1,3 +1,4 @@
+using EventDispatcher;
 using UnityEngine;
 
 public enum Side { Top, Bottom, Left, Right }
@@ -8,6 +9,25 @@ public class BrickGrid : StaffSingleton<BrickGrid>
     private int width, height;
     private float spacingX, spacingY;
     private float minX, maxX, minZ, maxZ;
+    public int totalBlocks;
+
+    public override void Init()
+    {
+        this.RegisterListener(EventID.BLOCK_DESTROYED, OnBlockDestroyed);
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        this.RemoveListener(EventID.BLOCK_DESTROYED, OnBlockDestroyed);
+    }
+    private void OnBlockDestroyed(object param)
+    {
+        totalBlocks--;
+        if (totalBlocks <= 0)
+            EventDispatcher.EventDispatcher.Instance.PostEvent(EventID.LEVEL_COMPLETE);
+    }
+
     public void Initialize(int w, int h, float sx, float sy, Vector3 worldOrigin)
     {
         width = w;
@@ -106,8 +126,4 @@ public class BrickGrid : StaffSingleton<BrickGrid>
                     grid[c, r].Break();
     }
 
-    public override void Init()
-    {
-        
-    }
 }
