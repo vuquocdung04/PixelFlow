@@ -91,11 +91,8 @@ public partial class LevelController
                     if (!shooterMap.TryGetValue(group[i], out var a)) continue;
                     if (!shooterMap.TryGetValue(group[i + 1], out var b)) continue;
 
-                    // VD: spawn rope nối a ↔ b (dùng RopeLink prefab đã làm)
-                    // var rope = Instantiate(ropeLinkPrefab, bottomParent);
-                    // rope.Setup(a.transform, b.transform);
-                    // a.ropeLinks.Add(rope);
-                    // b.ropeLinks.Add(rope);
+                    a.SetupLink(b, owner: true);
+                    b.SetupLink(a, owner: false);
                 }
             }
         }
@@ -141,7 +138,11 @@ public partial class LevelController
             if (!shooterMap.TryGetValue(oldIdx, out var shooter)) continue;
 
             Vector3 newPos = GridToLocalBottom(newIdx);
-            shooter.transform.DOLocalMove(newPos, 0.3f).SetEase(Ease.OutCubic);
+            var tween = shooter.transform.DOLocalMove(newPos, 0.3f).SetEase(Ease.OutCubic);
+
+
+            if (shooter.HasLink)
+                tween.OnUpdate(() => shooter.RefreshAllLinks());
 
             shooterMap.Remove(oldIdx);
             shooterMap[newIdx] = shooter;
