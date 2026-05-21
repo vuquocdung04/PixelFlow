@@ -64,7 +64,7 @@ public class PixelImageAnalyzer : OdinEditorWindow
         public Color[] colors;
         public int[] counts;
     }
-
+    private TunnelData editingTunnel;
     private BottomTool activeTool = BottomTool.None;
     private int iceCount = 1;
     private int tunnelSlotCount = 2;
@@ -394,7 +394,12 @@ public class PixelImageAnalyzer : OdinEditorWindow
         GUILayout.BeginHorizontal();
         DrawToolButton("TUNNEL", BottomTool.Tunnel, new Color(1f, 0.7f, 0.3f), BTN_W, BTN_H);
         int newSlots = Mathf.Max(1, EditorGUILayout.IntField(tunnelSlotCount, GUILayout.Width(NUM_W)));
-        if (newSlots != tunnelSlotCount) { tunnelSlotCount = newSlots; ResizeTunnelSlots(); }
+        if (newSlots != tunnelSlotCount)
+        {
+            tunnelSlotCount = newSlots;
+            ResizeTunnelSlots();
+            editingTunnel = null;
+        }
         if (tunnelSlotColors == null || tunnelSlotColors.Count != tunnelSlotCount
             || tunnelSlotCounts == null || tunnelSlotCounts.Count != tunnelSlotCount)
             ResizeTunnelSlots();
@@ -444,6 +449,10 @@ public class PixelImageAnalyzer : OdinEditorWindow
                     tunnelSlotColors[i] = new Color(0, 0, 0, 0);
                     tunnelSlotCounts[i] = 0;
                 }
+
+                // Live binding: nếu đang edit tunnel → sync vào tunnel
+                SyncBarToEditingTunnel();
+
                 Event.current.Use();
                 Repaint();
             }
@@ -452,15 +461,28 @@ public class PixelImageAnalyzer : OdinEditorWindow
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
     }
+    private void SyncBarToEditingTunnel()
+    {
+        if (editingTunnel == null) return;
 
+        int n = tunnelSlotColors.Count;
+        editingTunnel.colors = new Color[n];
+        editingTunnel.counts = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            editingTunnel.colors[i] = tunnelSlotColors[i];
+            editingTunnel.counts[i] = tunnelSlotCounts[i];
+        }
+    }
     private void DrawToolButton(string label, BottomTool tool, Color activeTint, float w, float h)
     {
         Color old = GUI.backgroundColor;
         bool active = activeTool == tool;
-        GUI.backgroundColor = active ? activeTint : Color.white; // default when inactive
+        GUI.backgroundColor = active ? activeTint : Color.white;
         if (GUILayout.Button(label, GUILayout.Width(w), GUILayout.Height(h)))
         {
             activeTool = active ? BottomTool.None : tool;
+            editingTunnel = null;   // ← thêm: đổi tool = exit edit mode
             Repaint();
         }
         GUI.backgroundColor = old;
@@ -597,6 +619,10 @@ public class PixelImageAnalyzer : OdinEditorWindow
                     EditorGUI.DrawRect(cellR, new Color(1f, 0.55f, 0.15f, 0.95f));
                     string arrow = DirectionToArrow(tunnel.direction);
                     GUI.Label(cellR, $"T{arrow}{tunnel.colors.Length}", tunnelStyle);
+
+                    if (tunnel == editingTunnel)
+                        DrawBorder(cellR, Color.yellow, 3);
+
                     continue;
                 }
 
@@ -724,32 +750,63 @@ public class PixelImageAnalyzer : OdinEditorWindow
 
             case BottomTool.Tunnel:
                 if (!isMouseDown) return false;
+
                 if (tunnel != null)
                 {
-                    tunnel.direction = (tunnel.direction + 1) % 4;
+                    // Click vào tunnel có sẵn
+                    if (tunnel.colors.Length != tunnelSlotCount)
+                    {
+                        // KHÁC count → xoá tunnel cũ, tạo mới với config bar hiện tại
+                        tunnels.Remove(tunnel);
+                        editingTunnel = CreateTunnelAt(cellId);
+                    }
+                    else
+                    {
+                        // BẰNG count → load vào bar để edit
+                        LoadTunnelToBar(tunnel);
+                        editingTunnel = tunnel;
+                    }
                     return true;
                 }
-                // Place new tunnel — clear all other props
+
+                // Click ô trống → tạo tunnel mới + vào edit mode luôn
                 bottomTex.SetPixel(col, yTex, new Color(0, 0, 0, 0));
                 bottomTex.Apply();
                 blindCells.Remove(cellId);
                 iceCells.Remove(cellId);
                 projectileCounts.Remove(cellId);
                 linkGroups.Remove(cellId);
-                tunnels.Add(new TunnelData
-                {
-                    placeAtId = cellId,
-                    direction = 0,
-                    colors = tunnelSlotColors != null ? tunnelSlotColors.ToArray() : new Color[0],
-                    counts = tunnelSlotCounts != null ? tunnelSlotCounts.ToArray() : new int[0]
-                });
-                if (tunnelSlotColors != null)
-                    for (int i = 0; i < tunnelSlotColors.Count; i++) tunnelSlotColors[i] = new Color(0, 0, 0, 0);
-                if (tunnelSlotCounts != null)
-                    for (int i = 0; i < tunnelSlotCounts.Count; i++) tunnelSlotCounts[i] = 0;
+                editingTunnel = CreateTunnelAt(cellId);
                 return true;
         }
         return false;
+    }
+    private TunnelData CreateTunnelAt(int cellId)
+    {
+        var t = new TunnelData
+        {
+            placeAtId = cellId,
+            direction = 0,  // luôn hướng lên (theo rule mới)
+            colors = tunnelSlotColors != null ? tunnelSlotColors.ToArray() : new Color[0],
+            counts = tunnelSlotCounts != null ? tunnelSlotCounts.ToArray() : new int[0]
+        };
+        tunnels.Add(t);
+        return t;
+    }
+
+    private void LoadTunnelToBar(TunnelData t)
+    {
+        if (tunnelSlotColors == null) tunnelSlotColors = new List<Color>();
+        if (tunnelSlotCounts == null) tunnelSlotCounts = new List<int>();
+
+        tunnelSlotColors.Clear();
+        tunnelSlotCounts.Clear();
+
+        for (int i = 0; i < t.colors.Length; i++)
+        {
+            tunnelSlotColors.Add(t.colors[i]);
+            tunnelSlotCounts.Add(t.counts != null && i < t.counts.Length ? t.counts[i] : 0);
+        }
     }
 
     private void ClearCellCompletely(int cellId, int col, int yTex)
@@ -762,9 +819,12 @@ public class PixelImageAnalyzer : OdinEditorWindow
         if (linkGroups != null) linkGroups.Remove(cellId);
         if (tunnels != null)
             for (int i = tunnels.Count - 1; i >= 0; i--)
-                if (tunnels[i].placeAtId == cellId) tunnels.RemoveAt(i);
+                if (tunnels[i].placeAtId == cellId)
+                {
+                    if (tunnels[i] == editingTunnel) editingTunnel = null;  // ← clear edit nếu xóa đúng tunnel đang edit
+                    tunnels.RemoveAt(i);
+                }
     }
-
     private TunnelData FindTunnel(int cellId)
     {
         if (tunnels == null) return null;
@@ -985,6 +1045,7 @@ public class PixelImageAnalyzer : OdinEditorWindow
         bottomTex.SetPixels(pixels);
         bottomTex.Apply();
         ResetOverlays();
+        editingTunnel = null;  
         Repaint();
     }
     private void AutoGetColor()
@@ -1044,7 +1105,7 @@ public class PixelImageAnalyzer : OdinEditorWindow
         bottomTex.SetPixels(pixels);
         bottomTex.Apply();
         ResetOverlays();
-        Debug.Log($"<color=cyan>[Auto Color]</color> X={bottomX}, total qty={totalCells} → Y={newY} (filled {filled})");
+        editingTunnel = null; 
         Repaint();
     }
     private void DrawLogPanel()
@@ -1578,6 +1639,7 @@ public class PixelImageAnalyzer : OdinEditorWindow
         bottomPalette = null;
         paletteQuantities = null;
         ResetOverlays();
+         editingTunnel = null; 
         tableMode = "";
 
         // ===== TOP =====
