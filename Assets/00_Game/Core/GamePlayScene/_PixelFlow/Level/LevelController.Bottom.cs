@@ -18,6 +18,7 @@ public partial class LevelController
 
     [System.NonSerialized] public Dictionary<int, Shooter> shooterMap = new Dictionary<int, Shooter>();
     [System.NonSerialized] public Dictionary<int, Tunnel> tunnelMap = new Dictionary<int, Tunnel>();
+    [System.NonSerialized] public Dictionary<int, Tunnel> tunnelByColumn = new Dictionary<int, Tunnel>();
     [System.NonSerialized] public BottomData bottomData;
 
     [Button("GENERATE BOTTOM", ButtonSizes.Large), GUIColor(0.5f, 0.8f, 1f)]
@@ -69,7 +70,6 @@ public partial class LevelController
         }
 
         // ===== 4) TUNNELS =====
-        // ===== 4) TUNNELS =====
         foreach (var kv in bottomData.tunnels)
         {
             int tunnelID = kv.Key;
@@ -80,6 +80,9 @@ public partial class LevelController
             tunnel.Setup(tunnelID, t.spawnAtID, GridToLocalBottom(t.spawnAtID), t.colors);
 
             tunnelMap[tunnelID] = tunnel;
+
+            int col = tunnelID % gridBottomX;
+            tunnelByColumn[col] = tunnel;
         }
         // ===== 5) LINKS =====
         if (bottomData.links != null)
@@ -125,6 +128,7 @@ public partial class LevelController
     {
         shooterMap.Clear();
         tunnelMap.Clear();
+        tunnelByColumn.Clear();
         bottomData = null;
 
         for (int i = bottomParent.childCount - 1; i >= 0; i--)
@@ -164,6 +168,21 @@ public partial class LevelController
                 shooter.RemoveProps(PropState.Blind);
             }
         }
+        TrySpawnFromTunnel(col);
+    }
+    private void TrySpawnFromTunnel(int col)
+    {
+        if (!tunnelByColumn.TryGetValue(col, out var tunnel)) return;
+        if (!tunnel.HasNext) return;
+        if (shooterMap.ContainsKey(tunnel.spawnAtID)) return; 
+
+        Shooter newShooter = tunnel.SpawnNext();
+        if (newShooter == null) return;
+
+        shooterMap[tunnel.spawnAtID] = newShooter;
+
+        int spawnRow = tunnel.spawnAtID / gridBottomX;
+        newShooter.SetAnimState(spawnRow == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
     }
     private Vector3 GridToLocalBottom(int idx)
     {
