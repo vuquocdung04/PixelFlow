@@ -159,7 +159,10 @@ public partial class LevelController
             shooterMap[newIdx] = shooter;
 
             if (newIdx / gridBottomX == 0)
+            {
                 shooter.SetAnimState(ShooterAnimState.Idle);
+                shooter.RemoveProps(PropState.Blind);
+            }
         }
     }
     private Vector3 GridToLocalBottom(int idx)
