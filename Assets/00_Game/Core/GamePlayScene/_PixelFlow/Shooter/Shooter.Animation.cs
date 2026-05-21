@@ -1,10 +1,10 @@
 using DG.Tweening;
 using UnityEngine;
+
 public enum ShooterAnimState { Idle, Combat, Blocked }
 
 public partial class Shooter
 {
-
     [Space(10), Header("Animation")]
     public float jumpPower = 1f;
     public float jumpDuration = 0.5f;
@@ -21,6 +21,10 @@ public partial class Shooter
     Vector3 baseScale;
     bool baseScaleCached;
 
+    private readonly IdleState _idleState = new IdleState();
+    private readonly CombatState _combatState = new CombatState();
+    private readonly BlockedState _blockedState = new BlockedState();
+
     public void JumpTo(Vector3 target, TweenCallback onComplete = null)
     {
         var tween = transform.DOJump(target, jumpPower, 1, jumpDuration).SetEase(Ease.OutCubic);
@@ -30,36 +34,26 @@ public partial class Shooter
 
         if (onComplete != null) tween.OnComplete(onComplete);
     }
+
     public void SetAnimState(ShooterAnimState state)
     {
-        ShooterAnimState prev = currentAnimState;
-
         if (!baseScaleCached)
         {
             baseScale = transform.localScale;
             baseScaleCached = true;
         }
 
-        currentAnimState = state;
         stateTween?.Kill(true);
         transform.localScale = baseScale;
 
-        switch (state)
+        ShooterState next = state switch
         {
-            case ShooterAnimState.Idle:
+            ShooterAnimState.Idle => _idleState,
+            ShooterAnimState.Combat => _combatState,
+            ShooterAnimState.Blocked => _blockedState,
+            _ => null,
+        };
 
-                break;
-            case ShooterAnimState.Combat:
-
-                break;
-            case ShooterAnimState.Blocked:
-
-                break;
-        }
-
-        if (state == ShooterAnimState.Combat && prev != ShooterAnimState.Combat)
-            ShooterController.Instance.RegisterCombat(this);
-        else if (prev == ShooterAnimState.Combat && state != ShooterAnimState.Combat)
-            ShooterController.Instance.UnregisterCombat(this);
+        ChangeState(next);
     }
 }

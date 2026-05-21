@@ -13685,6 +13685,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4570344207677266}
   - component: {fileID: 4570344207677267}
+  - component: {fileID: 4570344207677270}
+  - component: {fileID: 4570344207677269}
+  - component: {fileID: 4570344207677268}
   m_Layer: 0
   m_Name: Shooter
   m_TagString: Untagged
@@ -14188,22 +14191,58 @@ MonoBehaviour:
   projectileCount: 0
   shootPoint: {fileID: 769054382}
   projectilePrefab: {fileID: 4320118743191357118, guid: d740ba78d8c18407a972c17e88fe713d, type: 3}
-  linkedPartners: []
-  ownedLinkPartner: {fileID: 0}
   body: {fileID: 23316952794659323}
+  bodyVisual: {fileID: 1600947041133020}
+  txtBody: {fileID: 1959989300}
+--- !u!114 &4570344207677268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449802935512025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39794e8de747144b5be008ee1c435a44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LinkProp
+  linkVisual: {fileID: 1930170123984257}
   ropeForShooter: {fileID: 23613291185913119}
   cylinderRope: {fileID: 23710223843048373}
   ropePoint: {fileID: 4296019585945207}
   connectionPivot: {fileID: 4694653196539395}
-  bodyVisual: {fileID: 1600947041133020}
-  txtBody: {fileID: 1959989300}
-  blindVisual: {fileID: 1648302866945005}
-  iceVisual: {fileID: 541769937}
-  linkVisual: {fileID: 1930170123984257}
-  iceCount: 0
-  iceTxt: {fileID: 1844915109}
   ropeThickness: 1
   ropeNativeLength: 1
+  partners: []
+  ownedPartner: {fileID: 0}
+--- !u!114 &4570344207677269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449802935512025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 559419c6f76e84ed8b69b3fd11c1e1cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlindProp
+  blindVisual: {fileID: 1648302866945005}
+--- !u!114 &4570344207677270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449802935512025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3f7ffc5ab9b4ccb8419e3190477467, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IceProp
+  iceVisual: {fileID: 541769937}
+  iceTxt: {fileID: 1844915109}
+  iceCount: 0
 --- !u!4 &4592036282888788
 Transform:
   m_ObjectHideFlags: 0
