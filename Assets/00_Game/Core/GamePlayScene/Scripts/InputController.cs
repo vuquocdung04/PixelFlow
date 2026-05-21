@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using EventDispatcher;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,26 +33,20 @@ public class InputController : StaffSingleton<InputController>
 
     private void Update()
     {
-        if (!canInput)
-        {
-            return;
-        }
-        if (Mouse.current == null)
-        {
-            return;
-        }
-        if (!Mouse.current.leftButton.wasPressedThisFrame) return;
+        if (!canInput) return;
+        if (Pointer.current == null) return;
+        if (!Pointer.current.press.wasPressedThisFrame) return;
 
         HandleClick();
     }
 
     private void HandleClick()
     {
-        Vector2 screenPos = Mouse.current.position.ReadValue();
+        Vector2 screenPos = Pointer.current.position.ReadValue();
         Ray ray = cam.ScreenPointToRay(screenPos);
+
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
-        // Booster: click vào Block
         Block block = hit.collider.GetComponentInParent<Block>();
         if (block != null && block.IsAlive)
         {
@@ -80,10 +75,14 @@ public class InputController : StaffSingleton<InputController>
             return;
         }
 
-        if (Conveyor.Instance.itemSlots.Count == 0) return;
+        if (Conveyor.Instance.itemSlots.Count == 0)
+        {
+            this.PostEvent(EventID.CONVEYOR_NOT_ENOUGH_SLOT);
+            return;
+        }
 
         Conveyor.Instance.TakeFirstSlot(shooter);
-        LevelController.Instance.OnShooterTaken(shooter.gridIdx);
+        LevelController.Instance.OnShooterTaken(shooter);
     }
     private void HandleGroupClick(Shooter clicked, LinkGroup group)
     {
@@ -97,11 +96,11 @@ public class InputController : StaffSingleton<InputController>
 
         if (Conveyor.Instance.itemSlots.Count < group.Count)
         {
-            Debug.Log($"[Group] Not enough slots: need {group.Count}, have {Conveyor.Instance.itemSlots.Count}");
+            Debug.Log($"[Group] Not enough slots");
+            this.PostEvent(EventID.CONVEYOR_NOT_ENOUGH_SLOT);
             return;
         }
 
-        // Lưu Shooter reference (không phải idx cũ)
         List<Shooter> takenShooters = new List<Shooter>(group.members);
 
         Conveyor.Instance.TakeFirstSlotsForGroup(group);
@@ -112,10 +111,9 @@ public class InputController : StaffSingleton<InputController>
             float delay = i * 0.2f;
 
             if (delay > 0f)
-                DOVirtual.DelayedCall(delay, () =>
-                    LevelController.Instance.OnShooterTaken(captured.gridIdx));
+                DOVirtual.DelayedCall(delay, () => LevelController.Instance.OnShooterTaken(captured));
             else
-                LevelController.Instance.OnShooterTaken(captured.gridIdx);
+                LevelController.Instance.OnShooterTaken(captured);
         }
     }
 }

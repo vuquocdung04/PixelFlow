@@ -64,7 +64,8 @@ public partial class Shooter
         if (_despawning) return;
         _despawning = true;
 
-        if (shootSeq != null && shootSeq.IsActive()) shootSeq.Kill();
+        KillShootFeedback(); 
+        
         ItemSlot slot = GetComponentInParent<ItemSlot>();
         ShooterController.Instance.UnregisterCombat(this);
         ShooterController.Instance.OnShooterDespawn();
@@ -108,5 +109,11 @@ public partial class Shooter
 
         shootSeq.Append(transform.DOLocalMoveZ(0f, feedbackDuration / 2f).SetEase(Ease.InOutSine));
         shootSeq.Join(transform.DOScale(Vector3.one, feedbackDuration / 2f).SetEase(Ease.InOutSine));
+    }
+
+    public void KillShootFeedback()
+    {
+        if (shootSeq != null && shootSeq.IsActive())
+            shootSeq.Kill(complete: true);
     }
 }

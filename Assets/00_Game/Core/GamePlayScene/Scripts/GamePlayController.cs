@@ -16,6 +16,7 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
     public LevelController levelController;
     public ShooterController shooterController;
     public BrickGrid brickGrid;
+
     protected override void OnAwake()
     {
         base.OnAwake();
@@ -33,6 +34,7 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
         brickGrid.Init();
         conveyor.Init();
         levelController.Init();
+        waitAreaController.Init();
         //FXManager.Instance.isNextSceneReady = true;
     }
 }

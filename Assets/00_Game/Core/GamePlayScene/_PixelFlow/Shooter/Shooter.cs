@@ -5,7 +5,7 @@ public enum PropState { Blind, Ice, Link }
 
 public partial class Shooter : MonoBehaviour
 {
-    [System.NonSerialized] public int gridIdx;
+    [System.NonSerialized] public int gridIdx = -1;
     private readonly Dictionary<PropState, PropHandler> _props = new Dictionary<PropState, PropHandler>();
     private readonly Dictionary<PropState, PropHandler> _available = new Dictionary<PropState, PropHandler>();
 

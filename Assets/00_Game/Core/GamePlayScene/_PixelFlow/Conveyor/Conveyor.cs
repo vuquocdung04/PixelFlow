@@ -10,12 +10,14 @@ public partial class Conveyor : StaffSingleton<Conveyor>
         conveyorArrows = GetComponentInChildren<ConveyorArrows>();
         conveyorArrows.Init();
         this.RegisterListener(EventID.LOOP_MODE_ENTERED, OnLoopEntered);
+         this.RegisterListener(EventID.CONVEYOR_NOT_ENOUGH_SLOT, OnNotEnoughSlot);
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
         this.RemoveListener(EventID.LOOP_MODE_ENTERED, OnLoopEntered);
+         this.RemoveListener(EventID.CONVEYOR_NOT_ENOUGH_SLOT, OnNotEnoughSlot);
     }
 
     public void Pause()

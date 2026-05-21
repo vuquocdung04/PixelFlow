@@ -12,6 +12,14 @@ public partial class Conveyor
     public float spacing;
     public int initialItemCount = 5;
     public TextMeshPro countText;
+
+    [Header("Warning")]
+    public Color warningColor = Color.red;
+    public float warningDuration = 0.1f;
+    private Tween _warningTween;
+    private Color _countTextOriginalColor;
+    private bool _countTextColorCached;
+
     public List<ItemSlot> itemSlots = new List<ItemSlot>();
     public int Capacity => initialItemCount;
     public bool IsGroupStaggering { get; private set; }
@@ -85,7 +93,7 @@ public partial class Conveyor
         WaitAreaController.Instance.ShiftForward();
         UpdateCountText();
 
-        float endTime = (group.Count - 1) * STAGGER + 0.2f; 
+        float endTime = (group.Count - 1) * STAGGER + 0.2f;
         DOVirtual.DelayedCall(endTime, () => IsGroupStaggering = false);
     }
 
@@ -117,5 +125,29 @@ public partial class Conveyor
         float dir = Mathf.Sign(returnPoint.position.x - firstPoint.position.x);
         if (dir == 0f) dir = 1f;
         return firstPoint.position.x + index * spacing * dir;
+    }
+    private void OnNotEnoughSlot(object _)
+    {
+        FlashCountWarning();
+    }
+
+    private void FlashCountWarning()
+    {
+        if (!_countTextColorCached)
+        {
+            _countTextOriginalColor = countText.color;
+            _countTextColorCached = true;
+        }
+
+        _warningTween?.Kill(true);
+
+        countText.color = warningColor;
+        countText.transform.localScale = Vector3.one;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(countText.transform.DOPunchScale(Vector3.one * 0.3f, warningDuration, 10, 1f));
+        seq.Join(countText.DOColor(_countTextOriginalColor, warningDuration).SetEase(Ease.Linear));
+
+        _warningTween = seq;
     }
 }

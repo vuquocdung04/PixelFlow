@@ -88,6 +88,6 @@ public class WaitAreaController : StaffSingleton<WaitAreaController>
     }
     public override void Init()
     {
-
+        SpawnWaitAreas();
     }
 }

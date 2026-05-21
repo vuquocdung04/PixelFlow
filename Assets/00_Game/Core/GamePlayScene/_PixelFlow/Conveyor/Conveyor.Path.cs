@@ -90,6 +90,8 @@ public partial class Conveyor
             return;
         }
 
+        shooter.KillShootFeedback();
+
         shooter.SetAnimState(ShooterAnimState.Idle);
         empty.AddOccupant(shooter);
         shooter.transform.SetParent(empty.transform);

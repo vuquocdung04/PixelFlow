@@ -154,9 +154,15 @@ public partial class LevelController
         }
     }
 
-    public void OnShooterTaken(int idx)
+    public void OnShooterTaken(Shooter shooter)
     {
+        if (shooter == null || shooter.gridIdx < 0) return;
+
+        int idx = shooter.gridIdx;
+        if (!shooterMap.TryGetValue(idx, out var s) || s != shooter) return;
+
         shooterMap.Remove(idx);
+        shooter.gridIdx = -1;
 
         int col = idx % gridBottomX;
         int row = idx / gridBottomX;
@@ -166,22 +172,22 @@ public partial class LevelController
             int oldIdx = r * gridBottomX + col;
             int newIdx = (r - 1) * gridBottomX + col;
 
-            if (!shooterMap.TryGetValue(oldIdx, out var shooter)) continue;
+            if (!shooterMap.TryGetValue(oldIdx, out var movedShooter)) continue;
 
             Vector3 newPos = GridToLocalBottom(newIdx);
-            var tween = shooter.transform.DOLocalMove(newPos, 0.3f).SetEase(Ease.OutCubic);
+            var tween = movedShooter.transform.DOLocalMove(newPos, 0.3f).SetEase(Ease.OutCubic);
 
-            if (shooter.HasLink)
-                tween.OnUpdate(() => shooter.RefreshAllLinks());
+            if (movedShooter.HasLink)
+                tween.OnUpdate(() => movedShooter.RefreshAllLinks());
 
             shooterMap.Remove(oldIdx);
-            shooterMap[newIdx] = shooter;
-            shooter.gridIdx = newIdx;
+            shooterMap[newIdx] = movedShooter;
+            movedShooter.gridIdx = newIdx;
 
             if (newIdx / gridBottomX == 0)
             {
-                shooter.SetAnimState(ShooterAnimState.Idle);
-                shooter.RemoveProps(PropState.Blind);
+                movedShooter.SetAnimState(ShooterAnimState.Idle);
+                movedShooter.RemoveProps(PropState.Blind);
             }
         }
 
