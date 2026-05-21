@@ -31,45 +31,58 @@ public partial class LevelController
         gridBottomX = bottomData.gridX;
         gridBottomY = bottomData.gridY;
 
-        // ===== 1) COLORS → Shooter =====
+        SpawnShooters();
+        ApplyBlinds();
+        ApplyIces();
+        SpawnTunnels();
+        SetupLinks();
+        InitShooterController();
+    }
+
+    private void SpawnShooters()
+    {
         foreach (var kv in bottomData.colors)
         {
             ColorUtility.TryParseHtmlString(kv.Key, out Color color);
 
-            foreach (var cellEntry in kv.Value)
+            foreach (var cell in kv.Value)
             {
-                int idx = cellEntry.Key;
-                int projectileCount = cellEntry.Value;
-
+                int idx = cell.Key;
                 var shooter = Instantiate(shooterPrefab, bottomParent);
                 shooter.name = $"Shooter_{idx}_{kv.Key}";
                 shooter.transform.localPosition = GridToLocalBottom(idx);
                 shooter.SetColor(color);
                 shooter.colorHex = kv.Key;
-                shooter.SetProjectileCount(projectileCount);
+                shooter.SetProjectileCount(cell.Value);
 
                 int row = idx / gridBottomX;
                 shooter.SetAnimState(row == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
                 shooterMap[idx] = shooter;
             }
         }
+    }
 
-        // ===== 2) BLINDS =====
+    private void ApplyBlinds()
+    {
         foreach (int idx in bottomData.blinds)
         {
-            if (!shooterMap.TryGetValue(idx, out var shooter)) continue;
-            shooter.AddProps(PropState.Blind);
+            if (shooterMap.TryGetValue(idx, out var shooter))
+                shooter.AddProps(PropState.Blind);
         }
+    }
 
-        // ===== 3) ICES =====
+    private void ApplyIces()
+    {
         foreach (var ice in bottomData.ices)
         {
             if (!shooterMap.TryGetValue(ice.Key, out var shooter)) continue;
             shooter.AddProps(PropState.Ice);
             shooter.SetIceCount(ice.Value);
         }
+    }
 
-        // ===== 4) TUNNELS =====
+    private void SpawnTunnels()
+    {
         foreach (var kv in bottomData.tunnels)
         {
             int tunnelID = kv.Key;
@@ -80,37 +93,37 @@ public partial class LevelController
             tunnel.Setup(tunnelID, t.spawnAtID, GridToLocalBottom(t.spawnAtID), t.colors);
 
             tunnelMap[tunnelID] = tunnel;
-
-            int col = tunnelID % gridBottomX;
-            tunnelByColumn[col] = tunnel;
+            tunnelByColumn[tunnelID % gridBottomX] = tunnel;
         }
-        // ===== 5) LINKS =====
-        if (bottomData.links != null)
+    }
+
+    private void SetupLinks()
+    {
+        if (bottomData.links == null) return;
+
+        foreach (var group in bottomData.links)
         {
-            foreach (var group in bottomData.links)
+            var linkGroup = new LinkGroup();
+
+            foreach (int idx in group)
             {
-                var linkGroup = new LinkGroup();
+                if (!shooterMap.TryGetValue(idx, out var s)) continue;
+                linkGroup.members.Add(s);
+                s.linkGroup = linkGroup;
+            }
 
-                // Tập hợp members + assign reference
-                foreach (int idx in group)
-                {
-                    if (!shooterMap.TryGetValue(idx, out var s)) continue;
-                    linkGroup.members.Add(s);
-                    s.linkGroup = linkGroup;
-                }
-
-                // Setup rope links
-                for (int i = 0; i < group.Count - 1; i++)
-                {
-                    if (!shooterMap.TryGetValue(group[i], out var a)) continue;
-                    if (!shooterMap.TryGetValue(group[i + 1], out var b)) continue;
-
-                    a.SetupLink(b, owner: true);
-                    b.SetupLink(a, owner: false);
-                }
+            for (int i = 0; i < group.Count - 1; i++)
+            {
+                if (!shooterMap.TryGetValue(group[i], out var a)) continue;
+                if (!shooterMap.TryGetValue(group[i + 1], out var b)) continue;
+                a.SetupLink(b, owner: true);
+                b.SetupLink(a, owner: false);
             }
         }
+    }
 
+    private void InitShooterController()
+    {
         int totalAlive = 0;
         foreach (var kv in bottomData.colors)
             totalAlive += kv.Value.Count;
@@ -138,6 +151,7 @@ public partial class LevelController
             else DestroyImmediate(go);
         }
     }
+
     public void OnShooterTaken(int idx)
     {
         shooterMap.Remove(idx);
@@ -155,7 +169,6 @@ public partial class LevelController
             Vector3 newPos = GridToLocalBottom(newIdx);
             var tween = shooter.transform.DOLocalMove(newPos, 0.3f).SetEase(Ease.OutCubic);
 
-
             if (shooter.HasLink)
                 tween.OnUpdate(() => shooter.RefreshAllLinks());
 
@@ -168,13 +181,15 @@ public partial class LevelController
                 shooter.RemoveProps(PropState.Blind);
             }
         }
+
         TrySpawnFromTunnel(col);
     }
+
     private void TrySpawnFromTunnel(int col)
     {
         if (!tunnelByColumn.TryGetValue(col, out var tunnel)) return;
         if (!tunnel.HasNext) return;
-        if (shooterMap.ContainsKey(tunnel.spawnAtID)) return; 
+        if (shooterMap.ContainsKey(tunnel.spawnAtID)) return;
 
         Shooter newShooter = tunnel.SpawnNext();
         if (newShooter == null) return;
@@ -184,6 +199,7 @@ public partial class LevelController
         int spawnRow = tunnel.spawnAtID / gridBottomX;
         newShooter.SetAnimState(spawnRow == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
     }
+
     private Vector3 GridToLocalBottom(int idx)
     {
         int row = idx / gridBottomX;

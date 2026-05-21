@@ -12,6 +12,7 @@ public partial class Conveyor
     {
         itemPathSpeed *= loopSpeedMultiplier;
     }
+
     void SendSlotAlongPath(ItemSlot slot, Shooter shooter)
     {
         int count = itemPath.Count;
@@ -46,10 +47,11 @@ public partial class Conveyor
             ReturnSlot(slot);
         }
     }
+
     void LoopSlot(ItemSlot slot, Shooter shooter)
     {
         slot.transform.position = itemPath[0].position;
-        SendSlotAlongPath(slot, shooter);   // OnComplete sẽ gọi lại OnSlotPathComplete → loop tiếp
+        SendSlotAlongPath(slot, shooter);
     }
 
     void DispatchShooterToWaitArea(Shooter shooter)
@@ -60,41 +62,27 @@ public partial class Conveyor
             return;
         }
 
-        // === Logic cũ cho single shooter ===
-        WaitArea empty = WaitAreaController.Instance.FindEmptyWaitArea();
-        if (empty == null)
-        {
-            GameFlow.Instance.TriggerLose();
-            return;
-        }
-        shooter.SetAnimState(ShooterAnimState.Idle);
-        empty.AddOccupant(shooter);
-        shooter.transform.SetParent(empty.transform);
-        shooter.transform.localScale = Vector3.one;
-        shooter.transform.rotation = Quaternion.identity;
-        shooter.JumpTo(empty.transform.position, () =>
-        {
-            if (WaitAreaController.Instance.AreAllFull())
-                WaitAreaController.Instance.PlayAllWarningBlink();
-        });
+        AssignShooterToWaitArea(shooter);
     }
 
     void DispatchGroupToWaitArea(Shooter shooter)
     {
         LinkGroup group = shooter.linkGroup;
 
-        // Check chỉ khi shooter đầu tiên của group tới cuối path (Leader)
-        // Các shooter sau cứ dispatch theo ô trống tiếp theo
         if (shooter == group.Leader)
         {
-            int emptyCount = WaitAreaController.Instance.CountEmpty();
-            if (emptyCount < group.Count)
+            if (WaitAreaController.Instance.CountEmpty() < group.Count)
             {
                 GameFlow.Instance.TriggerLose();
                 return;
             }
         }
 
+        AssignShooterToWaitArea(shooter);
+    }
+
+    void AssignShooterToWaitArea(Shooter shooter)
+    {
         WaitArea empty = WaitAreaController.Instance.FindEmptyWaitArea();
         if (empty == null)
         {
