@@ -32,10 +32,19 @@ public class ShooterController : StaffSingleton<ShooterController>
     }
     public void TryPostLoopEvent()
     {
-        if (_loopEventPosted) return;
-        if (aliveCount > conveyorCapacity) return;
+        if (_loopEventPosted)
+        {
+            Debug.Log("[ShooterController] Loop event already posted, skip");
+            return;
+        }
+        if (aliveCount > conveyorCapacity)
+        {
+            Debug.Log($"[ShooterController] Not yet — aliveCount {aliveCount} > capacity {conveyorCapacity}");
+            return;
+        }
 
         _loopEventPosted = true;
+        Debug.Log("[ShooterController] LOOP_MODE_ENTERED posted!");
         this.PostEvent(EventID.LOOP_MODE_ENTERED);
     }
 

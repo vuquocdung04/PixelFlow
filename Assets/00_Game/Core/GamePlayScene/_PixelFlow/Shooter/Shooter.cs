@@ -5,39 +5,44 @@ public enum PropState { Blind, Ice, Link }
 
 public partial class Shooter : MonoBehaviour
 {
-    public LinkProp Link { get; private set; }
-    public IceProp Ice { get; private set; }
-    public BlindProp Blind { get; private set; }
-
+    [System.NonSerialized] public int gridIdx;
     private readonly Dictionary<PropState, PropHandler> _props = new Dictionary<PropState, PropHandler>();
     private readonly Dictionary<PropState, PropHandler> _available = new Dictionary<PropState, PropHandler>();
 
     private ShooterState _currentState;
 
     public bool HasLink => HasProp(PropState.Link);
-    public bool IsInGroup => Link != null && Link.IsInGroup;
+    public bool IsInGroup
+    {
+        get
+        {
+            var link = GetProp<LinkProp>();
+            return link != null && link.IsInGroup;
+        }
+    }
 
     public LinkGroup linkGroup
     {
-        get => Link != null ? Link.group : null;
-        set { if (Link != null) Link.group = value; }
+        get => GetProp<LinkProp>()?.group;
+        set
+        {
+            var link = GetProp<LinkProp>();
+            if (link != null) link.group = value;
+        }
     }
 
     public bool IsBlocked =>
         currentAnimState == ShooterAnimState.Blocked ||
         HasProp(PropState.Ice);
 
-    protected virtual void Awake()
-    {
-        Link = GetComponent<LinkProp>();
-        Ice = GetComponent<IceProp>();
-        Blind = GetComponent<BlindProp>();
-
-        foreach (var h in GetComponents<PropHandler>())
-            _available[h.Key] = h;
-    }
-
     public bool HasProp(PropState key) => _props.ContainsKey(key);
+
+    public T GetProp<T>() where T : PropHandler
+    {
+        foreach (var h in _available.Values)
+            if (h is T t) return t;
+        return null;
+    }
 
     public void AddProps(PropState key)
     {
@@ -66,10 +71,10 @@ public partial class Shooter : MonoBehaviour
     public void SetupLink(Shooter partner, bool owner)
     {
         AddProps(PropState.Link);
-        Link?.Setup(partner, owner);
+        GetProp<LinkProp>()?.Setup(partner, owner);
     }
 
-    public void RefreshAllLinks() => Link?.RefreshAllLinks();
-    public void RefreshLink() => Link?.RefreshLink();
-    public void SetIceCount(int count) => Ice?.SetCount(count);
+    public void RefreshAllLinks() => GetProp<LinkProp>()?.RefreshAllLinks();
+    public void RefreshLink() => GetProp<LinkProp>()?.RefreshLink();
+    public void SetIceCount(int count) => GetProp<IceProp>()?.SetCount(count);
 }

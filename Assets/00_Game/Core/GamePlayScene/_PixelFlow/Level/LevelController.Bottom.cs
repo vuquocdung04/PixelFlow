@@ -14,7 +14,7 @@ public partial class LevelController
     public float spacingBottomX;
     public float spacingBottomY;
     public float startZ;
-    private int gridBottomX, gridBottomY;
+    public int gridBottomX, gridBottomY;
 
     [System.NonSerialized] public Dictionary<int, Shooter> shooterMap = new Dictionary<int, Shooter>();
     [System.NonSerialized] public Dictionary<int, Tunnel> tunnelMap = new Dictionary<int, Tunnel>();
@@ -51,9 +51,12 @@ public partial class LevelController
                 var shooter = Instantiate(shooterPrefab, bottomParent);
                 shooter.name = $"Shooter_{idx}_{kv.Key}";
                 shooter.transform.localPosition = GridToLocalBottom(idx);
+                shooter.CachePropHandlers();
                 shooter.SetColor(color);
                 shooter.colorHex = kv.Key;
                 shooter.SetProjectileCount(cell.Value);
+
+                shooter.gridIdx = idx;
 
                 int row = idx / gridBottomX;
                 shooter.SetAnimState(row == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
@@ -128,8 +131,7 @@ public partial class LevelController
         foreach (var kv in bottomData.colors)
             totalAlive += kv.Value.Count;
         foreach (var kv in bottomData.tunnels)
-            foreach (var c in kv.Value.colors)
-                totalAlive += c.count;
+            totalAlive += kv.Value.colors.Count;
 
         ShooterController.Instance.aliveCount = totalAlive;
         ShooterController.Instance.conveyorCapacity = Conveyor.Instance.Capacity;
@@ -174,6 +176,7 @@ public partial class LevelController
 
             shooterMap.Remove(oldIdx);
             shooterMap[newIdx] = shooter;
+            shooter.gridIdx = newIdx;
 
             if (newIdx / gridBottomX == 0)
             {
@@ -195,6 +198,7 @@ public partial class LevelController
         if (newShooter == null) return;
 
         shooterMap[tunnel.spawnAtID] = newShooter;
+        newShooter.gridIdx = tunnel.spawnAtID;
 
         int spawnRow = tunnel.spawnAtID / gridBottomX;
         newShooter.SetAnimState(spawnRow == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);

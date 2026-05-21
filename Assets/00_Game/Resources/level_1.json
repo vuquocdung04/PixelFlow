@@ -11,16 +11,17 @@
     "gridX": 4,
     "gridY": 3,
     "colors": {
-      "#2E72B0": {"0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0}
+      "#2E72B0": {"0": 44, "1": 44, "4": 44, "6": 44, "7": 44},
+      "#F5F6FB": {"2": 27, "3": 27, "5": 27}
     },
     "blinds": [6,7],
-    "ices": {"1": 40},
+    "ices": {"3": 40},
     "tunnels": {
-      "8": { "spawnAtID": 4, "colors": [{"hex":"#000000","count":0}, {"hex":"#000000","count":0}] },
-      "9": { "spawnAtID": 5, "colors": [{"hex":"#000000","count":0}, {"hex":"#000000","count":0}] },
-      "10": { "spawnAtID": 6, "colors": [{"hex":"#000000","count":0}, {"hex":"#000000","count":0}] },
-      "11": { "spawnAtID": 7, "colors": [{"hex":"#000000","count":0}, {"hex":"#000000","count":0}] }
+      "8": { "spawnAtID": 4, "colors": [{"hex":"#F5F6FB","count":27}, {"hex":"#F5F6FB","count":27}] },
+      "9": { "spawnAtID": 5, "colors": [{"hex":"#2E72B0","count":44}, {"hex":"#2E72B0","count":44}] },
+      "10": { "spawnAtID": 6, "colors": [{"hex":"#2E72B0","count":46}, {"hex":"#F5F6FB","count":27}] },
+      "11": { "spawnAtID": 7, "colors": [{"hex":"#F5F6FB","count":27}, {"hex":"#F5F6FB","count":33}] }
     },
-    "links": [[0,2,5]]
+    "links": [[0,1,4]]
   }
 }

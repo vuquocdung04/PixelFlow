@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -61,14 +62,18 @@ public class InputController : StaffSingleton<InputController>
         Shooter shooter = hit.collider.GetComponentInParent<Shooter>();
         if (shooter == null) return;
 
-        // === GROUP CLICK ===
-        if (shooter.IsInGroup)
+        if (Conveyor.Instance.IsGroupStaggering)
         {
-            HandleGroupClick(shooter.linkGroup);
+            Debug.Log("[Click] Blocked — group staggering");
             return;
         }
 
-        // === SINGLE CLICK (logic cũ) ===
+        if (shooter.IsInGroup)
+        {
+            HandleGroupClick(shooter, shooter.linkGroup);
+            return;
+        }
+
         if (shooter.IsBlocked)
         {
             Debug.LogError($"Shooter '{shooter.name}' is BLOCKED");
@@ -77,24 +82,16 @@ public class InputController : StaffSingleton<InputController>
 
         if (Conveyor.Instance.itemSlots.Count == 0) return;
 
-        int shooterIdx = FindShooterIdx(shooter);
         Conveyor.Instance.TakeFirstSlot(shooter);
-
-        if (shooterIdx >= 0)
-            LevelController.Instance.OnShooterTaken(shooterIdx);
+        LevelController.Instance.OnShooterTaken(shooter.gridIdx);
     }
-
-    private void HandleGroupClick(LinkGroup group)
+    private void HandleGroupClick(Shooter clicked, LinkGroup group)
     {
-        if (!group.AllAtRow0())
-        {
-            Debug.Log($"[Group] Not all at row 0");
-            return;
-        }
+        int gridX = LevelController.Instance.gridBottomX;
 
-        if (group.AnyBlocked())
+        if (!group.CanClick(clicked, gridX))
         {
-            Debug.Log($"[Group] Some blocked (Ice / animState)");
+            Debug.Log($"[Group] Cannot click — clicked={clicked.name}");
             return;
         }
 
@@ -104,23 +101,21 @@ public class InputController : StaffSingleton<InputController>
             return;
         }
 
-        // Tìm idx của tất cả member
-        List<int> indices = new List<int>();
-        foreach (var s in group.members)
-        {
-            int idx = FindShooterIdx(s);
-            if (idx >= 0) indices.Add(idx);
-        }
+        // Lưu Shooter reference (không phải idx cũ)
+        List<Shooter> takenShooters = new List<Shooter>(group.members);
 
         Conveyor.Instance.TakeFirstSlotsForGroup(group);
 
-        foreach (int idx in indices)
-            LevelController.Instance.OnShooterTaken(idx);
-    }
-    private int FindShooterIdx(Shooter shooter)
-    {
-        foreach (var kv in LevelController.Instance.shooterMap)
-            if (kv.Value == shooter) return kv.Key;
-        return -1;
+        for (int i = 0; i < takenShooters.Count; i++)
+        {
+            Shooter captured = takenShooters[i];
+            float delay = i * 0.2f;
+
+            if (delay > 0f)
+                DOVirtual.DelayedCall(delay, () =>
+                    LevelController.Instance.OnShooterTaken(captured.gridIdx));
+            else
+                LevelController.Instance.OnShooterTaken(captured.gridIdx);
+        }
     }
 }

@@ -86,7 +86,7 @@ public class LinkProp : PropHandler
     {
         if (ownedPartner == null) return;
 
-        LinkProp partnerLink = ownedPartner.Link;
+        LinkProp partnerLink = ownedPartner.GetProp<LinkProp>(); ;
         if (partnerLink == null || partnerLink.ropePoint == null) return;
         if (ropePoint == null || connectionPivot == null) return;
 
@@ -113,7 +113,7 @@ public class LinkProp : PropHandler
         foreach (var partner in partners)
         {
             if (partner == null) continue;
-            LinkProp pl = partner.Link;
+            LinkProp pl = partner.GetProp<LinkProp>();
             if (pl != null && pl.ownedPartner == Owner)
                 pl.RefreshLink();
         }

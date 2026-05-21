@@ -23,6 +23,15 @@ public partial class Shooter
         body.SetPropertyBlock(_mpb);
     }
 
+    public void CachePropHandlers()
+    {
+        if (_available.Count == 0)
+        {
+            foreach (var h in GetComponents<PropHandler>())
+                _available[h.Key] = h;
+        }
+    }
+
     public void SetBodyVisible(bool visible)
     {
         bodyVisual.SetActive(visible);

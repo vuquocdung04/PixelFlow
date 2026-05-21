@@ -14,6 +14,7 @@ public partial class Conveyor
     public TextMeshPro countText;
     public List<ItemSlot> itemSlots = new List<ItemSlot>();
     public int Capacity => initialItemCount;
+    public bool IsGroupStaggering { get; private set; }
 
     private void SpawnItems()
     {
@@ -62,6 +63,7 @@ public partial class Conveyor
 
     public void TakeFirstSlotsForGroup(LinkGroup group)
     {
+        IsGroupStaggering = true;
         const float STAGGER = 0.2f;
 
         for (int i = 0; i < group.Count; i++)
@@ -82,7 +84,11 @@ public partial class Conveyor
 
         WaitAreaController.Instance.ShiftForward();
         UpdateCountText();
+
+        float endTime = (group.Count - 1) * STAGGER + 0.2f; 
+        DOVirtual.DelayedCall(endTime, () => IsGroupStaggering = false);
     }
+
 
     private void LaunchShooterOnSlot(ItemSlot slot, Shooter shooter, float delay = 0f)
     {

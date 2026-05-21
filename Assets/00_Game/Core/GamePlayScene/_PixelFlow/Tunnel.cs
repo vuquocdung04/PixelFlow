@@ -49,10 +49,11 @@ public class Tunnel : MonoBehaviour
 
         var parent = transform.parent;
         var shooter = Instantiate(shooterPrefab, pointSpawn.position, Quaternion.identity, parent);
+        shooter.CachePropHandlers();
         shooter.SetColor(color);
         shooter.colorHex = data.hex;
         shooter.SetProjectileCount(data.count);
-        
+
         shooter.transform
             .DOLocalMove(spawnAtLocalPos, moveDuration)
             .SetEase(moveEase)

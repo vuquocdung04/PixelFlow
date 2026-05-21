@@ -8,6 +8,7 @@ public partial class Shooter
     public int projectileCount;
     public Transform shootPoint;
     public Projectile projectilePrefab;
+    public ParticleSystem projectileFx;
     private bool _despawning;
     private Sequence shootSeq;
     public void SetProjectileCount(int count)
@@ -53,63 +54,37 @@ public partial class Shooter
             }
             else
             {
-                Despawn();
+                DespawnSelf();
             }
         }
     }
 
-    private void Despawn()
+    private void DespawnSelf()
     {
         if (_despawning) return;
         _despawning = true;
 
+        if (shootSeq != null && shootSeq.IsActive()) shootSeq.Kill();
         ItemSlot slot = GetComponentInParent<ItemSlot>();
-
-
         ShooterController.Instance.UnregisterCombat(this);
-
         ShooterController.Instance.OnShooterDespawn();
-
         transform.SetParent(null);
 
-        if (slot != null)
-        {
-            slot.AbortAndReturn();
-        }
+
+        if (slot != null) slot.AbortAndReturn();
 
         Sequence seq = DOTween.Sequence();
-        seq.Append(transform.DOLocalRotate(new Vector3(0, 360f, 0), 0.5f, RotateMode.FastBeyond360));
-        seq.Join(transform.DOScale(Vector3.zero, 0.5f));
+        seq.Append(transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutQuad));
+        seq.Append(transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack));
         seq.OnComplete(() => Destroy(gameObject));
     }
 
     private void DespawnGroup()
     {
-        if (_despawning) return;
+        if (linkGroup == null) return;
 
-        LinkGroup group = linkGroup;
-
-        foreach (var s in group.members)
-        {
-            if (s == null || s._despawning) continue;
-            s._despawning = true;
-
-            ItemSlot slot = s.GetComponentInParent<ItemSlot>();
-
-            ShooterController.Instance.UnregisterCombat(s);
-            ShooterController.Instance.OnShooterDespawn();
-
-            s.transform.SetParent(null);
-
-            if (slot != null)
-                slot.AbortAndReturn();
-
-            Sequence seq = DOTween.Sequence();
-            seq.Append(s.transform.DOLocalRotate(new Vector3(0, 360f, 0), 0.5f, RotateMode.FastBeyond360));
-            seq.Join(s.transform.DOScale(Vector3.zero, 0.5f));
-            Shooter capturedShooter = s;
-            seq.OnComplete(() => Destroy(capturedShooter.gameObject));
-        }
+        foreach (var s in linkGroup.members)
+            if (s != null) s.DespawnSelf();
     }
 
 
@@ -125,6 +100,8 @@ public partial class Shooter
         float feedbackDuration = 0.2f;
 
         shootSeq = DOTween.Sequence();
+
+        projectileFx.Play();
 
         shootSeq.Append(transform.DOLocalMoveZ(-recoilForce, feedbackDuration / 2f).SetEase(Ease.OutQuad));
         shootSeq.Join(transform.DOScale(new Vector3(1.15f, 0.75f, 1.15f), feedbackDuration / 2f).SetEase(Ease.OutQuad));

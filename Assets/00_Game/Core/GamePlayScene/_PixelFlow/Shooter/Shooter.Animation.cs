@@ -6,17 +6,8 @@ public enum ShooterAnimState { Idle, Combat, Blocked }
 public partial class Shooter
 {
     [Space(10), Header("Animation")]
-    public float jumpPower = 1f;
     public float jumpDuration = 0.5f;
-    public float idleScaleAmount = 0.05f;
-    public float idleDuration = 1f;
-    public float combatScaleAmount = 0.12f;
-    public float combatDuration = 0.35f;
-    public float wobbleAngle = 15f;
-    public float wobbleDuration = 0.3f;
-
     public ShooterAnimState currentAnimState = ShooterAnimState.Idle;
-
     Tween stateTween;
     Vector3 baseScale;
     bool baseScaleCached;
@@ -27,7 +18,7 @@ public partial class Shooter
 
     public void JumpTo(Vector3 target, TweenCallback onComplete = null)
     {
-        var tween = transform.DOJump(target, jumpPower, 1, jumpDuration).SetEase(Ease.OutCubic);
+        var tween = transform.DOJump(target, 2f, 1, jumpDuration).SetEase(Ease.OutCubic);
 
         if (HasLink)
             tween.OnUpdate(() => RefreshAllLinks());
