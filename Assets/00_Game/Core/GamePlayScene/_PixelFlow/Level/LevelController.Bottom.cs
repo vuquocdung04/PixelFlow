@@ -86,6 +86,17 @@ public partial class LevelController
         {
             foreach (var group in bottomData.links)
             {
+                var linkGroup = new LinkGroup();
+
+                // Tập hợp members + assign reference
+                foreach (int idx in group)
+                {
+                    if (!shooterMap.TryGetValue(idx, out var s)) continue;
+                    linkGroup.members.Add(s);
+                    s.linkGroup = linkGroup;
+                }
+
+                // Setup rope links
                 for (int i = 0; i < group.Count - 1; i++)
                 {
                     if (!shooterMap.TryGetValue(group[i], out var a)) continue;

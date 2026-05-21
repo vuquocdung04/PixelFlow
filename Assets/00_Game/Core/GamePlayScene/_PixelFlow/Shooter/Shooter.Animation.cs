@@ -24,6 +24,10 @@ public partial class Shooter
     public void JumpTo(Vector3 target, TweenCallback onComplete = null)
     {
         var tween = transform.DOJump(target, jumpPower, 1, jumpDuration).SetEase(Ease.OutCubic);
+
+        if (HasLink)
+            tween.OnUpdate(() => RefreshAllLinks());
+
         if (onComplete != null) tween.OnComplete(onComplete);
     }
     public void SetAnimState(ShooterAnimState state)

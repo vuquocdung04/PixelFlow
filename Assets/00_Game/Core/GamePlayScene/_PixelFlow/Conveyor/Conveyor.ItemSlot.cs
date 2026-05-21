@@ -78,4 +78,50 @@ public partial class Conveyor
         if (dir == 0f) dir = 1f;
         return firstPoint.position.x + index * spacing * dir;
     }
+
+    public void TakeFirstSlotsForGroup(LinkGroup group)
+    {
+        const float STAGGER = 0.2f;
+
+        for (int i = 0; i < group.Count; i++)
+        {
+            Shooter shooter = group.members[i];
+            ItemSlot slot = itemSlots[0];
+            itemSlots.RemoveAt(0);
+
+            // Reset waitarea cũ nếu shooter đang ở waitarea
+            WaitArea currentArea = shooter.GetComponentInParent<WaitArea>();
+            if (currentArea != null)
+                currentArea.ResetToDefault();
+
+            Vector3 pathStart = itemPath[0].position;
+            float durationSlot = shooter.jumpDuration * 0.8f;
+
+            slot.PrepareToReceive(pathStart, durationSlot);
+
+            // Stagger jump
+            float delay = i * STAGGER;
+            ItemSlot capturedSlot = slot;
+            Shooter capturedShooter = shooter;
+
+            DG.Tweening.DOVirtual.DelayedCall(delay, () =>
+            {
+                capturedShooter.JumpTo(pathStart, () =>
+                {
+                    capturedSlot.DockShooter(capturedShooter);
+                    capturedShooter.SetAnimState(ShooterAnimState.Combat);
+                    SendSlotAlongPath(capturedSlot, capturedShooter);
+                });
+            });
+        }
+
+        // Sau khi take xong N slot đầu, dồn queue về
+        for (int i = 0; i < itemSlots.Count; i++)
+            itemSlots[i].MoveToX(GetSlotTargetX(i));
+
+        // Shift WaitArea 1 lần ở cuối (nếu group rời từ WaitArea)
+        WaitAreaController.Instance.ShiftForward();
+
+        UpdateCountText();
+    }
 }

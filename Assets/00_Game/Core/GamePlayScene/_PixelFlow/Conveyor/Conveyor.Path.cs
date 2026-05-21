@@ -54,12 +54,54 @@ public partial class Conveyor
 
     void DispatchShooterToWaitArea(Shooter shooter)
     {
+        if (shooter.IsInGroup)
+        {
+            DispatchGroupToWaitArea(shooter);
+            return;
+        }
+
+        // === Logic cũ cho single shooter ===
         WaitArea empty = WaitAreaController.Instance.FindEmptyWaitArea();
         if (empty == null)
         {
             GameFlow.Instance.TriggerLose();
             return;
         }
+        shooter.SetAnimState(ShooterAnimState.Idle);
+        empty.AddOccupant(shooter);
+        shooter.transform.SetParent(empty.transform);
+        shooter.transform.localScale = Vector3.one;
+        shooter.transform.rotation = Quaternion.identity;
+        shooter.JumpTo(empty.transform.position, () =>
+        {
+            if (WaitAreaController.Instance.AreAllFull())
+                WaitAreaController.Instance.PlayAllWarningBlink();
+        });
+    }
+
+    void DispatchGroupToWaitArea(Shooter shooter)
+    {
+        LinkGroup group = shooter.linkGroup;
+
+        // Check chỉ khi shooter đầu tiên của group tới cuối path (Leader)
+        // Các shooter sau cứ dispatch theo ô trống tiếp theo
+        if (shooter == group.Leader)
+        {
+            int emptyCount = WaitAreaController.Instance.CountEmpty();
+            if (emptyCount < group.Count)
+            {
+                GameFlow.Instance.TriggerLose();
+                return;
+            }
+        }
+
+        WaitArea empty = WaitAreaController.Instance.FindEmptyWaitArea();
+        if (empty == null)
+        {
+            GameFlow.Instance.TriggerLose();
+            return;
+        }
+
         shooter.SetAnimState(ShooterAnimState.Idle);
         empty.AddOccupant(shooter);
         shooter.transform.SetParent(empty.transform);

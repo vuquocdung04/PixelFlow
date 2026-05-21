@@ -35,22 +35,27 @@ public partial class Shooter
     {
         target.Claim();
 
-        Projectile p = SimplePool2.Spawn(
-            projectilePrefab,
-            shootPoint.position,
-            Quaternion.identity);
-
-        //p.transform.position = shootPoint.position;
-
+        Projectile p = SimplePool2.Spawn(projectilePrefab, shootPoint.position, Quaternion.identity);
         p.Fire(target);
 
         projectileCount--;
         UpdateProjectileText();
 
         PlayShootFeedback();
-        //EventDispatcher.EventDispatcher.Instance.PostEvent(EventID.SHOOTER_FIRED, this);
 
-        if (projectileCount <= 0) Despawn();
+        if (projectileCount <= 0)
+        {
+            if (linkGroup != null)
+            {
+                ShooterController.Instance.UnregisterCombat(this);
+                if (linkGroup.AllEmpty())
+                    DespawnGroup();
+            }
+            else
+            {
+                Despawn();
+            }
+        }
     }
 
     private void Despawn()
@@ -62,7 +67,7 @@ public partial class Shooter
 
 
         ShooterController.Instance.UnregisterCombat(this);
-        
+
         ShooterController.Instance.OnShooterDespawn();
 
         transform.SetParent(null);
@@ -77,6 +82,37 @@ public partial class Shooter
         seq.Join(transform.DOScale(Vector3.zero, 0.5f));
         seq.OnComplete(() => Destroy(gameObject));
     }
+
+    private void DespawnGroup()
+    {
+        if (_despawning) return;
+
+        LinkGroup group = linkGroup;
+
+        foreach (var s in group.members)
+        {
+            if (s == null || s._despawning) continue;
+            s._despawning = true;
+
+            ItemSlot slot = s.GetComponentInParent<ItemSlot>();
+
+            ShooterController.Instance.UnregisterCombat(s);
+            ShooterController.Instance.OnShooterDespawn();
+
+            s.transform.SetParent(null);
+
+            if (slot != null)
+                slot.AbortAndReturn();
+
+            Sequence seq = DOTween.Sequence();
+            seq.Append(s.transform.DOLocalRotate(new Vector3(0, 360f, 0), 0.5f, RotateMode.FastBeyond360));
+            seq.Join(s.transform.DOScale(Vector3.zero, 0.5f));
+            Shooter capturedShooter = s;
+            seq.OnComplete(() => Destroy(capturedShooter.gameObject));
+        }
+    }
+
+
     private void UpdateProjectileText()
     {
         txtBody.text = projectileCount.ToString();

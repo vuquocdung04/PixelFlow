@@ -49,8 +49,14 @@ public class WaitAreaController : StaffSingleton<WaitAreaController>
         return null;
     }
     public bool AreAllFull() => !waitAreas[waitAreas.Count - 1].IsEmpty;
-
-    public void  PlayAllWarningBlink()
+    public int CountEmpty()
+    {
+        int count = 0;
+        foreach (var wa in waitAreas)
+            if (wa != null && wa.IsEmpty) count++;
+        return count;
+    }
+    public void PlayAllWarningBlink()
     {
         foreach (var wa in waitAreas)
             wa.PlayWarningBlink();

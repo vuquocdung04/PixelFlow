@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -47,22 +48,27 @@ public class InputController : StaffSingleton<InputController>
     {
         Vector2 screenPos = Mouse.current.position.ReadValue();
         Ray ray = cam.ScreenPointToRay(screenPos);
-
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
 
-        // Booster: click vào Block thì destroy all same color
+        // Booster: click vào Block
         Block block = hit.collider.GetComponentInParent<Block>();
         if (block != null && block.IsAlive)
         {
-            // Tại đây check booster mode đang active không, sau đó:
             BrickGrid.Instance.DestroyAllSameColor(block.colorHex);
             return;
         }
 
-        // Click vào Shooter
         Shooter shooter = hit.collider.GetComponentInParent<Shooter>();
         if (shooter == null) return;
 
+        // === GROUP CLICK ===
+        if (shooter.IsInGroup)
+        {
+            HandleGroupClick(shooter.linkGroup);
+            return;
+        }
+
+        // === SINGLE CLICK (logic cũ) ===
         if (shooter.IsBlocked)
         {
             Debug.LogError($"Shooter '{shooter.name}' is BLOCKED");
@@ -72,13 +78,45 @@ public class InputController : StaffSingleton<InputController>
         if (Conveyor.Instance.itemSlots.Count == 0) return;
 
         int shooterIdx = FindShooterIdx(shooter);
-
         Conveyor.Instance.TakeFirstSlot(shooter);
 
         if (shooterIdx >= 0)
             LevelController.Instance.OnShooterTaken(shooterIdx);
     }
 
+    private void HandleGroupClick(LinkGroup group)
+    {
+        if (!group.AllAtRow0())
+        {
+            Debug.Log($"[Group] Not all at row 0");
+            return;
+        }
+
+        if (group.AnyBlocked())
+        {
+            Debug.Log($"[Group] Some blocked (Ice / animState)");
+            return;
+        }
+
+        if (Conveyor.Instance.itemSlots.Count < group.Count)
+        {
+            Debug.Log($"[Group] Not enough slots: need {group.Count}, have {Conveyor.Instance.itemSlots.Count}");
+            return;
+        }
+
+        // Tìm idx của tất cả member
+        List<int> indices = new List<int>();
+        foreach (var s in group.members)
+        {
+            int idx = FindShooterIdx(s);
+            if (idx >= 0) indices.Add(idx);
+        }
+
+        Conveyor.Instance.TakeFirstSlotsForGroup(group);
+
+        foreach (int idx in indices)
+            LevelController.Instance.OnShooterTaken(idx);
+    }
     private int FindShooterIdx(Shooter shooter)
     {
         foreach (var kv in LevelController.Instance.shooterMap)
