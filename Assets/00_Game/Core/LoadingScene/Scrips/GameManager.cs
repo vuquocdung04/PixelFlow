@@ -10,7 +10,6 @@ public class GameManager : ManagerSingleton<GameManager>
     public LivesManager livesManager;
     [SerializeField] private LoadingBox loadingBox;
     public ToastManager toastManager;
-    public HighlightSystem highlightSystem;
     
     public bool isSkipOutPhase;
     public float loadingStepDuration = 1f;
@@ -34,7 +33,6 @@ public class GameManager : ManagerSingleton<GameManager>
         audioManager.Init();
         livesManager.Init();
         toastManager.Init();
-        highlightSystem.Init();
         await load50Task;
         await loadingBox.LoadingAsync(1f, loadingStepDuration);
         fxManager.PrepareWipeClosed();

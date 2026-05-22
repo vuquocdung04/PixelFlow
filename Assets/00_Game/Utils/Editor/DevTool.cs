@@ -47,6 +47,7 @@ public partial class DevTool : OdinEditorWindow
 [Serializable]
 public class PopupTesterItem
 {
+    [NonSerialized]
     private List<PopupTesterItem> parentList;
 
     public PopupTesterItem(List<PopupTesterItem> list)

@@ -194,6 +194,20 @@ public partial class LevelController
         TrySpawnFromTunnel(col);
     }
 
+    public List<GameObject> GetAvailableShooters()
+    {
+        var result = new List<GameObject>();
+        foreach (var kv in shooterMap)
+        {
+            var s = kv.Value;
+            if (s == null) continue;
+            if (s.HasProp(PropState.Ice)) continue;
+            if (s.IsInGroup) continue;
+            result.Add(s.gameObject);
+        }
+        return result;
+    }
+
     private void TrySpawnFromTunnel(int col)
     {
         if (!tunnelByColumn.TryGetValue(col, out var tunnel)) return;
@@ -220,5 +234,202 @@ public partial class LevelController
         float lz = startZ - row * spacingBottomY;
 
         return new Vector3(lx, 0f, lz);
+    }
+
+    public void DestroyAllShootersOfColor(string hex)
+    {
+        ClearTunnelColors(hex);
+
+        var targetsInGrid = new List<Shooter>();
+        var targetsInWaitArea = new List<Shooter>();
+        var targetsInConveyor = new List<Shooter>();
+        var affectedCols = new HashSet<int>();
+
+        foreach (var kv in shooterMap)
+        {
+            if (kv.Value != null && kv.Value.colorHex == hex)
+            {
+                targetsInGrid.Add(kv.Value);
+                affectedCols.Add(kv.Key % gridBottomX);
+            }
+        }
+
+        foreach (var wa in WaitAreaController.Instance.waitAreas)
+            if (wa.Occupant != null && wa.Occupant.colorHex == hex)
+                targetsInWaitArea.Add(wa.Occupant);
+
+        foreach (var slot in Conveyor.Instance.itemSlots)
+        {
+            var docked = slot.GetComponentInChildren<Shooter>();
+            if (docked != null && docked.colorHex == hex)
+                targetsInConveyor.Add(docked);
+        }
+
+        var allTargets = new HashSet<Shooter>();
+        foreach (var s in targetsInGrid) allTargets.Add(s);
+        foreach (var s in targetsInWaitArea) allTargets.Add(s);
+        foreach (var s in targetsInConveyor) allTargets.Add(s);
+
+        RebuildAffectedLinkGroups(allTargets);
+
+        foreach (var s in targetsInWaitArea) DestroyShooterInWaitArea(s);
+        foreach (var s in targetsInConveyor) DestroyShooterOnConveyor(s);
+        foreach (var s in targetsInGrid) DestroyShooterInGridRaw(s);
+
+        foreach (var col in affectedCols)
+            FillColumnFromTunnel(col);
+    }
+    private void FillColumnFromTunnel(int col)
+    {
+        if (!tunnelByColumn.TryGetValue(col, out var tunnel))
+        {
+            CompactColumn(col);
+            return;
+        }
+
+        int safety = gridBottomY + 1;
+        while (safety-- > 0)
+        {
+            CompactColumn(col);
+
+            if (!tunnel.HasNext) break;
+            if (shooterMap.ContainsKey(tunnel.spawnAtID)) break;
+
+            if (!IsColumnHasEmptyAbove(col, tunnel.spawnAtID)) break;
+
+            Shooter newShooter = tunnel.SpawnNext();
+            if (newShooter == null) break;
+
+            shooterMap[tunnel.spawnAtID] = newShooter;
+            newShooter.gridIdx = tunnel.spawnAtID;
+
+            int spawnRow = tunnel.spawnAtID / gridBottomX;
+            newShooter.SetAnimState(spawnRow == 0 ? ShooterAnimState.Idle : ShooterAnimState.Blocked);
+        }
+
+        CompactColumn(col);
+    }
+
+    private bool IsColumnHasEmptyAbove(int col, int spawnAtID)
+    {
+        int spawnRow = spawnAtID / gridBottomX;
+        for (int r = 0; r <= spawnRow; r++)
+        {
+            int idx = r * gridBottomX + col;
+            if (!shooterMap.ContainsKey(idx)) return true;
+        }
+        return false;
+    }
+    private void ClearTunnelColors(string hex)
+    {
+        foreach (var kv in tunnelMap)
+        {
+            var tunnel = kv.Value;
+            int removed = tunnel.RemoveColors(hex);
+            ShooterController.Instance.aliveCount -= removed;
+        }
+    }
+
+    private void DestroyShooterInGridRaw(Shooter shooter)
+    {
+        if (shooter == null || shooter.gridIdx < 0) return;
+        shooterMap.Remove(shooter.gridIdx);
+        shooter.gridIdx = -1;
+        ShooterController.Instance.UnregisterCombat(shooter);
+        ShooterController.Instance.OnShooterDespawn();
+        Destroy(shooter.gameObject);
+    }
+
+    private void DestroyShooterInWaitArea(Shooter shooter)
+    {
+        if (shooter == null) return;
+        var wa = shooter.GetComponentInParent<WaitArea>();
+        if (wa != null) wa.ResetToDefault();
+        ShooterController.Instance.UnregisterCombat(shooter);
+        ShooterController.Instance.OnShooterDespawn();
+        Destroy(shooter.gameObject);
+    }
+
+    private void DestroyShooterOnConveyor(Shooter shooter)
+    {
+        if (shooter == null) return;
+        var slot = shooter.GetComponentInParent<ItemSlot>();
+        if (slot != null) slot.AbortAndReturn();
+        ShooterController.Instance.UnregisterCombat(shooter);
+        ShooterController.Instance.OnShooterDespawn();
+        Destroy(shooter.gameObject);
+    }
+
+    private void CompactColumn(int col)
+    {
+        int writeRow = 0;
+        for (int readRow = 0; readRow < gridBottomY; readRow++)
+        {
+            int readIdx = readRow * gridBottomX + col;
+            if (!shooterMap.TryGetValue(readIdx, out var shooter)) continue;
+
+            if (readRow == writeRow)
+            {
+                writeRow++;
+                continue;
+            }
+
+            int writeIdx = writeRow * gridBottomX + col;
+            Vector3 newPos = GridToLocalBottom(writeIdx);
+
+            shooter.transform.DOKill();
+            var tween = shooter.transform.DOLocalMove(newPos, 0.3f).SetEase(Ease.OutCubic);
+            if (shooter.HasLink) tween.OnUpdate(() => shooter.RefreshAllLinks());
+
+            shooterMap.Remove(readIdx);
+            shooterMap[writeIdx] = shooter;
+            shooter.gridIdx = writeIdx;
+
+            if (writeRow == 0)
+            {
+                shooter.SetAnimState(ShooterAnimState.Idle);
+                shooter.RemoveProps(PropState.Blind);
+            }
+
+            writeRow++;
+        }
+    }
+
+    private void RebuildAffectedLinkGroups(HashSet<Shooter> destroyed)
+    {
+        var affectedGroups = new HashSet<LinkGroup>();
+        foreach (var s in destroyed)
+            if (s.linkGroup != null)
+                affectedGroups.Add(s.linkGroup);
+
+        foreach (var group in affectedGroups)
+        {
+            var survivors = new List<Shooter>();
+            foreach (var m in group.members)
+                if (m != null && !destroyed.Contains(m))
+                    survivors.Add(m);
+
+            foreach (var s in survivors)
+                s.RemoveProps(PropState.Link);
+
+            if (survivors.Count <= 1)
+            {
+                group.members.Clear();
+                continue;
+            }
+
+            var newGroup = new LinkGroup();
+            foreach (var s in survivors)
+            {
+                newGroup.members.Add(s);
+                s.linkGroup = newGroup;
+            }
+
+            for (int i = 0; i < survivors.Count - 1; i++)
+            {
+                survivors[i].SetupLink(survivors[i + 1], owner: true);
+                survivors[i + 1].SetupLink(survivors[i], owner: false);
+            }
+        }
     }
 }

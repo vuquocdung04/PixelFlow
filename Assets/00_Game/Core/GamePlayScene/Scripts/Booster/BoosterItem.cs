@@ -24,28 +24,20 @@ public class BoosterItem : MonoBehaviour
     [SerializeField] private GameObject quantityInfoGroup;
     [SerializeField] private GameObject addIconOverlay;
     [SerializeField] private GameObject inUseHighlight;
-    [SerializeField] private GameObject cooldownGroup;
-
     [Header("Text & Fill")]
     [SerializeField] private TextMeshProUGUI quantityText;
-    [SerializeField] private TextMeshProUGUI cooldownText;
     [SerializeField] private TextMeshProUGUI unlockLevelText;
-    [SerializeField] private Image cooldownFillImage;
 
     // Rule transition: từ state X có thể nhảy sang state nào
     private static readonly Dictionary<BoosterState, BoosterState[]> _transitions = new()
-    {
-        { BoosterState.Locked,    new[] { BoosterState.Available } },
-        { BoosterState.Available, new[] { BoosterState.InUse, BoosterState.Empty, BoosterState.Cooldown, BoosterState.Locked } },
-        { BoosterState.Empty,     new[] { BoosterState.Available } },
-        { BoosterState.InUse,     new[] { BoosterState.Available, BoosterState.Cooldown } },
-        { BoosterState.Cooldown,  new[] { BoosterState.Available } },
-    };
-
-    private Tween _cooldownTween;
+{
+    { BoosterState.Locked,    new[] { BoosterState.Available } },
+    { BoosterState.Available, new[] { BoosterState.InUse, BoosterState.Empty, BoosterState.Locked } },
+    { BoosterState.Empty,     new[] { BoosterState.Available } },
+    { BoosterState.InUse,     new[] { BoosterState.Available } },
+};
 
     private void Start() => btnMain.OnClicked(OnButtonClicked);
-    private void OnDestroy() => _cooldownTween?.Kill();
 
     public void SetSize(float size) => iconBooster.FitToTargetHeight(size);
 
@@ -73,24 +65,7 @@ public class BoosterItem : MonoBehaviour
         quantityInfoGroup.SetActive(s == BoosterState.Available);
         addIconOverlay.SetActive(s == BoosterState.Empty);
         inUseHighlight.SetActive(s == BoosterState.InUse);
-        cooldownGroup.SetActive(s == BoosterState.Cooldown);
     }
-
-    public void StartCooldown(float duration)
-    {
-        if (!ChangeState(BoosterState.Cooldown)) return;
-        _cooldownTween?.Kill();
-
-        _cooldownTween = DOVirtual.Float(duration, 0f, duration, t =>
-        {
-            if (CurrentState != BoosterState.Cooldown) return;
-            cooldownFillImage.fillAmount = t / duration;
-            cooldownText.text = Mathf.CeilToInt(t).ToString();
-        })
-        .SetEase(Ease.Linear)
-        .OnComplete(() => ChangeState(BoosterState.Available));
-    }
-
     private void OnButtonClicked()
     {
         switch (CurrentState)

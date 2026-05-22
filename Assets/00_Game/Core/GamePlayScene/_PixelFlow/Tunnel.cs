@@ -67,4 +67,11 @@ public class Tunnel : MonoBehaviour
     {
         if (countTxt != null) countTxt.text = spawnColors.Count.ToString();
     }
+
+    public int RemoveColors(string hex)
+    {
+        int removed = spawnColors.RemoveAll(c => c.hex == hex);
+        if (removed > 0) UpdateCountText();
+        return removed;
+    }
 }

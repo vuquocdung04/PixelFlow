@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using EventDispatcher;
 using UnityEngine;
 
@@ -126,4 +127,25 @@ public class BrickGrid : StaffSingleton<BrickGrid>
                     grid[c, r].Break();
     }
 
+    public List<GameObject> GetAllAliveBlocks()
+    {
+        var result = new List<GameObject>();
+        if (grid == null) return result;
+        for (int c = 0; c < width; c++)
+            for (int r = 0; r < height; r++)
+                if (grid[c, r] != null && grid[c, r].IsAlive)
+                    result.Add(grid[c, r].gameObject);
+        return result;
+    }
+
+    public List<Block> GetAliveBlocksByColor(string hex)
+    {
+        var result = new List<Block>();
+        if (grid == null) return result;
+        for (int c = 0; c < width; c++)
+            for (int r = 0; r < height; r++)
+                if (grid[c, r] != null && grid[c, r].IsAlive && grid[c, r].colorHex == hex)
+                    result.Add(grid[c, r]);
+        return result;
+    }
 }

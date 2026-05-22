@@ -724,7 +724,6 @@ Transform:
   - {fileID: 1373294504}
   - {fileID: 1828064795}
   - {fileID: 175757013}
-  - {fileID: 695349775}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &643601520
@@ -746,55 +745,9 @@ MonoBehaviour:
   livesManager: {fileID: 1828064796}
   loadingBox: {fileID: 783918718}
   toastManager: {fileID: 175757017}
-  highlightSystem: {fileID: 695349776}
   isSkipOutPhase: 1
   loadingStepDuration: 0.1
   loadingFadeOutDuration: 0.1
---- !u!1 &695349774
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 695349775}
-  - component: {fileID: 695349776}
-  m_Layer: 0
-  m_Name: Highlight
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &695349775
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 695349774}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 643601519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &695349776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 695349774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55292ae709cd2436ca9ec5fd5bd9f844, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HighlightSystem
-  highlightLayerIndex: 6
 --- !u!1 &777599145
 GameObject:
   m_ObjectHideFlags: 0

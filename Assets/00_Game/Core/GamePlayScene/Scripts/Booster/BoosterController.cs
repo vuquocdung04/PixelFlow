@@ -5,6 +5,10 @@ using UnityEngine;
 
 public partial class BoosterController : StaffSingleton<BoosterController>
 {
+
+    [Header("Booster2 Cannon")]
+    [SerializeField] private Booster2Cannon cannonPrefab;
+    [SerializeField] private Vector3 cannonSpawnPos = new Vector3(0f, 5f, 0f);
     [Header("Refs")]
     public Transform boosterHolder;
     public float targetSize = 150f;
@@ -76,14 +80,17 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         {
             case BoosterType.Booster0:
                 var targetPos1 = new Vector3(0f, 32.3f, -14.2f);
-                ShowSfxFlow(type, item, targetPos1,50f);
+                ShowSfxFlow(type, item, targetPos1, 50f);
+                var shooterAvailables = LevelController.Instance.GetAvailableShooters();
+                HighlightSystem.Instance.Highlight(shooterAvailables);
                 break;
             case BoosterType.Booster1:
                 SetupPhase2Tutorial(type);
                 break;
             case BoosterType.Booster2:
                 var targetPos2 = new Vector3(0f, 33.5f, -11f);
-                ShowSfxFlow(type, item, targetPos2,-650f);
+                ShowSfxFlow(type, item, targetPos2, -650f);
+                HighlightSystem.Instance.Highlight(BrickGrid.Instance.GetAllAliveBlocks());
                 break;
         }
     }
@@ -106,18 +113,8 @@ public partial class BoosterController : StaffSingleton<BoosterController>
     {
         if (_active == null) return;
         CompletePhase2Tutorial(_active.Type);
-
-        if (_active.Type == BoosterType.Booster2) ReleaseAndStartCooldown(60f);
-        else Deactivate();
+        Deactivate();
     }
-
-    public void ReleaseAndStartCooldown(float time)
-    {
-        if (_active == null) return;
-        _active.StartCooldown(time);
-        _active = null;
-    }
-
     // ============= MOVE ANIMATION =============
     public void MoveOut(float duration = 0.3f)
     {
@@ -147,6 +144,7 @@ public partial class BoosterController : StaffSingleton<BoosterController>
 
     public void OnSfxPopupClosed()
     {
+        HighlightSystem.Instance.Clear();
         MoveIn();
         MoveCameraTo(cameraDefaultPos);
         Deactivate();
@@ -174,4 +172,63 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         BoosterType.Booster2 => "Description for booster 2",
         _ => ""
     };
+
+
+    public void TryUseOnShooter(Shooter shooter)
+    {
+        if (_active == null || shooter == null) return;
+
+        switch (_active.Type)
+        {
+            case BoosterType.Booster0:
+                ExecuteBooster0OnShooter(shooter);
+                break;
+        }
+    }
+
+    public void TryUseOnBlock(Block block)
+    {
+        if (_active == null || block == null || !block.IsAlive) return;
+
+        switch (_active.Type)
+        {
+            case BoosterType.Booster2:
+                ExecuteBooster2OnBlock(block);
+                break;
+        }
+    }
+    private async void ExecuteBooster2OnBlock(Block block)
+    {
+        string hex = block.colorHex;
+
+        HighlightSystem.Instance.Clear();
+        sfxPopup.ForceClose();
+        MoveIn();
+        MoveCameraTo(cameraDefaultPos);
+
+        LevelController.Instance.DestroyAllShootersOfColor(hex);
+
+        var targets = BrickGrid.Instance.GetAliveBlocksByColor(hex);
+
+        var cannon = Instantiate(cannonPrefab, cannonSpawnPos, Quaternion.identity);
+        await cannon.FireAt(targets);
+
+        OnBoosterActionSuccess();
+    }
+    private void ExecuteBooster0OnShooter(Shooter shooter)
+    {
+        var available = LevelController.Instance.GetAvailableShooters();
+        if (!available.Contains(shooter.gameObject)) return;
+        HighlightSystem.Instance.Clear();
+        sfxPopup.ForceClose();
+        MoveIn();
+        MoveCameraTo(cameraDefaultPos);
+
+        shooter.RemoveProps(PropState.Blind);
+
+        Conveyor.Instance.TakeFirstSlot(shooter);
+        LevelController.Instance.OnShooterTaken(shooter);
+
+        OnBoosterActionSuccess();
+    }
 }

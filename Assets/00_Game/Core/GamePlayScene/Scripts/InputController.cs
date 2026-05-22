@@ -27,7 +27,6 @@ public class InputController : StaffSingleton<InputController>
         canInput = !(newState == GameState.Win ||
                      newState == GameState.Lose ||
                      newState == GameState.Paused ||
-                     newState == GameState.BoosterActive ||
                      newState == GameState.Tutorial);
     }
 
@@ -46,6 +45,12 @@ public class InputController : StaffSingleton<InputController>
         Ray ray = cam.ScreenPointToRay(screenPos);
 
         if (!Physics.Raycast(ray, out RaycastHit hit)) return;
+
+        if (BoosterController.Instance.HasActive)
+        {
+            HandleBoosterClick(hit);
+            return;
+        }
 
         Block block = hit.collider.GetComponentInParent<Block>();
         if (block != null && block.IsAlive)
@@ -114,6 +119,27 @@ public class InputController : StaffSingleton<InputController>
                 DOVirtual.DelayedCall(delay, () => LevelController.Instance.OnShooterTaken(captured));
             else
                 LevelController.Instance.OnShooterTaken(captured);
+        }
+    }
+
+    private void HandleBoosterClick(RaycastHit hit)
+    {
+        var activeType = BoosterController.Instance.ActiveType;
+        if (activeType == null) return;
+
+        switch (activeType.Value)
+        {
+            case BoosterType.Booster0:
+                Shooter shooter = hit.collider.GetComponentInParent<Shooter>();
+                if (shooter == null) return;
+                BoosterController.Instance.TryUseOnShooter(shooter);
+                break;
+
+            case BoosterType.Booster2:
+                Block block = hit.collider.GetComponentInParent<Block>();
+                if (block == null) return;
+                BoosterController.Instance.TryUseOnBlock(block);
+                break;
         }
     }
 }

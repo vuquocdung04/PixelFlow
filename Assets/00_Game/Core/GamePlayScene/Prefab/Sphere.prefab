@@ -255,5 +255,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31bb893de06f27d4cad4d757f68f36c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  speed: 20
+  speed: 30
   trail: {fileID: 7692932811638695148}

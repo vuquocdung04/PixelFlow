@@ -31,7 +31,7 @@ public class BoosterSfxPopup : MonoBehaviour
         title.text = titleText;
         description.text = descText;
 
-        root.anchoredPosition = new Vector3(0,targetY,0);
+        root.anchoredPosition = new Vector3(0, targetY, 0);
 
 
         gameObject.SetActive(true);
@@ -49,5 +49,12 @@ public class BoosterSfxPopup : MonoBehaviour
                 gameObject.SetActive(false);
                 BoosterController.Instance.OnSfxPopupClosed();
             });
+    }
+    public void ForceClose()
+    {
+        _scaleTween?.Kill();
+        _scaleTween = transform.DOScale(Vector3.zero, scaleDuration)
+          .SetEase(scaleOutEase)
+          .OnComplete(() => gameObject.SetActive(false));
     }
 }

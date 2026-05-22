@@ -2,18 +2,12 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HighlightSystem : MonoBehaviour
+public class HighlightSystem : StaffSingleton<HighlightSystem>
 {
-  public static HighlightSystem Instance { get; private set; }
   [SerializeField] int highlightLayerIndex = 6;
 
   private Dictionary<Renderer, int> _originalLayers = new Dictionary<Renderer, int>();
   private List<GameObject> _currentTargets = new List<GameObject>();
-
-  public void Init()
-  {
-    Instance = this;
-  }
 
   public void Highlight(GameObject target)
   {
@@ -62,4 +56,9 @@ public class HighlightSystem : MonoBehaviour
     _currentTargets.Clear();
     HighlightRendererFeature.IsActive = false;
   }
+
+    public override void Init()
+    {
+        throw new System.NotImplementedException();
+    }
 }

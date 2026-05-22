@@ -11,5 +11,4 @@ public enum BoosterState
     Available = 1,
     Empty = 2,
     InUse = 3,
-    Cooldown = 4
 }
