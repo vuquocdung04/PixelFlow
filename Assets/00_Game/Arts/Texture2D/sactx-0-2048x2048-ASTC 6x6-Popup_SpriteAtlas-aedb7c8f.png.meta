@@ -131,7 +131,7 @@ TextureImporter:
         width: 313
         height: 312
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 90, y: 90, z: 90, w: 90}
       customData: 
       outline: []
@@ -140,6 +140,28 @@ TextureImporter:
       bones: []
       spriteID: 82c630307270b47f09a97fa2474fd7f0
       internalID: 1268712739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_1
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 481
+        width: 311
+        height: 372
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 90, y: 94, z: 90, w: 205}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c302612e938f34f52a279f847f40b830
+      internalID: -1906617344
       vertices: []
       indices: 
       edges: []
@@ -159,6 +181,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_0: 1268712739
+      sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_1: -1906617344
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
