@@ -497,4 +497,14 @@ public partial class LevelController
         b.SetAnimState(ShooterAnimState.Idle);
         b.RemoveProps(PropState.Blind);
     }
+
+    public bool HasShooterBelowRow0()
+    {
+        foreach (var kv in shooterMap)
+        {
+            int idx = kv.Key;
+            if (idx / gridBottomX > 0) return true;
+        }
+        return false;
+    }
 }

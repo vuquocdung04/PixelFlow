@@ -47,6 +47,7 @@ public partial class BoosterController : StaffSingleton<BoosterController>
 
         this.RegisterListener(EventID.BOOSTER_USE_REQUEST, OnUseRequest);
         this.RegisterListener(EventID.BOOSTER_DEACTIVATE_REQUEST, OnDeactivateRequest);
+        GameFlow.Instance.OnStateEntered += OnGameStateChanged;
 
         CheckTutorialHighlight();
     }
@@ -56,8 +57,29 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         base.OnDestroy();
         this.RemoveListener(EventID.BOOSTER_USE_REQUEST, OnUseRequest);
         this.RemoveListener(EventID.BOOSTER_DEACTIVATE_REQUEST, OnDeactivateRequest);
+
+        if (GameFlow.Instance != null)
+            GameFlow.Instance.OnStateEntered -= OnGameStateChanged;
     }
 
+    private void OnGameStateChanged(GameState newState)
+    {
+        if (newState != GameState.Win && newState != GameState.Lose) return;
+        if (_active == null) return;
+        ForceCancelActiveBooster();
+    }
+    private void ForceCancelActiveBooster()
+    {
+        HighlightSystem.Instance.Clear();
+        sfxPopup.ForceClose();
+        MoveIn();
+        MoveCameraTo(cameraDefaultPos);
+
+        _active.ChangeState(BoosterState.Available);
+        _active = null;
+
+        InputController.Instance.RestoreNormalMode();
+    }
     // ============= USE / DEACTIVATE =============
     private void OnUseRequest(object param)
     {
@@ -72,6 +94,8 @@ public partial class BoosterController : StaffSingleton<BoosterController>
             ToastManager.Instance.ShowToast("Another Booster is in use!");
             return;
         }
+
+        if (!CanUseBooster(type)) return;
 
         _active = item;
         item.ChangeState(BoosterState.InUse);
@@ -100,6 +124,31 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         }
     }
 
+    private bool CanUseBooster(BoosterType type)
+    {
+        switch (type)
+        {
+            case BoosterType.Booster0:
+                if (LevelController.Instance.GetAvailableShooters().Count == 0)
+                {
+                    ToastManager.Instance.ShowToast("No available shooter!");
+                    return false;
+                }
+                return true;
+
+            case BoosterType.Booster1:
+                if (!LevelController.Instance.HasShooterBelowRow0())
+                {
+                    ToastManager.Instance.ShowToast("Nothing to swap!");
+                    return false;
+                }
+                return true;
+
+            case BoosterType.Booster2:
+                return true;
+        }
+        return true;
+    }
     private void OnDeactivateRequest(object param)
     {
         if (_active == null || _active.Type != (BoosterType)param) return;
