@@ -16,12 +16,10 @@ public class BoosterSfxPopup : MonoBehaviour
     [SerializeField] private float scaleDuration = 0.3f;
     [SerializeField] private Ease scaleInEase = Ease.OutBack;
     [SerializeField] private Ease scaleOutEase = Ease.InBack;
-    private Tween _scaleTween;
 
     private void Awake()
     {
         btnClose.OnClicked(OnCloseClicked);
-        transform.localScale = Vector3.zero;
         gameObject.SetActive(false);
     }
 
@@ -30,31 +28,17 @@ public class BoosterSfxPopup : MonoBehaviour
         image.sprite = icon;
         title.text = titleText;
         description.text = descText;
-
         root.anchoredPosition = new Vector3(0, targetY, 0);
-
-
         gameObject.SetActive(true);
-        _scaleTween?.Kill();
-        _scaleTween = transform.DOScale(Vector3.one, scaleDuration).SetEase(scaleInEase);
-    }
 
+    }
     private void OnCloseClicked()
     {
-        _scaleTween?.Kill();
-        _scaleTween = transform.DOScale(Vector3.zero, scaleDuration)
-            .SetEase(scaleOutEase)
-            .OnComplete(() =>
-            {
-                gameObject.SetActive(false);
-                BoosterController.Instance.OnSfxPopupClosed();
-            });
+        gameObject.SetActive(false);
+        BoosterController.Instance.OnSfxPopupClosed();
     }
     public void ForceClose()
     {
-        _scaleTween?.Kill();
-        _scaleTween = transform.DOScale(Vector3.zero, scaleDuration)
-          .SetEase(scaleOutEase)
-          .OnComplete(() => gameObject.SetActive(false));
+        gameObject.SetActive(false);
     }
 }

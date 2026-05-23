@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5616655224101235037}
   - component: {fileID: 7692932811638695148}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,7 +81,7 @@ TrailRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Time: 0.1
+  m_Time: 0.05
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
