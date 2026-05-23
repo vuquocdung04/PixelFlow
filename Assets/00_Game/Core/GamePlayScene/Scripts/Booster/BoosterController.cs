@@ -79,16 +79,20 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         switch (type)
         {
             case BoosterType.Booster0:
-                var targetPos1 = new Vector3(0f, 32.3f, -14.2f);
-                ShowSfxFlow(type, item, targetPos1, 50f);
+                InputController.Instance.SetBooster0Mode();
                 var shooterAvailables = LevelController.Instance.GetAvailableShooters();
                 HighlightSystem.Instance.Highlight(shooterAvailables);
+                var targetPos1 = new Vector3(0f, 32.3f, -14.2f);
+                ShowSfxFlow(type, item, targetPos1, 50f);
                 break;
+
             case BoosterType.Booster1:
                 LevelController.Instance.DoBooster1Swap();
                 OnBoosterActionSuccess();
                 break;
+
             case BoosterType.Booster2:
+                InputController.Instance.SetBooster2Mode();
                 var targetPos2 = new Vector3(0f, 33.5f, -11f);
                 ShowSfxFlow(type, item, targetPos2, -650f);
                 HighlightSystem.Instance.Highlight(BrickGrid.Instance.GetAllAliveBlocks());
@@ -101,13 +105,13 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         if (_active == null || _active.Type != (BoosterType)param) return;
         Deactivate();
     }
-
     public void Deactivate()
     {
         if (_active == null) return;
         HandleTutorialCancel(_active.Type);
         _active.ChangeState(BoosterState.Available);
         _active = null;
+        InputController.Instance.RestoreNormalMode();
     }
 
     public void OnBoosterActionSuccess()
@@ -116,6 +120,7 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         CompletePhase2Tutorial(_active.Type);
         Deactivate();
     }
+
     // ============= MOVE ANIMATION =============
     public void MoveOut(float duration = 0.3f)
     {
@@ -148,7 +153,9 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         HighlightSystem.Instance.Clear();
         MoveIn();
         MoveCameraTo(cameraDefaultPos);
-        Deactivate();
+        InputController.Instance.RestoreNormalMode();
+        _active.ChangeState(BoosterState.Available);
+        _active = null;
     }
 
     public void MoveCameraTo(Vector3 targetPos)
