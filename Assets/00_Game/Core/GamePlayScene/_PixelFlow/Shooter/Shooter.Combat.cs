@@ -64,13 +64,13 @@ public partial class Shooter
         if (_despawning) return;
         _despawning = true;
 
-        KillShootFeedback(); 
-        
+        KillShootFeedback();
+
         ItemSlot slot = GetComponentInParent<ItemSlot>();
+        LevelController.Instance.UnregisterShooter(this);
         ShooterController.Instance.UnregisterCombat(this);
         ShooterController.Instance.OnShooterDespawn();
         transform.SetParent(null);
-
 
         if (slot != null) slot.AbortAndReturn();
 
@@ -79,7 +79,6 @@ public partial class Shooter
         seq.Append(transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack));
         seq.OnComplete(() => Destroy(gameObject));
     }
-
     private void DespawnGroup()
     {
         if (linkGroup == null) return;

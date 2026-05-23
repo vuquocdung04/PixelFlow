@@ -52,13 +52,6 @@ public class InputController : StaffSingleton<InputController>
             return;
         }
 
-        Block block = hit.collider.GetComponentInParent<Block>();
-        if (block != null && block.IsAlive)
-        {
-            BrickGrid.Instance.DestroyAllSameColor(block.colorHex);
-            return;
-        }
-
         Shooter shooter = hit.collider.GetComponentInParent<Shooter>();
         if (shooter == null) return;
 

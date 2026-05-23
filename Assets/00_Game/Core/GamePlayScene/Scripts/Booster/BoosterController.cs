@@ -85,7 +85,8 @@ public partial class BoosterController : StaffSingleton<BoosterController>
                 HighlightSystem.Instance.Highlight(shooterAvailables);
                 break;
             case BoosterType.Booster1:
-                SetupPhase2Tutorial(type);
+                LevelController.Instance.DoBooster1Swap();
+                OnBoosterActionSuccess();
                 break;
             case BoosterType.Booster2:
                 var targetPos2 = new Vector3(0f, 33.5f, -11f);

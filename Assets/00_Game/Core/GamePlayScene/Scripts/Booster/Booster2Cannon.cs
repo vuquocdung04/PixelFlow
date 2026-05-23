@@ -10,7 +10,7 @@ public class Booster2Cannon : MonoBehaviour
     [SerializeField] private Transform shootPoint;
     [SerializeField] private ParticleSystem shootFx;
     [SerializeField] private Projectile projectilePrefab;
-
+    private Sequence _recoilSeq;
     public async UniTask FireAt(List<Block> targets)
     {
         transform.localScale = Vector3.zero;
@@ -50,11 +50,10 @@ public class Booster2Cannon : MonoBehaviour
 
     private void PlayRecoil()
     {
-        transform.DOKill();
-        transform.localScale = Vector3.one;
+        if (_recoilSeq != null && _recoilSeq.IsActive() && _recoilSeq.IsPlaying()) return;
 
-        DOTween.Sequence()
-            .Append(transform.DOScale(0.85f, 0.06f).SetEase(Ease.OutQuad))
-            .Append(transform.DOScale(1f, 0.1f).SetEase(Ease.OutBack));
+        _recoilSeq = DOTween.Sequence();
+        _recoilSeq.Append(transform.DOScale(1.3f, 0.02f).SetEase(Ease.OutQuad));
+        _recoilSeq.Append(transform.DOScale(1.5f, 0.05f).SetEase(Ease.OutBack));
     }
 }

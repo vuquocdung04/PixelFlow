@@ -148,4 +148,28 @@ public class BrickGrid : StaffSingleton<BrickGrid>
                     result.Add(grid[c, r]);
         return result;
     }
+
+    public HashSet<string> GetOuterRingColors()
+    {
+        var colors = new HashSet<string>();
+        if (grid == null) return colors;
+
+        for (int c = 0; c < width; c++)
+        {
+            var top = GetOuterBlock(Side.Top, c);
+            if (top != null) colors.Add(top.colorHex);
+            var bottom = GetOuterBlock(Side.Bottom, c);
+            if (bottom != null) colors.Add(bottom.colorHex);
+        }
+
+        for (int r = 0; r < height; r++)
+        {
+            var left = GetOuterBlock(Side.Left, r);
+            if (left != null) colors.Add(left.colorHex);
+            var right = GetOuterBlock(Side.Right, r);
+            if (right != null) colors.Add(right.colorHex);
+        }
+
+        return colors;
+    }
 }
