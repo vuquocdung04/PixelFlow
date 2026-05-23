@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2986a114e4ba57443a52ae5c3867c920
+    m_Address: BuyBoosterBox
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3a256ad0d81a14f32b826a4286b4049e
     m_Address: SettingBox
     m_ReadOnly: 0

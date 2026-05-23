@@ -4735,9 +4735,6 @@ MonoBehaviour:
   description: {fileID: 695649645}
   btnClose: {fileID: 1436519180}
   root: {fileID: 777986960}
-  scaleDuration: 0.2
-  scaleInEase: 27
-  scaleOutEase: 26
 --- !u!1 &956269289
 GameObject:
   m_ObjectHideFlags: 0

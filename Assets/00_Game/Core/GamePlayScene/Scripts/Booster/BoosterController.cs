@@ -11,7 +11,6 @@ public partial class BoosterController : StaffSingleton<BoosterController>
     [SerializeField] private Vector3 cannonSpawnPos = new Vector3(0f, 5f, 0f);
     [Header("Refs")]
     public Transform boosterHolder;
-    public float targetSize = 150f;
 
     [Header("Move Animation")]
     [SerializeField] private RectTransform panelRoot;
@@ -41,12 +40,14 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         _items = new List<BoosterItem>(boosterHolder.GetComponentsInChildren<BoosterItem>());
         foreach (var item in _items)
         {
-            item.SetSize(targetSize);
+            bool hasQty = item.GetQuantity() > 0;
             item.ChangeState(BoosterState.Available, force: true);
+            item.RefreshFromQuantity();
         }
 
         this.RegisterListener(EventID.BOOSTER_USE_REQUEST, OnUseRequest);
         this.RegisterListener(EventID.BOOSTER_DEACTIVATE_REQUEST, OnDeactivateRequest);
+        this.RegisterListener(EventID.BOOSTER_BUY_REQUEST, OnBuyRequest);
         GameFlow.Instance.OnStateEntered += OnGameStateChanged;
 
         CheckTutorialHighlight();
@@ -57,7 +58,7 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         base.OnDestroy();
         this.RemoveListener(EventID.BOOSTER_USE_REQUEST, OnUseRequest);
         this.RemoveListener(EventID.BOOSTER_DEACTIVATE_REQUEST, OnDeactivateRequest);
-
+        this.RemoveListener(EventID.BOOSTER_BUY_REQUEST, OnBuyRequest);
         if (GameFlow.Instance != null)
             GameFlow.Instance.OnStateEntered -= OnGameStateChanged;
     }
@@ -76,9 +77,16 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         MoveCameraTo(cameraDefaultPos);
 
         _active.ChangeState(BoosterState.Available);
+        _active.RefreshFromQuantity();
         _active = null;
 
         InputController.Instance.RestoreNormalMode();
+    }
+
+    private void OnBuyRequest(object param)
+    {
+        var type = (BoosterType)param;
+        _ = BuyBoosterBox.Setup(GameScene.GetPopupHolder(), box => box.SetupAndShow(type));
     }
     // ============= USE / DEACTIVATE =============
     private void OnUseRequest(object param)
@@ -159,14 +167,16 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         if (_active == null) return;
         HandleTutorialCancel(_active.Type);
         _active.ChangeState(BoosterState.Available);
+        _active.RefreshFromQuantity();  // auto chuyển sang Empty nếu qty = 0
         _active = null;
         InputController.Instance.RestoreNormalMode();
     }
-
     public void OnBoosterActionSuccess()
     {
         if (_active == null) return;
         CompletePhase2Tutorial(_active.Type);
+
+        _active.SubQuantity();
         Deactivate();
     }
 
@@ -185,7 +195,7 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         _moveTween = panelRoot.DOAnchorPos(_originalPosition, duration).SetEase(Ease.OutBack);
     }
 
-    private BoosterItem FindItem(BoosterType type) => _items.Find(i => i.Type == type);
+    public BoosterItem FindItem(BoosterType type) => _items.Find(i => i.Type == type);
 
     public BoosterItem GetItemByIndex(int index) =>
         (_items != null && index >= 0 && index < _items.Count) ? _items[index] : null;
@@ -216,17 +226,17 @@ public partial class BoosterController : StaffSingleton<BoosterController>
 
     private string GetTitle(BoosterType type) => type switch
     {
-        BoosterType.Booster0 => "Booster 0",
-        BoosterType.Booster1 => "Booster 1",
-        BoosterType.Booster2 => "Booster 2",
+        BoosterType.Booster0 => "Hand",
+        BoosterType.Booster1 => "Shuffle",
+        BoosterType.Booster2 => "Super Pig",
         _ => ""
     };
 
     private string GetDescription(BoosterType type) => type switch
     {
-        BoosterType.Booster0 => "Description for booster 0",
-        BoosterType.Booster1 => "Description for booster 1",
-        BoosterType.Booster2 => "Description for booster 2",
+        BoosterType.Booster0 => "Pick any pig or item in the queue",
+        BoosterType.Booster1 => "Shuffle the pigs in queues",
+        BoosterType.Booster2 => "Select a color to shoot with super powers",
         _ => ""
     };
 

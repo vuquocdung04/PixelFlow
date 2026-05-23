@@ -6,9 +6,9 @@ public static class UseProfile
     public static int DefaultStartingCoins = 500;
 
     public static readonly PrefVar<int> Level = new(StringHelper.LEVEL, 1);
+    public static readonly PrefVar<int> Booster0 = new(StringHelper.BOOSTER_0, DefaultBoosterAmount);
     public static readonly PrefVar<int> Booster1 = new(StringHelper.BOOSTER_1, DefaultBoosterAmount);
     public static readonly PrefVar<int> Booster2 = new(StringHelper.BOOSTER_2, DefaultBoosterAmount);
-    public static readonly PrefVar<int> Booster3 = new(StringHelper.BOOSTER_3, DefaultBoosterAmount);
     public static readonly PrefVar<int> Coin = new(StringHelper.COIN, DefaultStartingCoins);
 
     // --- SETTINGS ---

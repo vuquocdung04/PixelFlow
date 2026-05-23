@@ -28,7 +28,6 @@ public class BoosterItem : MonoBehaviour
     [SerializeField] private TextMeshProUGUI quantityText;
     [SerializeField] private TextMeshProUGUI unlockLevelText;
 
-    // Rule transition: từ state X có thể nhảy sang state nào
     private static readonly Dictionary<BoosterState, BoosterState[]> _transitions = new()
 {
     { BoosterState.Locked,    new[] { BoosterState.Available } },
@@ -36,9 +35,7 @@ public class BoosterItem : MonoBehaviour
     { BoosterState.Empty,     new[] { BoosterState.Available } },
     { BoosterState.InUse,     new[] { BoosterState.Available } },
 };
-
     private void Start() => btnMain.OnClicked(OnButtonClicked);
-
     public void SetSize(float size) => iconBooster.FitToTargetHeight(size);
 
     /// <summary>
@@ -77,8 +74,38 @@ public class BoosterItem : MonoBehaviour
                 this.PostEvent(EventID.BOOSTER_DEACTIVATE_REQUEST, type);
                 break;
             case BoosterState.Empty:
-                Debug.Log("Mở popup mua thêm!");
+                this.PostEvent(EventID.BOOSTER_BUY_REQUEST, type);
                 break;
         }
+    }
+    public int GetQuantity()
+    {
+        return type switch
+        {
+            BoosterType.Booster0 => UseProfile.Booster0.Value,
+            BoosterType.Booster1 => UseProfile.Booster1.Value,
+            BoosterType.Booster2 => UseProfile.Booster2.Value,
+            _ => 0
+        };
+    }
+    public void SubQuantity()
+    {
+        switch (type)
+        {
+            case BoosterType.Booster0: UseProfile.Booster0.Value = Mathf.Max(0, UseProfile.Booster0.Value - 1); break;
+            case BoosterType.Booster1: UseProfile.Booster1.Value = Mathf.Max(0, UseProfile.Booster1.Value - 1); break;
+            case BoosterType.Booster2: UseProfile.Booster2.Value = Mathf.Max(0, UseProfile.Booster2.Value - 1); break;
+        }
+        RefreshFromQuantity();
+    }
+    public void RefreshFromQuantity()
+    {
+        int qty = GetQuantity();
+        if (quantityText != null) quantityText.text = qty.ToString();
+
+        if (CurrentState == BoosterState.Available && qty <= 0)
+            ChangeState(BoosterState.Empty);
+        else if (CurrentState == BoosterState.Empty && qty > 0)
+            ChangeState(BoosterState.Available);
     }
 }

@@ -19,11 +19,10 @@ public class BoosterUnlockBox : BaseBox<BoosterUnlockBox>
         if (boosterIndex == -1) boosterIndex = 0;
         _targetBoosterItem = BoosterController.Instance.GetItemByIndex(boosterIndex);
 
-        var targetSize = BoosterController.Instance.targetSize;
         if (_targetBoosterItem != null)
         {
             imgBooster.sprite = _targetBoosterItem.iconBooster.sprite;
-            imgBooster.FitToTargetHeight(targetSize);
+            //imgBooster.FitToTargetHeight(targetSize);
             imgBooster.transform.localScale = Vector3.one * 3f;
         }
     }

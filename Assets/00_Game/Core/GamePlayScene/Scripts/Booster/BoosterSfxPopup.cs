@@ -12,10 +12,6 @@ public class BoosterSfxPopup : MonoBehaviour
     [SerializeField] private Button btnClose;
     [SerializeField] private RectTransform root;
 
-    [Header("Animation")]
-    [SerializeField] private float scaleDuration = 0.3f;
-    [SerializeField] private Ease scaleInEase = Ease.OutBack;
-    [SerializeField] private Ease scaleOutEase = Ease.InBack;
 
     private void Awake()
     {
@@ -29,6 +25,7 @@ public class BoosterSfxPopup : MonoBehaviour
         title.text = titleText;
         description.text = descText;
         root.anchoredPosition = new Vector3(0, targetY, 0);
+        image.FitToTargetHeight(173.9f);
         gameObject.SetActive(true);
 
     }

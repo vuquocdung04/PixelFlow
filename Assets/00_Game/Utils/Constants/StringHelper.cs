@@ -11,9 +11,9 @@ public class StringHelper
     public const string LEVEL = "Level";
 
     // Booster
-    public const string BOOSTER_1 = "PickFoodCount";
-    public const string BOOSTER_2 = "SwapFoodPositionsCount";
-    public const string BOOSTER_3 = "PauseTimerCount";
+    public const string BOOSTER_0 = "PickFoodCount";
+    public const string BOOSTER_1 = "SwapFoodPositionsCount";
+    public const string BOOSTER_2 = "PauseTimerCount";
 
 
     #region HEART_STRING
