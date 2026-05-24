@@ -18,7 +18,12 @@ public class HighlightRendererFeature : ScriptableRendererFeature
   HighlightObjectsPass _highlightPass;
 
   public static bool IsActive { get; set; }
-
+  
+  [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+  static void ResetStaticState()
+  {
+    IsActive = false;
+  }
   public override void Create()
   {
     _darkPass = new DarkOverlayPass(settings.overlayMaterial)

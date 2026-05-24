@@ -35,6 +35,6 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
         conveyor.Init();
         levelController.Init();
         waitAreaController.Init();
-        FXManager.Instance.isNextSceneReady = true;
+        ///FXManager.Instance.isNextSceneReady = true;
     }
 }
