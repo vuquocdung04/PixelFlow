@@ -1708,11 +1708,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45c93730303b4cd997e3b327ae2d192f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyBox
-  mainPanel: {fileID: 1580515947149773477}
+  mainPanel: {fileID: 653043003057881228}
   canvasGroup: {fileID: 4940294620149877067}
-  isAnim: 0
   durationAppeared: 0.3
-  durationSlide: 0.2
+  animationType: 1
   btnSetting: {fileID: 6507896876779392461}
   btnAvatar: {fileID: 6865764983575009809}
   btnNoAds: {fileID: 238728432611289978}

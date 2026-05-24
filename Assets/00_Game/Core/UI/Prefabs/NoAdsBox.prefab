@@ -278,7 +278,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 119
 --- !u!114 &8557593046327934483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,9 +293,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NoAdsBox
   mainPanel: {fileID: 5816170127061866488}
   canvasGroup: {fileID: 6586505479885128507}
-  isAnim: 1
   durationAppeared: 0.3
-  durationSlide: 0.2
+  animationType: 0
   btnClose: {fileID: 9062018444610958037}
   btnCloseByPanel: {fileID: 8959145684009047819}
   btnPurchase: {fileID: 5538321668349639271}

@@ -9,9 +9,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(GraphicRaycaster))]
 public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
 {
-    // ==========================================
-    // 1. SINGLETON & ADDRESSABLES LOGIC
-    // ==========================================
+    // ========== SINGLETON & ADDRESSABLES ==========
     public static T Instance { get; private set; }
     private static AsyncOperationHandle<GameObject> handle;
     private static bool isInstantiating;
@@ -25,10 +23,7 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
 
     private static async UniTask<T> GetInstanceAsync(string addressableKey, Transform parent)
     {
-        if (Instance != null)
-        {
-            return Instance;
-        }
+        if (Instance != null) return Instance;
 
         if (isInstantiating)
         {
@@ -46,18 +41,17 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
             isInstantiating = false;
             return null;
         }
-        Instance = obj.GetComponent<T>();
 
+        Instance = obj.GetComponent<T>();
         if (Instance == null)
         {
             Addressables.ReleaseInstance(obj);
             isInstantiating = false;
             return null;
         }
+
         Instance.ForceHide();
-
         Instance.Init();
-
         isInstantiating = false;
         return Instance;
     }
@@ -73,120 +67,59 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
             isInstantiating = false;
         }
 
-        if (handle.IsValid())
-        {
-            Addressables.ReleaseInstance(gameObject);
-        }
+        if (handle.IsValid()) Addressables.ReleaseInstance(gameObject);
     }
 
-    // ==========================================
-    // 2. UI ANIMATION & CANVAS GROUP LOGIC
-    // ==========================================
+    // ========== FIELDS ==========
     [Header("UI Animation Settings")]
-    [SerializeField]
-    protected RectTransform mainPanel;
-
+    [SerializeField] protected RectTransform mainPanel;
     [SerializeField] protected CanvasGroup canvasGroup;
-    [SerializeField] protected bool isAnim = true;
     [SerializeField] protected float durationAppeared = 0.3f;
-    [SerializeField] protected float durationSlide = 0.2f;
+    [SerializeField] protected BoxAnimationType animationType = BoxAnimationType.Scale;
 
     private Tween currentTween;
-    private Tween fadeTween;
+    private IShowAnimation _activeAnim;
 
-    public void Show()
+    public System.Action OnClosed;
+
+    // ========== SHOW / CLOSE ==========
+    public void Show() => Show(BoxAnimationFactory.Get(animationType));
+
+    public void Show(IShowAnimation anim)
     {
+        _activeAnim = anim;
         InitState();
-
-        KillCurrentTweens();
+        KillCurrentTween();
         transform.SetAsLastSibling();
-        if (isAnim)
-        {
-            mainPanel.localScale = Vector3.zero;
-            canvasGroup.SetCanvasState(true, 0);
-            DoAppearAnimation();
-        }
+        currentTween = anim.PlayShow(mainPanel, canvasGroup, durationAppeared);
+    }
+
+    public void Close() => Close(_activeAnim ?? BoxAnimationFactory.Get(animationType));
+
+    public void Close(IShowAnimation anim)
+    {
+        KillCurrentTween();
+        currentTween = anim.PlayClose(mainPanel, canvasGroup, durationAppeared);
+
+        if (currentTween != null)
+            currentTween.OnComplete(InvokeOnClosed);
         else
-        {
-            mainPanel.localScale = Vector3.one;
-            canvasGroup.SetCanvasState(true, 1);
-        }
+            InvokeOnClosed();
     }
 
-    private void DoAppearAnimation()
+    private void InvokeOnClosed()
     {
-        currentTween = mainPanel.DOScale(Vector3.one, durationAppeared).SetEase(Ease.OutBack);
-        fadeTween = canvasGroup.DOFade(1f, durationAppeared * 0.8f).SetEase(Ease.OutQuad);
+        var cb = OnClosed;
+        OnClosed = null;
+        cb?.Invoke();
     }
 
+    // ========== HELPERS ==========
+    private void ForceHide() => canvasGroup.SetCanvasState(false, 0f);
 
-    protected void Close()
-    {
-        KillCurrentTweens();
-
-        canvasGroup.SetCanvasState(false);
-
-        if (isAnim)
-        {
-            currentTween = mainPanel.DOScale(Vector3.zero, durationAppeared * 0.8f).SetEase(Ease.InBack);
-            fadeTween = canvasGroup.DOFade(0f, durationAppeared * 0.8f)
-                .SetEase(Ease.InQuad)
-                .OnComplete(ForceHide);
-        }
-        else
-        {
-            ForceHide();
-        }
-    }
-
-    // ==========================================
-    // 3. SLIDING LOGIC (Cũng áp dụng Canvas Group)
-    // ==========================================
-    public Tween ShowSliding(bool slideInFromLeft)
-    {
-        InitState();
-
-        KillCurrentTweens();
-        transform.SetAsLastSibling();
-
-        canvasGroup.SetCanvasState(true, 1f);
-
-        RectTransform self = (RectTransform)transform;
-        float slideWidth = mainPanel.rect.width > 0 ? mainPanel.rect.width : Screen.width;
-        float startX = slideInFromLeft ? -slideWidth : slideWidth;
-        self.anchoredPosition = new Vector2(startX, 0);
-
-        currentTween = self.DOAnchorPos(Vector2.zero, durationSlide).SetEase(Ease.OutCubic);
-        return currentTween;
-    }
-
-    public Tween CloseSliding(bool slideOutToLeft)
-    {
-        KillCurrentTweens();
-
-        RectTransform self = (RectTransform)transform;
-        float slideWidth = mainPanel.rect.width > 0 ? mainPanel.rect.width : Screen.width;
-        float endX = slideOutToLeft ? -slideWidth : slideWidth;
-
-        var seq = DOTween.Sequence();
-
-        seq.Append(self.DOAnchorPos(new Vector2(endX, 0), durationSlide).SetEase(Ease.OutCubic));
-        seq.AppendCallback(() => canvasGroup.SetCanvasState(false, 0f));
-
-        currentTween = seq;
-        return seq;
-    }
-
-    private void ForceHide()
-    {
-        canvasGroup.SetCanvasState(false, 0f);
-    }
-
-    private void KillCurrentTweens()
+    private void KillCurrentTween()
     {
         currentTween?.Kill();
-        fadeTween?.Kill();
         currentTween = null;
-        fadeTween = null;
     }
 }
