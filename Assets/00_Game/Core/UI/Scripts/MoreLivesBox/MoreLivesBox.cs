@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class MoreLivesBox : BaseBox<MoreLivesBox>
 {
     public Button btnClose;
-    public Button btnCloseByPanel;
     public TextMeshProUGUI txtDisplayLives;
     public TextMeshProUGUI txtDisplayCooldownLives;
     public Button btnRefill;
@@ -20,8 +19,6 @@ public class MoreLivesBox : BaseBox<MoreLivesBox>
     {
         cost = 900;
         btnClose.OnClicked(Close);
-        btnCloseByPanel.OnClicked(Close);
-
         btnRefill.OnClicked(delegate
         {
             OnRefillByCoin();
@@ -29,7 +26,7 @@ public class MoreLivesBox : BaseBox<MoreLivesBox>
 
         btnRefillByAds.OnClicked(delegate
         {
-           
+
         });
         txtDisplayCoin.text = cost.ToString();
         this.RegisterListener(EventID.CHANGE_HEART, UpdateHeartUI);
@@ -70,10 +67,29 @@ public class MoreLivesBox : BaseBox<MoreLivesBox>
             return;
         }
 
-        if (!CurrencyManager.Instance.TrySpend(CurrencyType.Coin, cost)) return;
+        if (!CurrencyManager.Instance.CanAfford(CurrencyType.Coin, cost))
+        {
+            HandleNotEnoughCoin();
+            return;
+        }
 
+        CurrencyManager.Instance.TrySpend(CurrencyType.Coin, cost);
         HeartManager.Instance.TryAddHeart(1);
         AudioManager.Instance.PlaySfx("Reward");
         Close();
+    }
+
+    private void HandleNotEnoughCoin()
+    {
+        SceneUtils.ExecuteInScene(SceneName.LOBBY_SCENE, () =>
+        {
+            Close();
+            NavController.Instance.NavigateTo(ENavType.Shop);
+        });
+
+        SceneUtils.ExecuteInScene(SceneName.GAME_PLAY, () =>
+        {
+            _ = ShopBox.Setup(GameScene.GetPopupHolder(), box => box.Show(BoxAnimationFactory.NoAnim));
+        });
     }
 }

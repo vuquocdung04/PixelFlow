@@ -170,7 +170,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2881229528952627422}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -228,9 +228,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WinBox
   mainPanel: {fileID: 1404481205891805048}
   canvasGroup: {fileID: 6232817985524949102}
-  isAnim: 1
   durationAppeared: 0.3
-  durationSlide: 0.2
+  animationType: 0
   btnReward: {fileID: 2159546109208294479}
   btnDoubleReward: {fileID: 0}
 --- !u!1 &3310845568429919681

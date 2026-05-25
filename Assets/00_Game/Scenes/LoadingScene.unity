@@ -743,6 +743,7 @@ MonoBehaviour:
   audioManager: {fileID: 1730948399}
   localizationManager: {fileID: 1373294505}
   heartManager: {fileID: 1828064796}
+  currencyManager: {fileID: 1828064797}
   loadingBox: {fileID: 783918718}
   toastManager: {fileID: 175757017}
   isSkipOutPhase: 1

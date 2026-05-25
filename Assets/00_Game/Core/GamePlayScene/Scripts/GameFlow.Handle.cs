@@ -20,14 +20,14 @@ public partial class GameFlow
                {
                    box.Show();
                });
-                Debug.LogError("Win");
+                AudioManager.Instance.PlaySfx("sfx-Win");
                 break;
             case GameState.Lose:
-                Debug.LogError("LOSEE");
                 _ = LoseBox.Setup(popupHolder, box =>
                 {
                     box.Show();
                 });
+                AudioManager.Instance.PlaySfx("sfx-Lose");
                 break;
             case GameState.BoosterActive:
                 // open booster UI

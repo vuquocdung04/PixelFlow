@@ -11,7 +11,7 @@ public partial class Shooter
     Tween stateTween;
     Vector3 baseScale;
     bool baseScaleCached;
-
+    private Tween _wobbleTween;
     private readonly IdleState _idleState = new IdleState();
     private readonly CombatState _combatState = new CombatState();
     private readonly BlockedState _blockedState = new BlockedState();
@@ -46,5 +46,12 @@ public partial class Shooter
         };
 
         ChangeState(next);
+    }
+
+    public void PlayRejectWobble()
+    {
+        if (_wobbleTween != null && _wobbleTween.IsActive() && _wobbleTween.IsPlaying()) return;
+        _wobbleTween = transform.DOPunchRotation(new Vector3(0f, 0f, 15f), 0.35f, vibrato: 10, elasticity: 1f);
+
     }
 }

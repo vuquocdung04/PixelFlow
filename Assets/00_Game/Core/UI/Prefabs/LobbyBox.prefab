@@ -497,6 +497,7 @@ GameObject:
   - component: {fileID: 4462673777041284942}
   - component: {fileID: 2998199860842627234}
   - component: {fileID: 3373215653250035256}
+  - component: {fileID: 998148191546134386}
   m_Layer: 5
   m_Name: btnPlay
   m_TagString: Untagged
@@ -606,6 +607,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &998148191546134386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381907039562031622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &400474545324205098
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,6 +1301,7 @@ GameObject:
   - component: {fileID: 9074839926379507398}
   - component: {fileID: 883636534688971973}
   - component: {fileID: 6865764983575009809}
+  - component: {fileID: 4121050417996380983}
   m_Layer: 5
   m_Name: btnAvatar
   m_TagString: Untagged
@@ -1393,6 +1411,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4121050417996380983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3458157428628182627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &3900250673017607631
 GameObject:
   m_ObjectHideFlags: 0
@@ -2401,6 +2435,7 @@ GameObject:
   - component: {fileID: 9078890681464735160}
   - component: {fileID: 7366405872977819775}
   - component: {fileID: 6507896876779392461}
+  - component: {fileID: 5770222981038508362}
   m_Layer: 5
   m_Name: btnSetting
   m_TagString: Untagged
@@ -2510,6 +2545,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5770222981038508362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6624042648486366045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &6731585579851277366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2842,7 +2893,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -144.43188, y: 398}
+  m_AnchoredPosition: {x: -144.43188, y: 228}
   m_SizeDelta: {x: 288.8637, y: 1170.5461}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7494389350552133619
@@ -3061,6 +3112,7 @@ GameObject:
   - component: {fileID: 1988198080313910111}
   - component: {fileID: 7476154713993261643}
   - component: {fileID: 238728432611289978}
+  - component: {fileID: 5940677776718380891}
   m_Layer: 5
   m_Name: btnNoAds
   m_TagString: Untagged
@@ -3136,10 +3188,26 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 8693111292569401196}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5940677776718380891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7091100976733178336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &7221560712013677472
 GameObject:
   m_ObjectHideFlags: 0
@@ -3723,7 +3791,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 144.43188, y: 398}
+  m_AnchoredPosition: {x: 144.43188, y: 228}
   m_SizeDelta: {x: 288.8637, y: 1170.5461}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6924127528097982004
@@ -3899,7 +3967,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8912732291885172810}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

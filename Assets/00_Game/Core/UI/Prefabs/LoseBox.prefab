@@ -306,6 +306,7 @@ GameObject:
   - component: {fileID: 6009368316509659481}
   - component: {fileID: 3403986469257541248}
   - component: {fileID: 6866787214894946638}
+  - component: {fileID: 4617208316985937688}
   m_Layer: 5
   m_Name: btnClose
   m_TagString: Untagged
@@ -414,6 +415,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4617208316985937688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876429263835430928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &1500720248052556415
 GameObject:
   m_ObjectHideFlags: 0
@@ -1333,6 +1350,7 @@ GameObject:
   - component: {fileID: 3573576973734505699}
   - component: {fileID: 6908368053012472458}
   - component: {fileID: 8017786689903238524}
+  - component: {fileID: 1088627465590539896}
   m_Layer: 5
   m_Name: btnRetry
   m_TagString: Untagged
@@ -1442,6 +1460,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1088627465590539896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5829303087172604975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &7344480364710354214
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,7 +1614,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7651317912290111151}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1638,9 +1672,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoseBox
   mainPanel: {fileID: 7619692336919603347}
   canvasGroup: {fileID: 2080593487363625506}
-  isAnim: 1
   durationAppeared: 0.3
-  durationSlide: 0.2
+  animationType: 0
   btnClose: {fileID: 6866787214894946638}
   btnCloseByPanel: {fileID: 7715428641427821496}
   btnRetry: {fileID: 8017786689903238524}

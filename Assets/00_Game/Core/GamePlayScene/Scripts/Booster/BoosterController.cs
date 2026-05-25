@@ -137,9 +137,14 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         switch (type)
         {
             case BoosterType.Booster0:
+                if (!LevelController.Instance.HasShooterBelowRow0())
+                {
+                    ToastManager.Instance.ShowToast("Just tap the shooters directly!");
+                    return false;
+                }
                 if (LevelController.Instance.GetAvailableShooters().Count == 0)
                 {
-                    ToastManager.Instance.ShowToast("No available shooter!");
+                    ToastManager.Instance.ShowToast("No available shooters");
                     return false;
                 }
                 return true;

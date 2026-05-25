@@ -9,7 +9,7 @@ public class PathPrefabs
     public const string MORE_LIVES_BOX = "MoreLivesBox";
     public const string NO_ADS_BOX = "NoAdsBox";
     public const string RANK_BOX = "RankBox";
-    public const string SETTING_BOX = "SettingBox";
+    public const string SETTING_LOBBY_BOX = "SettingLobbyBox";
     public const string SHOP_BOX = "ShopBox";
     public const string WIN_BOX = "WinBox";
 }

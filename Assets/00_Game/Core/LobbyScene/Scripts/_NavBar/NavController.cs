@@ -5,15 +5,16 @@ using UnityEngine;
 
 public class NavController : MonoBehaviour
 {
+    public static NavController Instance { get; private set; }
     [SerializeField] private Sprite sprSelected;
     public List<NavButton> navButtons;
     private Vector2 sizeSelected;
     private Vector2 sizeUnselected;
-
     private NavButton currentNavSelected;
 
     public void Init()
     {
+        Instance = this;
 
         foreach (var nav in navButtons)
         {
@@ -48,7 +49,12 @@ public class NavController : MonoBehaviour
             sizeUnselected = new Vector2(widthUnselected, height);
         }
     }
-
+    public void NavigateTo(ENavType type)
+    {
+        var target = navButtons.Find(n => n.navType == type);
+        if (target == null || target == currentNavSelected) return;
+        UpdateNavButtonState(target);
+    }
     private void InitNavButtonStateWith(ENavType type)
     {
         InitSize();

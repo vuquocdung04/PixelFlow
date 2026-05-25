@@ -6,15 +6,21 @@ public class LobbyScene : MonoBehaviour
 {
     public NavController navController;
     public Button btnHeart;
+
+    public Button btnCoin;
     public async UniTask InitAsync()
-    {           
+    {
         navController.Init();
 
         await PreLoad();
 
         btnHeart.OnClicked(delegate
         {
-            HeartManager.Instance.TryShowHeartOffer(LobbyController.Instance.midCanvas);
+            HeartManager.Instance.TryShowHeartOffer(LobbyController.Instance.topCanvas);
+        });
+        btnCoin.OnClicked(delegate
+        {
+            navController.NavigateTo(ENavType.Shop);
         });
     }
 
@@ -33,9 +39,11 @@ public class LobbyScene : MonoBehaviour
         _ = ShopBox.Setup(holder, _ => shopTcs.TrySetResult());
 
         _ = RankBox.Setup(holder, _ => rankTcs.TrySetResult());
-        
+
         await UniTask.WhenAll(lobbyTcs.Task, shopTcs.Task, rankTcs.Task);
-        
+
         FXManager.Instance.isNextSceneReady = true;
     }
+
+    public void NavigateTo(ENavType type) => navController.NavigateTo(type);
 }

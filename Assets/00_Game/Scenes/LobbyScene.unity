@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 557992811}
   - component: {fileID: 557992810}
   m_Layer: 5
-  m_Name: txtTimer
+  m_Name: count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -411,10 +411,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 36
+  m_fontSize: 42
+  m_fontSizeBase: 42
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 1
   m_fontSizeMax: 50
   m_fontStyle: 0
@@ -477,6 +477,7 @@ GameObject:
   - component: {fileID: 620340175}
   - component: {fileID: 620340172}
   - component: {fileID: 620340174}
+  - component: {fileID: 620340176}
   m_Layer: 5
   m_Name: btnHeart
   m_TagString: Untagged
@@ -605,6 +606,22 @@ MonoBehaviour:
   timerText: {fileID: 1718828929}
   normalHeartIcon: {fileID: 788192903}
   unlimitedHeartIcon: {fileID: 1825616282}
+--- !u!114 &620340176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 620340170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &633117594
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,7 +955,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lobbyScene: {fileID: 2012477221}
   botCanvas: {fileID: 783672048}
-  midCanvas: {fileID: 2036106563}
+  midCanvas: {fileID: 0}
   topCanvas: {fileID: 775356368}
 --- !u!1 &926237317
 GameObject:
@@ -1113,7 +1130,6 @@ RectTransform:
   - {fileID: 1031128070}
   - {fileID: 783672048}
   - {fileID: 401794624}
-  - {fileID: 2036106563}
   - {fileID: 1411968459}
   - {fileID: 775356368}
   m_Father: {fileID: 0}
@@ -1574,7 +1590,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 06:03
+  m_text: 29m52s
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d98d5879ef0ba4ad38d32798d22630cd, type: 2}
   m_sharedMaterial: {fileID: -3828438225811331009, guid: d98d5879ef0ba4ad38d32798d22630cd, type: 2}
@@ -1601,10 +1617,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 1
   m_fontSizeMax: 50
   m_fontStyle: 0
@@ -2268,6 +2284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   navController: {fileID: 401794625}
   btnHeart: {fileID: 620340174}
+  btnCoin: {fileID: 2016692915}
 --- !u!1 &2016692913
 GameObject:
   m_ObjectHideFlags: 0
@@ -2278,8 +2295,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2016692914}
   - component: {fileID: 2016692917}
+  - component: {fileID: 2016692918}
   - component: {fileID: 2016692916}
   - component: {fileID: 2016692915}
+  - component: {fileID: 2016692919}
   m_Layer: 5
   m_Name: btnCoin
   m_TagString: Untagged
@@ -2391,6 +2410,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2016692913}
   m_CullTransparentMesh: 1
+--- !u!114 &2016692918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016692913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be86668949ade9844bab17b359a4a27f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinView
+  txtCoin: {fileID: 557992810}
+--- !u!114 &2016692919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016692913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &2032598314
 GameObject:
   m_ObjectHideFlags: 0
@@ -2528,41 +2576,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2032598314}
   m_CullTransparentMesh: 1
---- !u!1 &2036106562
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2036106563}
-  m_Layer: 5
-  m_Name: Mid
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &2036106563
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2036106562}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 939726155}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2037562989
 GameObject:
   m_ObjectHideFlags: 0

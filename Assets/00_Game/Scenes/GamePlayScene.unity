@@ -4779,6 +4779,8 @@ GameObject:
   - component: {fileID: 963171533}
   - component: {fileID: 963171532}
   - component: {fileID: 963171531}
+  - component: {fileID: 963171534}
+  - component: {fileID: 963171535}
   m_Layer: 5
   m_Name: btnCoin
   m_TagString: Untagged
@@ -4890,6 +4892,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963171529}
   m_CullTransparentMesh: 1
+--- !u!114 &963171534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963171529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be86668949ade9844bab17b359a4a27f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinView
+  txtCoin: {fileID: 2070741457}
+--- !u!114 &963171535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963171529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &972283889
 GameObject:
   m_ObjectHideFlags: 0
@@ -7068,6 +7099,7 @@ GameObject:
   - component: {fileID: 1436519179}
   - component: {fileID: 1436519178}
   - component: {fileID: 1436519180}
+  - component: {fileID: 1436519181}
   m_Layer: 5
   m_Name: btnClose
   m_TagString: Untagged
@@ -7177,6 +7209,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1436519181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1436519176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &1440776037
 GameObject:
   m_ObjectHideFlags: 0
@@ -7433,6 +7481,7 @@ GameObject:
   - component: {fileID: 1494181788}
   - component: {fileID: 1494181787}
   - component: {fileID: 1494181786}
+  - component: {fileID: 1494181789}
   m_Layer: 5
   m_Name: btn
   m_TagString: Untagged
@@ -7542,6 +7591,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1494181784}
   m_CullTransparentMesh: 1
+--- !u!114 &1494181789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1494181784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &1513039820
 GameObject:
   m_ObjectHideFlags: 0
@@ -7714,6 +7779,7 @@ GameObject:
   - component: {fileID: 1534744680}
   - component: {fileID: 1534744679}
   - component: {fileID: 1534744678}
+  - component: {fileID: 1534744681}
   m_Layer: 5
   m_Name: btn
   m_TagString: Untagged
@@ -7823,6 +7889,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1534744676}
   m_CullTransparentMesh: 1
+--- !u!114 &1534744681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534744676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &1579916760
 GameObject:
   m_ObjectHideFlags: 0
@@ -10170,7 +10252,7 @@ GameObject:
   - component: {fileID: 2070741458}
   - component: {fileID: 2070741457}
   m_Layer: 5
-  m_Name: txtTimer
+  m_Name: count
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10307,6 +10389,7 @@ GameObject:
   - component: {fileID: 2076153894}
   - component: {fileID: 2076153893}
   - component: {fileID: 2076153895}
+  - component: {fileID: 2076153896}
   m_Layer: 5
   m_Name: btnSetting
   m_TagString: Untagged
@@ -10416,6 +10499,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2076153896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2076153891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &2077064455
 GameObject:
   m_ObjectHideFlags: 0
@@ -10497,6 +10596,7 @@ GameObject:
   - component: {fileID: 2077141869}
   - component: {fileID: 2077141868}
   - component: {fileID: 2077141870}
+  - component: {fileID: 2077141871}
   m_Layer: 5
   m_Name: btn
   m_TagString: Untagged
@@ -10606,6 +10706,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2077141871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077141866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312753d954ffccf47ac5826bf4f47ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonScalePress
+  pressScale: 0.8
+  pressDuration: 0.08
+  releaseDuration: 0.15
+  releaseEase: 27
 --- !u!1 &2085686344
 GameObject:
   m_ObjectHideFlags: 0

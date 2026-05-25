@@ -38,9 +38,6 @@ public class BoosterItem : MonoBehaviour
     private void Start() => btnMain.OnClicked(OnButtonClicked);
     public void SetSize(float size) => iconBooster.FitToTargetHeight(size);
 
-    /// <summary>
-    /// Đổi state. force=true để bypass rule (init, load save game).
-    /// </summary>
     public bool ChangeState(BoosterState next, bool force = false)
     {
         if (!force && CurrentState != next

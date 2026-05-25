@@ -25,11 +25,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3a256ad0d81a14f32b826a4286b4049e
-    m_Address: SettingBox
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3baa788837b7740f18476516c07013e4
     m_Address: NoAdsBox
     m_ReadOnly: 0
@@ -67,6 +62,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: daef24bbacefc43f7a9459fd822fb763
     m_Address: RankBox
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e777f1cb797489e45a7050d50cd9e008
+    m_Address: SettingLobbyBox
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

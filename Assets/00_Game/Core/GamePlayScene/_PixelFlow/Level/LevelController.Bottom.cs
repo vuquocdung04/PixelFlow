@@ -472,7 +472,7 @@ public partial class LevelController
         {
             if (candidates.Count == 0) break;
 
-            int pickIdx = UnityEngine.Random.Range(0, candidates.Count);
+            int pickIdx = Random.Range(0, candidates.Count);
             var partner = candidates[pickIdx];
             candidates.RemoveAt(pickIdx);
 
@@ -507,4 +507,5 @@ public partial class LevelController
         }
         return false;
     }
+    
 }

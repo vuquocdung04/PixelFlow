@@ -8,6 +8,7 @@ public class GameManager : ManagerSingleton<GameManager>
     [SerializeField] private AudioManager audioManager;
     public LocalizationManager localizationManager;
     public HeartManager heartManager;
+    public CurrencyManager currencyManager;
     [SerializeField] private LoadingBox loadingBox;
     public ToastManager toastManager;
 
@@ -34,6 +35,7 @@ public class GameManager : ManagerSingleton<GameManager>
         fxManager.Init();
         audioManager.Init();
         heartManager.Init();
+        currencyManager.Init();
         toastManager.Init();
         await load50Task;
         await loadingBox.LoadingAsync(1f, loadingStepDuration);

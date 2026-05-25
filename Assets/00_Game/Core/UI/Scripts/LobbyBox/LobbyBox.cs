@@ -21,7 +21,7 @@ public class LobbyBox : BaseBox<LobbyBox>
     protected override void Init()
     {
         var holder = LobbyController.Instance.topCanvas;
-        btnSetting.OnClicked(delegate { _ = SettingBox.Setup(holder, box => { box.Show(); }); });
+        btnSetting.OnClicked(delegate { _ = SettingLobbyBox.Setup(holder, box => { box.Show(); }); });
         btnAvatar.OnClicked(delegate { });
         btnNoAds.OnClicked(delegate { _ = NoAdsBox.Setup(holder, box => { box.Show(); }); });
         btnPlay.OnClicked(delegate
