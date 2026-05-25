@@ -742,7 +742,7 @@ MonoBehaviour:
   fxManager: {fileID: 2062787737}
   audioManager: {fileID: 1730948399}
   localizationManager: {fileID: 1373294505}
-  livesManager: {fileID: 1828064796}
+  heartManager: {fileID: 1828064796}
   loadingBox: {fileID: 783918718}
   toastManager: {fileID: 175757017}
   isSkipOutPhase: 1
@@ -2064,8 +2064,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1828064795}
   - component: {fileID: 1828064796}
+  - component: {fileID: 1828064797}
   m_Layer: 0
-  m_Name: LivesManager
+  m_Name: HeartManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2098,9 +2099,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3de7576dd73bb4cbfb244d6a81ff16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LivesManager
-  maxHearts: 5
-  timeToNextHeart: 0
-  debugUnlimitedEnd: 
+--- !u!114 &1828064797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828064794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6e17b19e17f03b44b522ad5ff5d1b6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CurrencyManager
 --- !u!1 &1980457470
 GameObject:
   m_ObjectHideFlags: 0

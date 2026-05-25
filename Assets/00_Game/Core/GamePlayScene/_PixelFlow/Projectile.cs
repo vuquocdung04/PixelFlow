@@ -3,6 +3,7 @@ using DG.Tweening;
 
 public class Projectile : MonoBehaviour
 {
+    public AudioClip hitSFX;
     public float speed = 20f;
     private Block target;
     [SerializeField] private TrailRenderer trail;
@@ -29,7 +30,7 @@ public class Projectile : MonoBehaviour
         if (target != null) target.Break();
         target = null;
         if (trail != null) trail.Clear();
-
+        AudioManager.Instance.PlaySfx(hitSFX);
         SimplePool2.Despawn(gameObject);
     }
 }

@@ -19,7 +19,6 @@ public class AudioConfig
     [Header("Pitch Randomization")]
     [Range(0.5f, 2f)] public float minPitch = 0.7f;
     [Range(0.5f, 2f)] public float maxPitch = 1.1f;
-
     public AudioClip GetRandomClip()
     {
         if (variants == null || variants.Count == 0)

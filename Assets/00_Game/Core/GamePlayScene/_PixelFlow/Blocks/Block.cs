@@ -41,7 +41,7 @@ public partial class Block : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         seq.Append(transform.DOScale(originalScale * 1.3f, 0.1f).SetEase(Ease.OutBack));
-        seq.Append(transform.DOScale(Vector3.zero, 0.15f).SetEase(Ease.InBack));
+        seq.Append(transform.DOScale(Vector3.zero, 0.1f).SetEase(Ease.InBack));
 
         seq.OnComplete(() =>
         {

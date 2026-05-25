@@ -20,16 +20,16 @@ public class KeepPlayingBox : BaseBox<KeepPlayingBox>
 
         btnBuyTime.OnClicked(delegate
         {
-            // Logic add  time
-            bool trySubtractCoin = ConsumableManager.TrySubtractCoin(cost[countedShow]);
-            if (trySubtractCoin)
-            {
-                Close();
-            }
-            else
-            {
-                //NOTE: show shopBox
-            }
+            // // Logic add  time
+            // bool trySubtractCoin = ConsumableManager.TrySubtractCoin(cost[countedShow]);
+            // if (trySubtractCoin)
+            // {
+            //     Close();
+            // }
+            // else
+            // {
+            //     //NOTE: show shopBox
+            // }
         });
     }
 

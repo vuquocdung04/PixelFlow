@@ -24,19 +24,14 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 4dcdba26195d64e31ae5f152166642a7, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
-  - key: FreezeBegin
+  - key: Main Menu Music (Cover) 2
     variants:
-    - {fileID: 8300000, guid: f24179e8e4ffdb949913535ad327fb9e, type: 3}
+    - {fileID: 8300000, guid: e332c7cae8fa9d8498b92a76697fe83d, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
-  - key: FreezeEnd
+  - key: Normal Level Music (Cover) 1
     variants:
-    - {fileID: 8300000, guid: 87df63f7fe596ac438fd2f376b11f2a0, type: 3}
-    minPitch: 0.7
-    maxPitch: 1.1
-  - key: sfx-GiftboxOpen
-    variants:
-    - {fileID: 8300000, guid: 9fa7e3f5b4ab7934e86acedef7a8594b, type: 3}
+    - {fileID: 8300000, guid: cb291565de22ff944bc56f5b8627c349, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
   - key: sfx-Lose
@@ -44,19 +39,9 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 9df7fd47a5259de40b1e64282b9b777b, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
-  - key: sfx-PopupAppear
-    variants:
-    - {fileID: 8300000, guid: baa0a940b70b90a4486189e6cf8d4a38, type: 3}
-    minPitch: 0.7
-    maxPitch: 1.1
   - key: sfx-RewardGiftbox
     variants:
     - {fileID: 8300000, guid: f0fe111667b857e4f8fb50a2c9c5ff48, type: 3}
-    minPitch: 0.7
-    maxPitch: 1.1
-  - key: sfx-TapChest
-    variants:
-    - {fileID: 8300000, guid: 8b5462d56cafbfb42967ced6eb7a9246, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
   - key: sfx-Win
@@ -67,28 +52,5 @@ MonoBehaviour:
   - key: Toast
     variants:
     - {fileID: 8300000, guid: 5ed60df51f85948c185d3f974d76333e, type: 3}
-    minPitch: 0.7
-    maxPitch: 1.1
-  - key: GamePlay
-    variants:
-    - {fileID: 8300000, guid: 9a5447c852eee1848b728ebfef50851c, type: 3}
-    - {fileID: 8300000, guid: 8ea35f1094b76fc4388ebabcf24ac0bf, type: 3}
-    - {fileID: 8300000, guid: 7fd45afc8ba984f439b9c4719c13ae84, type: 3}
-    - {fileID: 8300000, guid: 9e88f6bdbd94e4641b7d4cebc582aee4, type: 3}
-    - {fileID: 8300000, guid: 46fa6d83a1c66ad43900b870978c3a5b, type: 3}
-    minPitch: 0.7
-    maxPitch: 1.1
-  - key: GetStar
-    variants:
-    - {fileID: 8300000, guid: 8acafe5dcd8e4dd43bbd65bae5a24f6b, type: 3}
-    - {fileID: 8300000, guid: 47096f9bf45f6cd4fa8a634e4af1c50c, type: 3}
-    - {fileID: 8300000, guid: 1bbf6a06f6e6bda488fb8d955279d9d2, type: 3}
-    - {fileID: 8300000, guid: 71130bbe396c5544daf5a759c3ca3eda, type: 3}
-    minPitch: 0.7
-    maxPitch: 1.1
-  - key: Lobby
-    variants:
-    - {fileID: 8300000, guid: e2db22d6aa4ad124c96894b78118d1b1, type: 3}
-    - {fileID: 8300000, guid: 6adb8b409662f4f418402ae38a7691a8, type: 3}
     minPitch: 0.7
     maxPitch: 1.1

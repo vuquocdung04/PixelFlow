@@ -20,7 +20,7 @@ public class LoseBox : BaseBox<LoseBox>
         });
         btnRetry.OnClicked(delegate
         {
-            var heartAvaiable = ConsumableManager.TryUseHeart();
+            var heartAvaiable = HeartManager.Instance.TryUseHeart();
             FXManager.Instance.LoadSceneWithIrisWipe(heartAvaiable ? SceneName.GAME_PLAY : SceneName.LOBBY_SCENE);
         });
         

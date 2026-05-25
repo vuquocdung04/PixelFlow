@@ -14,16 +14,7 @@ public class LobbyScene : MonoBehaviour
 
         btnHeart.OnClicked(delegate
         {
-            if (ConsumableManager.TotalHeart() >= LivesManager.Instance.maxHearts || UseProfile.IsUnlimitedHeart)
-            {
-                ToastManager.Instance.ShowToast("Heart is full");
-                return;
-            }
-
-            _ = MoreLivesBox.Setup(LobbyController.Instance.midCanvas, box =>
-            {
-                box.Show();
-            });
+            HeartManager.Instance.TryShowHeartOffer(LobbyController.Instance.midCanvas);
         });
     }
 

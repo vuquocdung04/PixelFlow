@@ -6409,7 +6409,6 @@ MonoBehaviour:
   cannonPrefab: {fileID: 4307306271236495625, guid: 505c4b67749abbc46ac8a3208ce46d2a, type: 3}
   cannonSpawnPos: {x: 0, y: 2, z: -3}
   boosterHolder: {fileID: 1860653571}
-  targetSize: 150
   panelRoot: {fileID: 1860653571}
   hiddenPosition: {x: 0, y: -300}
   sfxPopup: {fileID: 950072832}

@@ -6,95 +6,77 @@ using UnityEngine;
 public class HeartView : MonoBehaviour
 {
     [Header("Visual Components")]
-    [SerializeField] private TextMeshProUGUI heartCountText; 
-    [SerializeField] private TextMeshProUGUI timerText;     
-    
+    [SerializeField] private TextMeshProUGUI heartCountText;
+    [SerializeField] private TextMeshProUGUI timerText;
+
     [Header("Optional Icons")]
-    [SerializeField] private GameObject normalHeartIcon;   
+    [SerializeField] private GameObject normalHeartIcon;
     [SerializeField] private GameObject unlimitedHeartIcon;
 
-    private int lastTimerSeconds = -1;
+    private int lastUpdateKey = -1;
 
     private void OnEnable()
     {
-        this.RegisterListener(EventID.CHANGE_HEART,OnHeartChanged );
+        this.RegisterListener(EventID.CHANGE_HEART, OnHeartChanged);
         UpdateHeartStateVisuals();
     }
 
     private void OnDisable()
     {
-        this.RemoveListener(EventID.CHANGE_HEART,OnHeartChanged);
+        this.RemoveListener(EventID.CHANGE_HEART, OnHeartChanged);
     }
 
-    private void OnHeartChanged(object param)
-    {
-        UpdateHeartStateVisuals();
-    }
+    private void OnHeartChanged(object param) => UpdateHeartStateVisuals();
+
     private void UpdateHeartStateVisuals()
     {
-        if (LivesManager.Instance == null) return;
+        if (HeartManager.Instance == null) return;
 
         bool isUnlimited = UseProfile.IsUnlimitedHeart;
-        
+
         if (normalHeartIcon != null) normalHeartIcon.SetActive(!isUnlimited);
         if (unlimitedHeartIcon != null) unlimitedHeartIcon.SetActive(isUnlimited);
-        
         if (heartCountText != null) heartCountText.gameObject.SetActive(!isUnlimited);
 
         if (!isUnlimited)
         {
-            int currentHearts = UseProfile.Heart;
-            int maxHearts = LivesManager.Instance.GetMaxHearts();
-            heartCountText.text = $"{currentHearts}";
+            int hearts = UseProfile.Heart;
+            int max = HeartManager.Instance.MaxHearts;
+            heartCountText.text = $"{hearts}";
 
-            if (currentHearts >= maxHearts)
+            if (hearts >= max)
             {
-                timerText.text = "FULL";
-                lastTimerSeconds = -2;
+                timerText.text = HeartManager.FULL_LABEL;
+                lastUpdateKey = -2;
             }
         }
     }
+
     private void Update()
     {
-        bool isUnlimited = UseProfile.IsUnlimitedHeart;
+        TimeSpan time;
+        if (UseProfile.IsUnlimitedHeart)
+        {
+            time = HeartManager.Instance.GetUnlimitedTimeRemaining();
+        }
+        else if (UseProfile.Heart < HeartManager.Instance.MaxHearts)
+        {
+            time = TimeSpan.FromSeconds(HeartManager.Instance.GetTimeToNextHeart());
+        }
+        else
+        {
+            return;
+        }
 
-        if (isUnlimited)
-        {
-            TimeSpan timeRemain = LivesManager.Instance.GetUnlimitedTimeRemaining();
-            UpdateUnlimitedTimerText(timeRemain);
-        }
-        else if (UseProfile.Heart < LivesManager.Instance.GetMaxHearts())
-        {
-            double timeToNext = LivesManager.Instance.GetTimeToNextHeart();
-            UpdateNormalTimerText((int)timeToNext);
-        }
+        UpdateTimerText(time);
     }
-    private void UpdateUnlimitedTimerText(TimeSpan time)
+
+    private void UpdateTimerText(TimeSpan time)
     {
-        int currentTotalSeconds = (int)time.TotalSeconds;
+        int updateKey = time.TotalHours >= 1 ? (int)time.TotalMinutes : (int)time.TotalSeconds;
+        if (updateKey == lastUpdateKey) return;
+        lastUpdateKey = updateKey;
 
-        if (currentTotalSeconds != lastTimerSeconds)
-        {
-            lastTimerSeconds = currentTotalSeconds;
-
-            if (time.TotalSeconds <= 0)
-            {
-                timerText.text = "00:00:00";
-                return;
-            }
-
-            timerText.text = time.TotalDays >= 1 ? $"{(int)time.TotalDays}d {time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}" : $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
-        }
-    }
-    private void UpdateNormalTimerText(int totalSeconds)
-    {
-        if (totalSeconds != lastTimerSeconds)
-        {
-            lastTimerSeconds = totalSeconds;
-            
-            int mins = totalSeconds / 60;
-            int secs = totalSeconds % 60;
-            timerText.text = $"{mins:D2}:{secs:D2}";
-        }
+        timerText.text = TimeManager.Format(time);
     }
 }
