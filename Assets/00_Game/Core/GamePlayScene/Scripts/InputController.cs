@@ -71,9 +71,4 @@ public class InputController : StaffSingleton<InputController>
 
         _currentMode.HandleClick(hit);
     }
-
-    public void PostEvent(object eventID)
-    {
-        this.PostEvent((EventID)eventID);
-    }
 }
