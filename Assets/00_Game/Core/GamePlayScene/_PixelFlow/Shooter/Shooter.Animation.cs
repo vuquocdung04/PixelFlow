@@ -6,6 +6,7 @@ public enum ShooterAnimState { Idle, Combat, Blocked }
 public partial class Shooter
 {
     [Space(10), Header("Animation")]
+    public AudioClip blockSFX;
     public float jumpDuration = 0.5f;
     public ShooterAnimState currentAnimState = ShooterAnimState.Idle;
     Tween stateTween;
@@ -51,7 +52,7 @@ public partial class Shooter
     public void PlayRejectWobble()
     {
         if (_wobbleTween != null && _wobbleTween.IsActive() && _wobbleTween.IsPlaying()) return;
-        _wobbleTween = transform.DOPunchRotation(new Vector3(0f, 0f, 15f), 0.35f, vibrato: 10, elasticity: 1f);
-
+        _wobbleTween = transform.DOPunchRotation(new Vector3(0f, 0f, 10f), 0.35f, vibrato: 10, elasticity: 1f);
+        AudioManager.Instance.PlaySfx(blockSFX);
     }
 }

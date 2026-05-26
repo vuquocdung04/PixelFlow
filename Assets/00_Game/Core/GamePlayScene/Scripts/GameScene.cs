@@ -15,7 +15,7 @@ public class GameScene : StaffSingleton<GameScene>
     {
         btnSetting.OnClicked(delegate
         {
-            _ = SettingLobbyBox.Setup(popupHolder, box => box.Show());
+            _ = SettingGameBox.Setup(popupHolder, box => box.Show());
         });
 
         btnCoin.OnClicked(delegate

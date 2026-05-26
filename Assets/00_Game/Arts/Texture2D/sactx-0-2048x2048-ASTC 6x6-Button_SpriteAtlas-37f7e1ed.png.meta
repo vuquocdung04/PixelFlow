@@ -153,7 +153,7 @@ TextureImporter:
         width: 487
         height: 220
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 100, y: 75, z: 100, w: 75}
       customData: 
       outline: []
@@ -162,6 +162,50 @@ TextureImporter:
       bones: []
       spriteID: 818e1a298cbec004096bd403d753da98
       internalID: -598021795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Button_SpriteAtlas-37f7e1ed_2
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 1138
+        width: 487
+        height: 220
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 80, y: 75, z: 80, w: 72}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 435d7d0b2f2bf4f84a0377b5c993f444
+      internalID: 2044388910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Button_SpriteAtlas-37f7e1ed_3
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 1591
+        width: 487
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 80, y: 75, z: 80, w: 72}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8aa524d1623c34c02a0d81deafc031cb
+      internalID: -268671714
       vertices: []
       indices: 
       edges: []
@@ -182,6 +226,8 @@ TextureImporter:
     nameFileIdTable:
       sactx-0-2048x2048-ASTC 6x6-Button_SpriteAtlas-37f7e1ed_0: -1688346851
       sactx-0-2048x2048-ASTC 6x6-Button_SpriteAtlas-37f7e1ed_1: -598021795
+      sactx-0-2048x2048-ASTC 6x6-Button_SpriteAtlas-37f7e1ed_2: 2044388910
+      sactx-0-2048x2048-ASTC 6x6-Button_SpriteAtlas-37f7e1ed_3: -268671714
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
