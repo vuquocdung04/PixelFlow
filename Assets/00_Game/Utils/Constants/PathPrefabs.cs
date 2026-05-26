@@ -1,6 +1,7 @@
 // AUTO-GENERATED CODE. DO NOT EDIT MANUALLY.
 public class PathPrefabs
 {
+    public const string AVATAR_BOX = "AvatarBox";
     public const string BOOSTER_UNLOCK_BOX = "BoosterUnlockBox";
     public const string BUY_BOOSTER_BOX = "BuyBoosterBox";
     public const string KEEP_PLAYING_BOX = "KeepPlayingBox";

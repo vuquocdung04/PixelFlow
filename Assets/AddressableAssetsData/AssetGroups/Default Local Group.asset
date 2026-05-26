@@ -3335,6 +3335,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f0aa10ad5072466096cf546797ede90
+    m_Address: AvatarBox
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6f2b99ffd381f2b4fb2774133eefc469
     m_Address: SwordSlashThinRed
     m_ReadOnly: 0

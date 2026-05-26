@@ -1133,6 +1133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localizationDataBase: {fileID: 11400000, guid: 13f72042c9df5bc4694b9fc94c5b6d5f, type: 2}
   audioData: {fileID: 11400000, guid: 5f74a99ad3c90864a83b736ffb298fef, type: 2}
+  avatarData: {fileID: 11400000, guid: cd11aad89e6d048fba020977c6af6966, type: 2}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -11,24 +10,33 @@ public static class GamePrefs
     private static Dictionary<string, object> cache = new();
 
     private static bool isDirty = false;
-    public static bool isSaving = false;
     public static string SavePath => Application.persistentDataPath + "/game_data.json";
 
-    public static void Init()
+    public static UniTask Init()
     {
         if (File.Exists(SavePath))
         {
             try
             {
                 string json = File.ReadAllText(SavePath);
-                cache = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                var loaded = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                cache = loaded ?? new Dictionary<string, object>();
             }
-            catch
+            catch (Exception e)
             {
-                Debug.LogError($"File not read");
-                cache = new();
+                Debug.LogError($"[GamePrefs] Load error: {e.Message}");
+                cache = new Dictionary<string, object>();
             }
         }
+        else
+        {
+            cache = new Dictionary<string, object>();
+        }
+
+        Debug.Log($"[GamePrefs] Init done. Loaded {cache.Count} keys from {SavePath}");
+
+        StartAutoSaveLoop();
+        return UniTask.CompletedTask;
     }
 
     public static void Set<T>(string key, T value)
@@ -65,57 +73,39 @@ public static class GamePrefs
         if (cache.Remove(key)) isDirty = true;
     }
 
-    public static void SaveNow()
+    public static void Save()
     {
-        if (!isDirty || isSaving) return;
-        _ = ExecuteSaveAsync();
-    }
-
-    private static async Task ExecuteSaveAsync()
-    {
-        isSaving = true;
-        isDirty = false;
-
+        if (!isDirty) return;
         try
         {
-            string jsonToSave = JsonConvert.SerializeObject(cache);
-
-            await Awaitable.BackgroundThreadAsync();
-            File.WriteAllText(SavePath, jsonToSave);
+            string json = JsonConvert.SerializeObject(cache);
+            File.WriteAllText(SavePath, json);
+            isDirty = false;
         }
         catch (Exception e)
         {
-            Debug.LogError("Lỗi khi ghi file: " + e.Message);
-            isDirty = true;
-        }
-        finally
-        {
-            await Awaitable.MainThreadAsync();
-            isSaving = false;
+            Debug.LogError("[GamePrefs] Save error: " + e.Message);
         }
     }
 
-    public static async void StartAutoSaveLoop(CancellationToken token)
+    private static async void StartAutoSaveLoop()
     {
+        var token = Application.exitCancellationToken;
+
         try
         {
             while (!token.IsCancellationRequested)
             {
                 await Awaitable.WaitForSecondsAsync(10f, token);
-
-                if (isDirty && !isSaving)
-                {
-                    await ExecuteSaveAsync();
-                }
+                if (isDirty) Save();
             }
         }
         catch (OperationCanceledException)
         {
-            if (isDirty) SaveNow();
+            if (isDirty) Save();
         }
     }
 }
-
 
 public class PrefVar<T>
 {

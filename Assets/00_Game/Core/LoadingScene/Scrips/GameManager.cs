@@ -22,13 +22,11 @@ public class GameManager : ManagerSingleton<GameManager>
     }
     private async UniTaskVoid Init()
     {
-        UseProfile.Heart.Value = 4;
-        UseProfile.TimeLastOverHeart = TimeManager.GetCurrentTime();
-        
         Application.targetFrameRate = 60;
         loadingBox.Init();
-
         var load50Task = loadingBox.LoadingAsync(0.5f, loadingStepDuration);
+        await GamePrefs.Init();
+        Test();
         //firebaseSetup.Init();
         //await UniTask.WaitUntil(() => firebaseSetup.IsActiveRemote);
         dataRepo.Init();
@@ -44,5 +42,11 @@ public class GameManager : ManagerSingleton<GameManager>
 
         //Init final
         fxManager.LoadSceneWithIrisWipe(SceneName.LOBBY_SCENE, isSkipOutPhase);
+    }
+
+    private void Test()
+    {
+        UseProfile.Heart.Value = 4;
+        UseProfile.TimeLastOverHeart = TimeManager.GetCurrentTime();
     }
 }

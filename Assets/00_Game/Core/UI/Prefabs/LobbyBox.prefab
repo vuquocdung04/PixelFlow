@@ -3967,7 +3967,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8912732291885172810}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -4021,6 +4021,7 @@ MonoBehaviour:
   btnAvatar: {fileID: 6865764983575009809}
   btnNoAds: {fileID: 238728432611289978}
   btnPlay: {fileID: 3373215653250035256}
+  iconAvatar: {fileID: 883636534688971973}
 --- !u!114 &9009709743269236082
 MonoBehaviour:
   m_ObjectHideFlags: 0

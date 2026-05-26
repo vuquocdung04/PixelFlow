@@ -11,6 +11,8 @@ public static class UseProfile
     public static readonly PrefVar<int> Booster2 = new(StringHelper.BOOSTER_2, DefaultBoosterAmount);
     public static readonly PrefVar<int> Coin = new(StringHelper.COIN, DefaultStartingCoins);
 
+    public static readonly PrefVar<int> AvatarId = new(StringHelper.AVATAR_ID, 0);
+
     // --- SETTINGS ---
     public static readonly PrefVar<bool> OnMusic = new(StringHelper.ONOFF_MUSIC, true);
     public static readonly PrefVar<bool> OnSound = new(StringHelper.ONOFF_SOUND, true);

@@ -10,6 +10,8 @@ public class StringHelper
 
     public const string LEVEL = "Level";
 
+    public const string AVATAR_ID = "AVATAR_ID";
+
     // Booster
     public const string BOOSTER_0 = "PickFoodCount";
     public const string BOOSTER_1 = "SwapFoodPositionsCount";
@@ -29,15 +31,15 @@ public class StringHelper
     public const string REMOVE_ADS = "REMOVE_ADS";
 
     public const string LAST_TIME_LOGIN = "LastTimeLogin";
-    
-    
+
+
     public const string IS_BACK_LOBBY_OPTION = "IS_BACK_LOBBY_OPTION";
 
     // Done Tut booster 
     public const string IS_DONE_TUT_BOOSTER_0 = "IS_DONE_TUT_BOOSTER_SWAP";
     public const string IS_DONE_TUT_BOOSTER_1 = "IS_DONE_TUT_BOOSTER_PICK";
     public const string IS_DONE_TUT_BOOSTER_2 = "IS_DONE_TUT_BOOSTER_FREEZE";
-    
+
     /// Remote Config Key
     public const string KEY_STARTING_COINS = "initial_coin";
 
