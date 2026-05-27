@@ -911,12 +911,6 @@ MonoBehaviour:
   shootPoint: {fileID: 4555982853732589}
   shootFx: {fileID: 0}
   projectilePrefab: {fileID: 4320118743191357118, guid: d740ba78d8c18407a972c17e88fe713d, type: 3}
-  introDelay: 0.2
-  rotateDuration: 0.3
-  rotateEase: 27
-  intraRowDelay: 0.01
-  interRowDelay: 0.1
-  endDelay: 0.3
 --- !u!1 &1715742016918570
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,7 +14,7 @@ public class Booster2Cannon : MonoBehaviour
     public async UniTask FireAt(List<Block> targets)
     {
         transform.localScale = Vector3.zero;
-        await transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).AsyncWaitForCompletion();
+        await transform.DOScale(Vector3.one * 1.3f, 0.25f).SetEase(Ease.OutBack).AsyncWaitForCompletion();
         await transform.DORotate(new Vector3(0f, 180f, 0f), 0.2f, RotateMode.LocalAxisAdd)
                        .SetEase(Ease.OutBack)
                        .AsyncWaitForCompletion();
@@ -36,7 +36,7 @@ public class Booster2Cannon : MonoBehaviour
 
                 target.Claim();
                 Projectile p = SimplePool2.Spawn(projectilePrefab, shootPoint.position, Quaternion.identity);
-                p.Fire(target);
+                p.FireJumpBooster(target);
             }
 
             await UniTask.Delay(TimeSpan.FromSeconds(0.05f));

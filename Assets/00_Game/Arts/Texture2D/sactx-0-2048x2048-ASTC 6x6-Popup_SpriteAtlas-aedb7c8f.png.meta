@@ -175,7 +175,7 @@ TextureImporter:
         width: 311
         height: 310
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 100, y: 100, z: 100, w: 100}
       customData: 
       outline: []
@@ -184,6 +184,72 @@ TextureImporter:
       bones: []
       spriteID: dda7a04b0fecd0e4faa418f7df01bc7b
       internalID: -694776017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_3
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 1
+        width: 311
+        height: 371
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 90, y: 94, z: 90, w: 205}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ded3e95f4dcfd4290a9061c0c6500e05
+      internalID: 1742488361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_4
+      rect:
+        serializedVersion: 2
+        x: 790
+        y: 376
+        width: 312
+        height: 371
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 90, y: 94, z: 90, w: 205}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ff430e67e44845b5815751ec069fb04
+      internalID: -701093977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_5
+      rect:
+        serializedVersion: 2
+        x: 931
+        y: 1
+        width: 311
+        height: 371
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 90, y: 94, z: 90, w: 205}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0f4351c32197b4e08bf66ae0d2359fc7
+      internalID: -412210633
       vertices: []
       indices: 
       edges: []
@@ -205,6 +271,9 @@ TextureImporter:
       sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_0: 1268712739
       sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_1: -1906617344
       sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_2: -694776017
+      sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_3: 1742488361
+      sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_4: -701093977
+      sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_5: -412210633
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
