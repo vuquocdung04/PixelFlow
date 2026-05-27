@@ -48,6 +48,6 @@ public class GameScene : StaffSingleton<GameScene>
             Instance.darkPanel.gameObject.SetActive(false);
         }
     }
-
+    public static Transform GetCoinBar() => Instance.btnCoin.transform;
     public static Transform GetPopupHolder() => Instance.popupHolder;
 }

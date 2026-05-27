@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8928704899702876452
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9118066856003966706}
+  - component: {fileID: 4914745177928741464}
+  - component: {fileID: 2139813145170573173}
+  m_Layer: 5
+  m_Name: CoinFxFly
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9118066856003966706
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8928704899702876452}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 28.51, y: 4.88957, z: -6.38534}
+  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &4914745177928741464
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8928704899702876452}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 178439135
+  m_SortingLayer: 1
+  m_SortingOrder: 100
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: f9ad68475d4be004299588e237e92d89, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!114 &2139813145170573173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8928704899702876452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93a5a418225d4af8a4d8ce2b3094b1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinFlyFx
+  spriteRenderer: {fileID: 4914745177928741464}
+  sprites:
+  - {fileID: 21300000, guid: f9ad68475d4be004299588e237e92d89, type: 3}
+  - {fileID: 21300000, guid: d4926f1f38125b042b58fe732847054f, type: 3}
+  - {fileID: 21300000, guid: 2627fa58297d61e488374e7dc950fc21, type: 3}
+  - {fileID: 21300000, guid: a21ded6802372914c94e280777447170, type: 3}
+  - {fileID: 21300000, guid: 6e266ebb0687dab4092cbb229bb843c7, type: 3}
+  - {fileID: 21300000, guid: edd90a9038f60d44e900b72ae21893a2, type: 3}
+  - {fileID: 21300000, guid: 2d6a7c86b2ceff64e97868f0fc42c221, type: 3}
+  - {fileID: 21300000, guid: 8ed0dc640f2fdad4c90ee6257bad4c82, type: 3}
+  - {fileID: 21300000, guid: 001d72f80ce694244bb7368bf80f84a2, type: 3}
+  - {fileID: 21300000, guid: ae937b7d0a814e245b570361ba8e6b75, type: 3}
+  - {fileID: 21300000, guid: 49d4a660a5c6c024281206f11ebd550e, type: 3}
+  - {fileID: 21300000, guid: dac575ad06ba0974181245eb69e20867, type: 3}
+  - {fileID: 21300000, guid: d3028a667decdf64fba647726f585692, type: 3}
+  - {fileID: 21300000, guid: 104dc092d1b8e1e44bc1e92e312851a6, type: 3}
+  - {fileID: 21300000, guid: 6428ce8c99ef95840bd2ec0e2890af1e, type: 3}
+  - {fileID: 21300000, guid: 4e8b105bc34ca6b4e9d3fafb8d3ad31c, type: 3}
+  - {fileID: 21300000, guid: a7d055fb80f12c4448c0cc18ae41bcf8, type: 3}
+  - {fileID: 21300000, guid: 47c402dede2e6b14d80f5b6c935a8fb8, type: 3}
+  - {fileID: 21300000, guid: c7ac53ce53742e04db73c35c848c5e50, type: 3}
+  - {fileID: 21300000, guid: 8dc17369a06de8443a14a4369de6cc31, type: 3}
+  - {fileID: 21300000, guid: a8625db885fa2fb44a7c452be7aad04c, type: 3}
+  - {fileID: 21300000, guid: f1a5377c3247aee4689f96e399a2d433, type: 3}
+  - {fileID: 21300000, guid: de6016a24553cd944a3fa4694bd1c5d8, type: 3}
+  - {fileID: 21300000, guid: c86fa6b0394aed94e80fb468a3ec8888, type: 3}
+  frameDuration: 0.05
+  scaleUpDuration: 0.2
+  flyDelay: 0.1
+  moveDuration: 0.5

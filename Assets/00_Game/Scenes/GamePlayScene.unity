@@ -6332,6 +6332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popupHolder: {fileID: 2124169858}
+  winHolder: {fileID: 0}
   darkPanel: {fileID: 482042480}
   txtLevelDisplay: {fileID: 823680857}
   btnSetting: {fileID: 2076153895}

@@ -35,11 +35,17 @@ public partial class GameFlow : StaffSingleton<GameFlow>
         RequestResume();
     }
 
-
+    [Button("ShowWin")]
+    private void TestingState3()
+    {
+        _ = WinBox.Setup(popupHolder, box =>
+{
+   box.Show();
+});
+    }
     public override void Init()
     {
         popupHolder = GameScene.GetPopupHolder();
-
         OnStateEntered += HandleStateEntered;
         OnStateExited += HandleStateExited;
 

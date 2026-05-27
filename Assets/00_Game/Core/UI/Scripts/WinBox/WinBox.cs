@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class WinBox : BaseBox<WinBox>
 {
     public Button btnReward;
-    public Button btnDoubleReward;
+
+    public Transform coinTarget;
 
     [Header("Progress")]
     public Image imageIconFill;
@@ -17,12 +18,30 @@ public class WinBox : BaseBox<WinBox>
     [Header("Sprites (theo thứ tự unlock)")]
     public Sprite[] propSprites;
 
+    Tween _coinTargetPopTween;
+
     protected override void Init()
     {
         btnReward.OnClicked(delegate
         {
-            FXManager.Instance.LoadSceneWithIrisWipe(SceneName.GAME_PLAY);
+            btnReward.interactable = false;
+
+            _ = FXManager.Instance.SpawnCoinFly(
+                btnReward.transform.position,
+                coinTarget,
+                onEachArrived: PopCoinTarget,
+                onComplete: () =>
+                {
+                    FXManager.Instance.LoadSceneWithIrisWipe(SceneName.GAME_PLAY);
+                }
+            );
         });
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        _coinTargetPopTween?.Kill();
     }
 
     protected override void InitState()
@@ -30,6 +49,15 @@ public class WinBox : BaseBox<WinBox>
         RefreshProgress();
     }
 
+    void PopCoinTarget()
+    {
+        if (_coinTargetPopTween != null) return;
+        AudioManager.Instance.PlaySfx("Coins");
+        _coinTargetPopTween = coinTarget
+            .DOPunchScale(coinTarget.localScale * 0.25f, 0.1f, 1, 0f)
+            .SetLink(coinTarget.gameObject)
+            .OnComplete(() => _coinTargetPopTween = null);
+    }
     private void RefreshProgress()
     {
         int[] unlockLevels = new[] { 10, 20, 30, 40 };
@@ -71,6 +99,8 @@ public class WinBox : BaseBox<WinBox>
 
     private void AnimateFill(float targetPercent)
     {
+        btnReward.interactable = false;
+
         imageIconFill.fillAmount = 0f;
         imageProgressFill.fillAmount = 0f;
 
@@ -79,6 +109,11 @@ public class WinBox : BaseBox<WinBox>
             imageIconFill.fillAmount = x;
             imageProgressFill.fillAmount = x;
             txtPercent.text = $"{(int)(x * 100)}%";
-        }, targetPercent, 0.6f).SetEase(Ease.OutCubic);
+        }, targetPercent, 0.6f)
+        .SetEase(Ease.OutCubic)
+        .OnComplete(() =>
+        {
+            btnReward.interactable = true;
+        });
     }
 }
