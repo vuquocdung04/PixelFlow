@@ -1425,7 +1425,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8131749931638733657}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1490,25 +1490,6 @@ MonoBehaviour:
   mainAvatar: {fileID: 6424575365015121332}
   avatarItemPrefab: {fileID: 2741194865782159477, guid: e7a3c1578d1224a02b52623c52efb5a2, type: 3}
   avatarItemParent: {fileID: 3727724202101471285}
-  avatarSprites:
-  - {fileID: 645952351, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 827030926, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 897740630, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -895045502, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -988061542, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -445056057, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 1127681057, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -347107860, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -713969296, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -1292394024, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 1495287196, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 480959683, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 579634995, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -895403501, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 1754758689, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -1918843383, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: 1762823373, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
-  - {fileID: -1173308854, guid: afe26828065a91348ac9cf1cc9e56bc9, type: 3}
 --- !u!1 &8279076874380390528
 GameObject:
   m_ObjectHideFlags: 0
