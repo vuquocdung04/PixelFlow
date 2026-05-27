@@ -21,10 +21,10 @@ public class SettingLobbyBox : BaseBox<SettingLobbyBox>
     {
         btnClose.OnClicked(Close);
         btnCloseByPanel.OnClicked(Close);
-        
+
         btnSound.OnClicked(delegate
         {
-            UseProfile.OnSound.Value = !UseProfile.OnSound;
+            AudioManager.Instance.ToggleSound();
             imgSound.SetSprite(UseProfile.OnSound ? sprOn : sprOff);
         });
 
@@ -36,7 +36,7 @@ public class SettingLobbyBox : BaseBox<SettingLobbyBox>
 
         btnMusic.OnClicked(delegate
         {
-            UseProfile.OnMusic.Value = !UseProfile.OnMusic;
+            AudioManager.Instance.ToggleMusic();
             imgMusic.SetSprite(UseProfile.OnMusic ? sprOn : sprOff);
         });
 
@@ -45,7 +45,7 @@ public class SettingLobbyBox : BaseBox<SettingLobbyBox>
 
     protected override void InitState()
     {
-        
+
     }
 
     private void Refresh()

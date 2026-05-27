@@ -15,19 +15,21 @@ public partial class GameFlow
                 Conveyor.Instance.Pause();
                 break;
             case GameState.Win:
-                // show win popup, save progress
-                UseProfile.Level.Value++;
+                bool isMaxLevel = UseProfile.Level.Value >= LevelController.MaxLevel;
+                if (!isMaxLevel) UseProfile.Level.Value++;
                 _ = WinBox.Setup(popupHolder, box =>
-               {
-                   box.Show();
-               });
+                    {
+                        box.Show();
+                    });
                 AudioManager.Instance.PlaySfx("sfx-Win");
                 break;
             case GameState.Lose:
+                ShooterController.Instance.Pause();
+                Conveyor.Instance.Pause();
                 _ = LoseBox.Setup(popupHolder, box =>
-                {
-                    box.Show();
-                });
+                    {
+                        box.Show();
+                    });
                 AudioManager.Instance.PlaySfx("sfx-Lose");
                 break;
             case GameState.BoosterActive:

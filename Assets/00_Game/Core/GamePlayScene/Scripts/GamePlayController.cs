@@ -30,10 +30,9 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
         boosterController.Init();
         inputController.Init();
         gameFlow.Init();
-        inputController.Init();
+        levelController.Init();
         brickGrid.Init();
         conveyor.Init();
-        levelController.Init();
         waitAreaController.Init();
 
         AudioManager.Instance.PlayMusic("Normal Level Music (Cover) 1");

@@ -27,8 +27,7 @@ public partial class LevelController
     {
         ClearBottom();
 
-        var data = JsonConvert.DeserializeObject<LevelJsonData>(levelTest.text);
-        bottomData = data.bottom;
+        bottomData = levelData.bottom;
         gridBottomX = bottomData.gridX;
         gridBottomY = bottomData.gridY;
 
@@ -408,6 +407,11 @@ public partial class LevelController
 
             if (survivors.Count <= 1)
             {
+                foreach (var s in survivors)
+                {
+                    var link = s.GetProp<LinkProp>();
+                    if (link != null) link.group = null;
+                }
                 group.members.Clear();
                 continue;
             }
@@ -507,5 +511,5 @@ public partial class LevelController
         }
         return false;
     }
-    
+
 }

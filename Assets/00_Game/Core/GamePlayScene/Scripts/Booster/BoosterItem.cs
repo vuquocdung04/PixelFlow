@@ -68,7 +68,7 @@ public class BoosterItem : MonoBehaviour
                 this.PostEvent(EventID.BOOSTER_USE_REQUEST, type);
                 break;
             case BoosterState.InUse:
-                this.PostEvent(EventID.BOOSTER_DEACTIVATE_REQUEST, type);
+            
                 break;
             case BoosterState.Empty:
                 this.PostEvent(EventID.BOOSTER_BUY_REQUEST, type);

@@ -26,7 +26,6 @@ public partial class DevTool : OdinEditorWindow
     }
 
     [Button("🚀 Bật Fast Play Mode", ButtonHeight = 35)]
-    [FoldoutGroup("⚙️ Editor")]
     [GUIColor(0.2f, 1f, 0.2f)]
     private void EnableFastPlayMode()
     {
@@ -35,12 +34,37 @@ public partial class DevTool : OdinEditorWindow
     }
 
     [Button("🐢 Tắt Fast Play Mode", ButtonHeight = 35)]
-    [FoldoutGroup("⚙️ Editor")]
     [GUIColor(1f, 1f, 0.2f)]
     private void DisableFastPlayMode()
     {
         EditorSettings.enterPlayModeOptionsEnabled = false;
         EditorSettings.enterPlayModeOptions = EnterPlayModeOptions.None;
+    }
+
+    [Button("🧹 Clear All & Restart Scene", ButtonHeight = 35)]
+    [GUIColor(1f, 0.4f, 0.4f)]
+    private void ClearAllAndRestart()
+    {
+        bool confirm = EditorUtility.DisplayDialog(
+            "Clear All Data",
+            "Xóa toàn bộ save data và reload scene?",
+            "OK",
+            "Hủy"
+        );
+
+        if (!confirm) return;
+
+        GamePrefs.ClearAll();
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+
+        if (Application.isPlaying)
+        {
+            var current = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(current);
+        }
+
+        Debug.Log("[DevTool] Cleared all data");
     }
 }
 
@@ -57,7 +81,7 @@ public class PopupTesterItem
 
     [HorizontalGroup("Row", 0.5f)]
     [AssetSelector(Paths = "Assets")]
-    [Required, AssetsOnly, HideLabel]
+    [AssetsOnly, HideLabel]
     public GameObject PopupPrefab;
 
     [HorizontalGroup("Row", 0.15f)]

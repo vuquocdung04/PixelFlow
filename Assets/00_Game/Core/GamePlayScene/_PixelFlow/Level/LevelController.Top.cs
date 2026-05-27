@@ -6,7 +6,6 @@ using UnityEngine;
 public partial class LevelController
 {
     [Space(10), Header("Top")]
-    public TextAsset levelTest;
     public float spacingX, spacingY;
     private int gridX, gridY;
 
@@ -21,8 +20,13 @@ public partial class LevelController
     {
         ClearTop();
 
-        var data = JsonConvert.DeserializeObject<LevelJsonData>(levelTest.text);
-        topData = data.top;
+        if (levelData == null)
+        {
+            Debug.LogError("[GenerateTop] levelData NULL — abort");
+            return;
+        }
+
+        topData = levelData.top;
         gridX = topData.gridX;
         gridY = topData.gridY;
 
@@ -56,7 +60,7 @@ public partial class LevelController
         }
 
         int totalBlocks = 0;
-        foreach (var kv in data.top.colors)
+        foreach (var kv in levelData.top.colors)
             totalBlocks += kv.Value.Count;
         BrickGrid.Instance.totalBlocks = totalBlocks;
     }

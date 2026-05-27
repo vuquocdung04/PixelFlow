@@ -23,7 +23,7 @@ public class SettingGameBox : BaseBox<SettingGameBox>
 
         btnSound.OnClicked(delegate
         {
-            UseProfile.OnSound.Value = !UseProfile.OnSound;
+            AudioManager.Instance.ToggleSound();
             imgSound.SetSprite(UseProfile.OnSound ? sprOn : sprOff);
         });
 
@@ -35,7 +35,7 @@ public class SettingGameBox : BaseBox<SettingGameBox>
 
         btnMusic.OnClicked(delegate
         {
-            UseProfile.OnMusic.Value = !UseProfile.OnMusic;
+            AudioManager.Instance.ToggleMusic();
             imgMusic.SetSprite(UseProfile.OnMusic ? sprOn : sprOff);
         });
 

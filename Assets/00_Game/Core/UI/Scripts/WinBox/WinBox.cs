@@ -25,6 +25,8 @@ public class WinBox : BaseBox<WinBox>
         btnReward.OnClicked(delegate
         {
             btnReward.interactable = false;
+            bool isMaxLevel = UseProfile.Level.Value >= LevelController.MaxLevel;
+            string targetScene = isMaxLevel ? SceneName.LOBBY_SCENE : SceneName.GAME_PLAY;
 
             _ = FXManager.Instance.SpawnCoinFly(
                 btnReward.transform.position,
@@ -32,7 +34,7 @@ public class WinBox : BaseBox<WinBox>
                 onEachArrived: PopCoinTarget,
                 onComplete: () =>
                 {
-                    FXManager.Instance.LoadSceneWithIrisWipe(SceneName.GAME_PLAY);
+                    FXManager.Instance.LoadSceneWithIrisWipe(targetScene);
                 }
             );
         });

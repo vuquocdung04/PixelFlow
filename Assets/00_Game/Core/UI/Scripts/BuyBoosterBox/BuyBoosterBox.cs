@@ -49,7 +49,7 @@ public class BuyBoosterBox : BaseBox<BuyBoosterBox>
             ToastManager.Instance.ShowToast("Not enough coin!");
             return;
         }
-
+        AudioManager.Instance.PlaySfx("sfx-RewardGiftbox");
         UseProfile.Coin.Value = coin - pricePerBooster;
         AddBoosterQuantity(_currentType, amountPerPurchase);
 

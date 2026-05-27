@@ -105,6 +105,25 @@ public static class GamePrefs
             if (isDirty) Save();
         }
     }
+
+    public static void ClearAll()
+    {
+        cache.Clear();
+        isDirty = false;
+
+        if (File.Exists(SavePath))
+        {
+            try
+            {
+                File.Delete(SavePath);
+                Debug.Log($"[GamePrefs] Cleared all data. Deleted {SavePath}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[GamePrefs] Clear error: {e.Message}");
+            }
+        }
+    }
 }
 
 public class PrefVar<T>

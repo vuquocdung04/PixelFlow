@@ -22,8 +22,8 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         audioDataBase = DataRepo.Instance.audioData;
         BuildAudioLookup();
-        SetMusicVolume();
-        SetSoundVolume(1f);
+        ApplyMusicVolume();
+        ApplySoundVolume();
     }
 
     private void BuildAudioLookup()
@@ -105,18 +105,26 @@ public class AudioManager : MonoBehaviour
         asBg.loop = true;
         asBg.pitch = 1f;
         asBg.Play();
-        SetMusicVolume();
+    }
+    public void ToggleSound()
+    {
+        UseProfile.OnSound.Value = !UseProfile.OnSound;
+        ApplySoundVolume();
     }
 
-    public void RefreshMusicVolume() => SetMusicVolume();
-
-    private void SetMusicVolume()
+    public void ToggleMusic()
     {
-        asBg.volume = UseProfile.OnMusic ? 0.8f : 0f;
+        UseProfile.OnMusic.Value = !UseProfile.OnMusic;
+        ApplyMusicVolume();
     }
 
-    private void SetSoundVolume(float volume)
+    private void ApplyMusicVolume()
     {
-        currentSfxVolume = UseProfile.OnSound ? volume : 0f;
+        asBg.volume = UseProfile.OnMusic ? 0.6f : 0f;
+    }
+
+    private void ApplySoundVolume()
+    {
+        currentSfxVolume = UseProfile.OnSound ? 1f : 0f;
     }
 }
