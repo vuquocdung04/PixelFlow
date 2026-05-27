@@ -14,21 +14,21 @@
   },
   "bottom": {
     "gridX": 4,
-    "gridY": 4,
+    "gridY": 3,
     "colors": {
-      "#F59843": {"0": 123},
-      "#205D3E": {"1": 30, "2": 30, "7": 30},
-      "#FEFEFE": {"3": 279, "14": 279},
-      "#5CBB41": {"4": 6, "8": 7},
-      "#2071C9": {"5": 16, "6": 16, "9": 16, "13": 16},
-      "#B9322A": {"10": 41},
-      "#A6A6B8": {"11": 3}
+      "#FEFEFE": {"0": 111, "1": 111, "2": 111},
+      "#B9322A": {"3": 125},
+      "#2071C9": {"4": 27, "6": 27},
+      "#F59843": {"5": 61},
+      "#5CBB41": {"7": 6}
     },
     "blinds": [],
     "ices": {},
     "tunnels": {
-      "12": { "spawnAtID": 8, "colors": [{"hex":"#B9322A","count":41}, {"hex":"#B9322A","count":43}] },
-      "15": { "spawnAtID": 11, "colors": [{"hex":"#205D3E","count":30}, {"hex":"#2071C9","count":18}] }
+      "8": { "spawnAtID": 4, "colors": [{"hex":"#205D3E","count":60}, {"hex":"#A6A6B8","count":3}] },
+      "9": { "spawnAtID": 5, "colors": [{"hex":"#F59843","count":62}, {"hex":"#2071C9","count":28}] },
+      "10": { "spawnAtID": 6, "colors": [{"hex":"#205D3E","count":60}, {"hex":"#5CBB41","count":7}] },
+      "11": { "spawnAtID": 7, "colors": [{"hex":"#FEFEFE","count":111}, {"hex":"#FEFEFE","count":114}] }
     },
     "links": []
   }

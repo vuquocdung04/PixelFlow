@@ -407,11 +407,6 @@ public partial class LevelController
 
             if (survivors.Count <= 1)
             {
-                foreach (var s in survivors)
-                {
-                    var link = s.GetProp<LinkProp>();
-                    if (link != null) link.group = null;
-                }
                 group.members.Clear();
                 continue;
             }

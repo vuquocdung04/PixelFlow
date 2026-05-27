@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public enum PropState { Blind, Ice, Link }
@@ -77,4 +78,12 @@ public partial class Shooter : MonoBehaviour
     public void RefreshAllLinks() => GetProp<LinkProp>()?.RefreshAllLinks();
     public void RefreshLink() => GetProp<LinkProp>()?.RefreshLink();
     public void SetIceCount(int count) => GetProp<IceProp>()?.SetCount(count);
+
+    private void OnDestroy()
+    {
+        transform.DOKill();
+        shootSeq?.Kill();
+        _wobbleTween?.Kill();
+        stateTween?.Kill();
+    }
 }
