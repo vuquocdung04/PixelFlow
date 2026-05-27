@@ -50,7 +50,7 @@ public partial class BoosterController : StaffSingleton<BoosterController>
         this.RegisterListener(EventID.BOOSTER_BUY_REQUEST, OnBuyRequest);
         GameFlow.Instance.OnStateEntered += OnGameStateChanged;
 
-        CheckTutorialHighlight();
+        //CheckTutorialHighlight();
     }
 
     protected override void OnDestroy()

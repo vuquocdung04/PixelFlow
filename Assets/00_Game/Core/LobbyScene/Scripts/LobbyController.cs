@@ -16,5 +16,7 @@ public class LobbyController : LeaderSingleton<LobbyController>
     private void Init()
     {
         lobbyScene.InitAsync().Forget();
+        AudioManager.Instance.PlayMusic("Normal Level Music (Cover) 1");
+
     }
 }

@@ -9,7 +9,7 @@ public class Projectile : MonoBehaviour
     public void Fire(Block target)
     {
         this.target = target;
-
+        transform.localScale = Vector3.one * 0.5f;
         Vector3 direction = (target.transform.position - transform.position).normalized;
         transform.rotation = Quaternion.LookRotation(direction);
 
@@ -24,8 +24,8 @@ public class Projectile : MonoBehaviour
     }
     public void FireJumpBooster(Block target)
     {
+        transform.localScale = Vector3.one * 1f;
         this.target = target;
-
         Vector3 direction = (target.transform.position - transform.position).normalized;
         transform.rotation = Quaternion.LookRotation(direction);
 

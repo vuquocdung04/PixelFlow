@@ -26,7 +26,6 @@ public class Booster2Cannon : MonoBehaviour
         {
             int currentRow = targets[i].gridRow;
 
-            if (shootFx != null) shootFx.Play();
             PlayRecoil();
 
             while (i < targets.Count && targets[i].gridRow == currentRow)
@@ -51,7 +50,7 @@ public class Booster2Cannon : MonoBehaviour
     private void PlayRecoil()
     {
         if (_recoilSeq != null && _recoilSeq.IsActive() && _recoilSeq.IsPlaying()) return;
-
+        if (shootFx != null) shootFx.Play();
         _recoilSeq = DOTween.Sequence();
         _recoilSeq.Append(transform.DOScale(1.3f, 0.02f).SetEase(Ease.OutQuad));
         _recoilSeq.Append(transform.DOScale(1.5f, 0.05f).SetEase(Ease.OutBack));

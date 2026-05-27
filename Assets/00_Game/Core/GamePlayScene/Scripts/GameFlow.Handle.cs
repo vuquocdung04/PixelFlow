@@ -16,6 +16,7 @@ public partial class GameFlow
                 break;
             case GameState.Win:
                 // show win popup, save progress
+                UseProfile.Level.Value++;
                 _ = WinBox.Setup(popupHolder, box =>
                {
                    box.Show();

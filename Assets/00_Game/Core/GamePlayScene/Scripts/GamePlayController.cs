@@ -35,6 +35,8 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
         conveyor.Init();
         levelController.Init();
         waitAreaController.Init();
+
+        AudioManager.Instance.PlayMusic("Normal Level Music (Cover) 1");
         FXManager.Instance.isNextSceneReady = true;
     }
 }

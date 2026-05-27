@@ -1,5 +1,6 @@
 
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ public class GameScene : StaffSingleton<GameScene>
 {
     public Transform popupHolder;
     public Image darkPanel;
+
+    public TextMeshProUGUI txtLevelDisplay;
 
     [Header("Button")]
     public Button btnSetting;
@@ -22,7 +25,7 @@ public class GameScene : StaffSingleton<GameScene>
         {
             _ = ShopBox.Setup(popupHolder, box => box.Show());
         });
-
+        txtLevelDisplay.text = $"Level {UseProfile.Level.Value}";
     }
     public static void EnableDarkPanel(bool state)
     {
