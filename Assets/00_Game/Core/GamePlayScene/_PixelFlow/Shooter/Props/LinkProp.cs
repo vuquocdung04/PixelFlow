@@ -38,6 +38,7 @@ public class LinkProp : PropHandler
         if (connectionPivot != null) connectionPivot.gameObject.SetActive(false);
         partners.Clear();
         ownedPartner = null;
+        group = null;
         base.OnDetach();
     }
 

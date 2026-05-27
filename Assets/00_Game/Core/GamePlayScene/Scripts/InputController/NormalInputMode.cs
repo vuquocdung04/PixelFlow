@@ -10,7 +10,6 @@ public class NormalInputMode : InputMode
 
         if (Conveyor.Instance.IsGroupStaggering)
         {
-            Debug.Log("[Click] Blocked — group staggering");
             return;
         }
 
@@ -22,7 +21,6 @@ public class NormalInputMode : InputMode
 
         if (shooter.IsBlocked)
         {
-            Debug.LogError($"Shooter '{shooter.name}' is BLOCKED");
             shooter.PlayRejectWobble();
             return;
         }
@@ -43,14 +41,12 @@ public class NormalInputMode : InputMode
 
         if (!group.CanClick(clicked, gridX))
         {
-            Debug.Log($"[Group] Cannot click — clicked={clicked.name}");
             clicked.PlayRejectWobble();
             return;
         }
 
         if (Conveyor.Instance.itemSlots.Count < group.Count)
         {
-            Debug.Log($"[Group] Not enough slots");
             Controller.PostEvent(EventID.CONVEYOR_NOT_ENOUGH_SLOT);
             return;
         }
