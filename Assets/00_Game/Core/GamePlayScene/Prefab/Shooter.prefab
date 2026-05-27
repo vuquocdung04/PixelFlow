@@ -13209,7 +13209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shooter
   blockSFX: {fileID: 8300000, guid: 00de2b2270a6afc4f9ab84c20e9680df, type: 3}
-  jumpDuration: 0.5
+  jumpDuration: 0.4
   currentAnimState: 0
   colorHex: 
   projectileCount: 0
