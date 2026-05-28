@@ -2388,7 +2388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinFlyPrefab: {fileID: 2139813145170573173, guid: e20ba0b3d6ece437f95b631a518e062b, type: 3}
-  coinCount: 15
+  coinCount: 10
   spawnInterval: 0.05
   spreadRadius: 0.75
   wipeCanvas: {fileID: 4322210418281459487}
