@@ -22,27 +22,6 @@ public partial class GameFlow : StaffSingleton<GameFlow>
     private int pauseRequest;
 
     private Transform popupHolder;
-
-    [Button("Pause")]
-    private void TestingState()
-    {
-        RequestPause();
-    }
-
-    [Button("Resume")]
-    private void TestingState2()
-    {
-        RequestResume();
-    }
-
-    [Button("ShowWin")]
-    private void TestingState3()
-    {
-        _ = WinBox.Setup(popupHolder, box =>
-{
-   box.Show();
-});
-    }
     public override void Init()
     {
         popupHolder = GameScene.GetPopupHolder();
@@ -79,6 +58,7 @@ public partial class GameFlow : StaffSingleton<GameFlow>
 
             case GameState.Paused:
                 return to == GameState.Playing ||
+                       to == GameState.Win ||
                        to == GameState.Lose ||
                        to == GameState.BoosterActive ||
                        to == GameState.Tutorial;

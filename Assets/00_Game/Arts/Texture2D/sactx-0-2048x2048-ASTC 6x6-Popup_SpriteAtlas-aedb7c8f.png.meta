@@ -241,7 +241,7 @@ TextureImporter:
         width: 311
         height: 371
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 90, y: 94, z: 90, w: 205}
       customData: 
       outline: []
@@ -250,6 +250,50 @@ TextureImporter:
       bones: []
       spriteID: 0f4351c32197b4e08bf66ae0d2359fc7
       internalID: -412210633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_6
+      rect:
+        serializedVersion: 2
+        x: 1246
+        y: 0
+        width: 310
+        height: 372
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 90, y: 94, z: 90, w: 205}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63b2c62007c404cf28bff50c03f72034
+      internalID: -364343468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_7
+      rect:
+        serializedVersion: 2
+        x: 1261
+        y: 1017
+        width: 300
+        height: 299
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 80, y: 80, z: 80, w: 80}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 24ceed5adcbc14653b321dca8e4dda52
+      internalID: -1511406768
       vertices: []
       indices: 
       edges: []
@@ -274,6 +318,8 @@ TextureImporter:
       sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_3: 1742488361
       sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_4: -701093977
       sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_5: -412210633
+      sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_6: -364343468
+      sactx-0-2048x2048-ASTC 6x6-Popup_SpriteAtlas-aedb7c8f_7: -1511406768
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

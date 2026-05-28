@@ -132,5 +132,5 @@ MonoBehaviour:
   - {fileID: 21300000, guid: c86fa6b0394aed94e80fb468a3ec8888, type: 3}
   frameDuration: 0.01
   scaleUpDuration: 0.2
-  flyDelay: 0.1
+  flyDelay: 0.15
   moveDuration: 0.5

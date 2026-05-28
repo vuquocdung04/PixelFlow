@@ -3707,7 +3707,6 @@ MonoBehaviour:
   startZ: 1.5
   gridBottomX: 0
   gridBottomY: 0
-  levelTest: {fileID: 4900000, guid: 4d3928740726841f482727a03c03a7a8, type: 3}
   spacingX: 0.17
   spacingY: 0.17
   blockPrefab: {fileID: 1346262177718181828, guid: 8545d9db7e12149fca4c2ddebd73a649, type: 3}
@@ -4659,7 +4658,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &950072829
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6332,7 +6331,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popupHolder: {fileID: 2124169858}
-  winHolder: {fileID: 0}
   darkPanel: {fileID: 482042480}
   txtLevelDisplay: {fileID: 823680857}
   btnSetting: {fileID: 2076153895}

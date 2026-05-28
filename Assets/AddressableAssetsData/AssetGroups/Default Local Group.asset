@@ -3755,6 +3755,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d3513a169e2d43f1bd09717c46f2d67
+    m_Address: CheatBox
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d4e99a3eb9e47c4390895c8bec7bae6
     m_Address: BigStarFilled
     m_ReadOnly: 0

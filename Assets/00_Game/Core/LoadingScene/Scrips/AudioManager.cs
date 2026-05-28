@@ -52,7 +52,7 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        float volume = lowerKey == "coins" ? 0.5f : currentSfxVolume;
+        float volume = lowerKey == "coins" ? 1f : currentSfxVolume;
         PlayClipInternal(lowerKey, config.GetRandomClip(), config.GetRandomPitch(), volume);
     }
 
@@ -120,7 +120,7 @@ public class AudioManager : MonoBehaviour
 
     private void ApplyMusicVolume()
     {
-        asBg.volume = UseProfile.OnMusic ? 0.6f : 0f;
+        asBg.volume = UseProfile.OnMusic ? 0.4f : 0f;
     }
 
     private void ApplySoundVolume()

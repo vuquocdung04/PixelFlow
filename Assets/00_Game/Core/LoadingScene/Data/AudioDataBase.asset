@@ -19,11 +19,6 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 50745de1a97e9144a9d756ba0ea81804, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
-  - key: Coins
-    variants:
-    - {fileID: 8300000, guid: 4dcdba26195d64e31ae5f152166642a7, type: 3}
-    minPitch: 0.7
-    maxPitch: 1.1
   - key: Main Menu Music (Cover) 2
     variants:
     - {fileID: 8300000, guid: e332c7cae8fa9d8498b92a76697fe83d, type: 3}
@@ -32,6 +27,11 @@ MonoBehaviour:
   - key: Normal Level Music (Cover) 1
     variants:
     - {fileID: 8300000, guid: cb291565de22ff944bc56f5b8627c349, type: 3}
+    minPitch: 0.7
+    maxPitch: 1.1
+  - key: Toast
+    variants:
+    - {fileID: 8300000, guid: 5ed60df51f85948c185d3f974d76333e, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
   - key: sfx-Lose
@@ -49,8 +49,10 @@ MonoBehaviour:
     - {fileID: 8300000, guid: c18767893d6d14b4eaa15d4f3be56bca, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
-  - key: Toast
+  - key: Coins
     variants:
-    - {fileID: 8300000, guid: 5ed60df51f85948c185d3f974d76333e, type: 3}
+    - {fileID: 8300000, guid: e755f6405b6ec4e29bb3cb26ddd8ba06, type: 3}
+    - {fileID: 8300000, guid: 0b15f962516b34304a9e82adf94fe1ac, type: 3}
+    - {fileID: 8300000, guid: 040b42137b4fd43008ba730a0c2a050f, type: 3}
     minPitch: 0.7
     maxPitch: 1.1
