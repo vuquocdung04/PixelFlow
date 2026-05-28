@@ -118,7 +118,7 @@ TextureImporter:
         width: 115
         height: 72
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -127,6 +127,138 @@ TextureImporter:
       bones: []
       spriteID: 41669dc3da032f449b2120567e95987f
       internalID: 612280923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_1
+      rect:
+        serializedVersion: 2
+        x: 1430
+        y: 7
+        width: 153
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26a909a56151c5d4a990feb0159cae1f
+      internalID: 1676035967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_2
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 172
+        width: 179
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ba53f473dad64a4b91554fab5e3953e
+      internalID: -2095720456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_3
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 775
+        width: 159
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0759ec7030ef6064db032a770f7e11fd
+      internalID: 1876428242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_4
+      rect:
+        serializedVersion: 2
+        x: 1098
+        y: 774
+        width: 164
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6337defa8b1d382448ca27bd49543194
+      internalID: 1923287254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_5
+      rect:
+        serializedVersion: 2
+        x: 1257
+        y: 320
+        width: 112
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78093abdf9af85b429923eaefb903b02
+      internalID: 311021713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_6
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1830
+        width: 164
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 385fb571301c53348bc0de9a42a6c537
+      internalID: 2042722648
       vertices: []
       indices: 
       edges: []
@@ -146,6 +278,12 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_0: 612280923
+      sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_1: 1676035967
+      sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_2: -2095720456
+      sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_3: 1876428242
+      sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_4: 1923287254
+      sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_5: 311021713
+      sactx-0-2048x2048-ASTC 6x6-GoldsSpriteAtlas-36f5fcae_6: 2042722648
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
