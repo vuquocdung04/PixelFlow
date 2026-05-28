@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using EventDispatcher;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -13,6 +14,7 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
     public static T Instance { get; private set; }
     private static AsyncOperationHandle<GameObject> handle;
     private static bool isInstantiating;
+    private bool _postedOpen;
 
     public static async UniTaskVoid Setup(Transform parent, System.Action<T> callback)
     {
@@ -91,6 +93,15 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
         InitState();
         KillCurrentTween();
         transform.SetAsLastSibling();
+
+        SceneUtils.ExecuteInScene(SceneName.GAME_PLAY, () =>
+       {
+           if (!_postedOpen)
+           {
+               _postedOpen = true;
+               this.PostEvent(EventID.POPUP_OPENED);
+           }
+       });
         currentTween = anim.PlayShow(mainPanel, canvasGroup, durationAppeared);
     }
 
@@ -99,6 +110,13 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
     public void Close(IShowAnimation anim)
     {
         KillCurrentTween();
+
+        if (_postedOpen)
+        {
+            _postedOpen = false;
+            this.PostEvent(EventID.POPUP_CLOSED);
+        }
+
         currentTween = anim.PlayClose(mainPanel, canvasGroup, durationAppeared);
 
         if (currentTween != null)

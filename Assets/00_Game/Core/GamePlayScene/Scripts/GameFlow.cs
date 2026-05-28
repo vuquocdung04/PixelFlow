@@ -29,6 +29,8 @@ public partial class GameFlow : StaffSingleton<GameFlow>
         OnStateExited += HandleStateExited;
 
         this.RegisterListener(EventID.LEVEL_COMPLETE, OnLevelComplete);
+        this.RegisterListener(EventID.POPUP_OPENED, RequestPause);
+        this.RegisterListener(EventID.POPUP_CLOSED, RequestResume);
     }
     protected override void OnDestroy()
     {
@@ -37,6 +39,8 @@ public partial class GameFlow : StaffSingleton<GameFlow>
         OnStateExited -= HandleStateExited;
 
         this.RemoveListener(EventID.LEVEL_COMPLETE, OnLevelComplete);
+        this.RemoveListener(EventID.POPUP_OPENED, RequestPause);
+        this.RemoveListener(EventID.POPUP_CLOSED, RequestResume);
     }
 
     public bool ChangeState(GameState next)
@@ -74,17 +78,18 @@ public partial class GameFlow : StaffSingleton<GameFlow>
         }
         return false;
     }
-    public void RequestPause()
+    private void RequestPause(object _)
     {
         pauseRequest++;
         if (pauseRequest == 1) ChangeState(GameState.Paused);
     }
-    public void RequestResume()
+    private void RequestResume(object _)
     {
         pauseRequest = Mathf.Max(0, pauseRequest - 1);
         if (pauseRequest == 0 && CurrentState == GameState.Paused)
             ChangeState(GameState.Playing);
     }
+
     void OnLevelComplete(object _) => ChangeState(GameState.Win);
     public void TriggerLose() => ChangeState(GameState.Lose);
     public void EnterBooster() => ChangeState(GameState.BoosterActive);
