@@ -1,3 +1,4 @@
+using EventDispatcher;
 using TMPro;
 using UnityEngine.UI;
 
@@ -49,5 +50,7 @@ public class CheatBox : BaseBox<CheatBox>
     {
         if (int.TryParse(inputBuffCoin.text, out int amount))
             UseProfile.Coin.Value += amount;
+
+        this.PostEvent(EventID.CHANGE_COIN);
     }
 }

@@ -26,7 +26,7 @@ public class MoreLivesBox : BaseBox<MoreLivesBox>
 
         btnRefillByAds.OnClicked(delegate
         {
-
+            ToastManager.Instance.ShowToast("Coming soon");
         });
         txtDisplayCoin.text = cost.ToString();
         this.RegisterListener(EventID.CHANGE_HEART, UpdateHeartUI);
@@ -40,13 +40,7 @@ public class MoreLivesBox : BaseBox<MoreLivesBox>
     private void Refresh()
     {
         UpdateHeartUI(null);
-
-        txtDisplayCooldownLives.BindCountdownRealtime(
-            getTimeRemaining: () => HeartManager.Instance.GetTimeToNextHeart(),
-            textWhenZero: "Full",
-            checkUnlimited: () => UseProfile.IsUnlimitedHeart,
-            token: this.GetCancellationTokenOnDestroy()
-        ).Forget();
+        txtDisplayCooldownLives.BindHeartTimer(this);
     }
 
     private void UpdateHeartUI(object param)
@@ -72,10 +66,11 @@ public class MoreLivesBox : BaseBox<MoreLivesBox>
             HandleNotEnoughCoin();
             return;
         }
-
         CurrencyManager.Instance.TrySpend(CurrencyType.Coin, cost);
         HeartManager.Instance.TryAddHeart(1);
-        AudioManager.Instance.PlaySfx("Reward");
+        AudioManager.Instance.PlaySfx("sfx-RewardGiftbox");
+        this.PostEvent(EventID.CHANGE_HEART);
+        this.PostEvent(EventID.CHANGE_COIN);
         Close();
     }
 

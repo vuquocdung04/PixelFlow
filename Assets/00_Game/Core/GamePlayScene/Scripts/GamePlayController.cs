@@ -1,4 +1,6 @@
 
+using Cysharp.Threading.Tasks;
+using EventDispatcher;
 using UnityEngine;
 
 public class GamePlayController : LeaderSingleton<GamePlayController>
@@ -20,10 +22,10 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
     protected override void OnAwake()
     {
         base.OnAwake();
-        Init();
+        Init().Forget();
     }
 
-    private void Init()
+    private async UniTaskVoid Init()
     {
         gameScene.Init();
         handAnimation.Init();
@@ -35,7 +37,14 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
         conveyor.Init();
         waitAreaController.Init();
 
+         gameFlow.RequestPause();
+
         AudioManager.Instance.PlayMusic("Normal Level Music (Cover) 1");
+
+        await UniTask.WaitForEndOfFrame(this);
+        await UniTask.Delay(500);
         FXManager.Instance.isNextSceneReady = true;
+        await UniTask.Delay(500);
+        gameFlow.RequestResume();
     }
 }

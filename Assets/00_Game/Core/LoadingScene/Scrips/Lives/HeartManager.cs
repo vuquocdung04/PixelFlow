@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using EventDispatcher;
 using UnityEngine;
 
 public class HeartManager : MonoBehaviour
@@ -139,5 +140,15 @@ public class HeartManager : MonoBehaviour
             UseProfile.TimeLastOverHeart = UseProfile.TimeLastOverHeart
                 .Add(TimeSpan.FromSeconds(heartsGained * RefillSeconds));
         }
+        this.PostEvent(EventID.CHANGE_HEART);
+    }
+
+    public Cooldown HeartTimer()
+    {
+        if (IsUnlimited)
+            return Cooldown.Until(UseProfile.TimeUnlimitedHeart);
+
+        RefillOfflineHearts();
+        return IsFull ? Cooldown.Done : Cooldown.InSeconds(GetTimeToNextHeart());
     }
 }
