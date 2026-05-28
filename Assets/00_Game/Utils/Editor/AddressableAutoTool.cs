@@ -17,7 +17,7 @@ public class AddressableAutoTool : OdinEditorWindow
     private static void OpenWindow()
     {
         var window = GetWindow<AddressableAutoTool>("Auto Addressable");
-        window.LoadPrefs(); // Load lại đường dẫn cũ đã lưu
+        window.prefabFolderPath = string.Empty; // mở lên để trống
         window.Show();
     }
 
@@ -29,7 +29,7 @@ public class AddressableAutoTool : OdinEditorWindow
 
     private void LoadPrefs()
     {
-        prefabFolderPath = EditorPrefs.GetString("AutoTool_PrefabPath", "Assets/");
+        prefabFolderPath = EditorPrefs.GetString("AutoTool_PrefabPath", "");
     }
 
     private void SavePrefs()
@@ -83,7 +83,7 @@ public class AddressableAutoTool : OdinEditorWindow
     {
         // 1. Quét toàn bộ project tìm file tên là "PathPrefabs"
         string[] foundGuids = AssetDatabase.FindAssets("PathPrefabs t:MonoScript");
-        
+
         if (foundGuids.Length > 0)
         {
             // Trả về đường dẫn của file nếu đã tồn tại (dù bạn vứt nó ở ngóc ngách nào)
@@ -92,11 +92,11 @@ public class AddressableAutoTool : OdinEditorWindow
 
         // 2. Nếu là lần chạy đầu tiên (chưa có file), tự động tạo thư mục mặc định
         string defaultFolder = "Assets/Scripts/Data";
-        
-        if (!AssetDatabase.IsValidFolder("Assets/Scripts")) 
+
+        if (!AssetDatabase.IsValidFolder("Assets/Scripts"))
             AssetDatabase.CreateFolder("Assets", "Scripts");
-            
-        if (!AssetDatabase.IsValidFolder(defaultFolder)) 
+
+        if (!AssetDatabase.IsValidFolder(defaultFolder))
             AssetDatabase.CreateFolder("Assets/Scripts", "Data");
 
         return $"{defaultFolder}/PathPrefabs.cs";
@@ -109,15 +109,46 @@ public class AddressableAutoTool : OdinEditorWindow
             writer.WriteLine("// AUTO-GENERATED CODE. DO NOT EDIT MANUALLY.");
             writer.WriteLine("public class PathPrefabs");
             writer.WriteLine("{");
-            
+
             foreach (string constLine in constants)
             {
                 writer.WriteLine(constLine);
             }
-            
+
             writer.WriteLine("}");
         }
-        
+
         AssetDatabase.Refresh();
+    }
+    [Button("❌ Untick Addressable (cả sub-folder)", ButtonSizes.Large), GUIColor(1f, 0.5f, 0.4f)]
+    private void RemoveAddressables()
+    {
+        if (string.IsNullOrEmpty(prefabFolderPath) || !AssetDatabase.IsValidFolder(prefabFolderPath))
+        {
+            Debug.LogError("Vui lòng chọn thư mục chứa Prefab hợp lệ!");
+            return;
+        }
+
+        AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+        if (settings == null)
+        {
+            Debug.LogError("Không tìm thấy Addressable Settings!");
+            return;
+        }
+
+        string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { prefabFolderPath });
+        int removed = 0;
+
+        foreach (string guid in prefabGuids)
+        {
+            // RemoveAssetEntry trả về true nếu prefab đó đang là addressable
+            if (settings.RemoveAssetEntry(guid, postEvent: false))
+                removed++;
+        }
+
+        settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryRemoved, null, true);
+        AssetDatabase.SaveAssets();
+
+        Debug.Log($"<color=orange>[AutoTool]</color> Đã untick {removed}/{prefabGuids.Length} prefab trong {prefabFolderPath} (gồm cả sub-folder).");
     }
 }
