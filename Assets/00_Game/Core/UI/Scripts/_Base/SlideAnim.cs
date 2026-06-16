@@ -25,7 +25,6 @@ public class SlideAnim : IShowAnimation
     {
         float w = panel.rect.width > 0 ? panel.rect.width : Screen.width;
         float endX = _direction == Direction.ToLeft ? -w : w;
-        return panel.DOAnchorPos(new Vector2(endX, 0), duration).SetEase(Ease.OutCubic)
-                    .OnComplete(() => cg.SetCanvasState(false, 0f));
+        return panel.DOAnchorPos(new Vector2(endX, 0), duration).SetEase(Ease.OutCubic);
     }
 }

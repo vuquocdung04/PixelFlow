@@ -85,6 +85,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dcf3a433b8c038b4e8395823f5af413e
+    m_Address: DummyWarmup
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e777f1cb797489e45a7050d50cd9e008
     m_Address: SettingLobbyBox
     m_ReadOnly: 0

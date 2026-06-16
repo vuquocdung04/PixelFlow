@@ -36,11 +36,11 @@ public class LobbyScene : MonoBehaviour
             lobbyTcs.TrySetResult();
         });
 
-        _ = ShopBox.Setup(holder, _ => shopTcs.TrySetResult());
+        // _ = ShopBox.Setup(holder, _ => shopTcs.TrySetResult());
 
-        _ = RankBox.Setup(holder, _ => rankTcs.TrySetResult());
+        // _ = RankBox.Setup(holder, _ => rankTcs.TrySetResult());
 
-        await UniTask.WhenAll(lobbyTcs.Task, shopTcs.Task, rankTcs.Task);
+        await UniTask.WhenAll(lobbyTcs.Task);
 
         FXManager.Instance.isNextSceneReady = true;
     }

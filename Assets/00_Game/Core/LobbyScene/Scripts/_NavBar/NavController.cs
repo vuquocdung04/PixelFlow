@@ -94,16 +94,20 @@ public class NavController : MonoBehaviour
     }
     private void OpenCurrentBox(ENavType type, IShowAnimation anim)
     {
+        var holder = LobbyController.Instance.botCanvas;
+
         switch (type)
         {
             case ENavType.Shop:
-                ShopBox.Instance.Show(anim);
+                _ = ShopBox.Setup(holder, box => box.Show(anim));
                 break;
             case ENavType.Lobby:
                 LobbyBox.Instance.Show(anim);
                 break;
             case ENavType.Rank:
-                RankBox.Instance.Show(anim);
+                // RankBox.Instance.Show(anim);
+                _ = RankBox.Setup(holder, box => box.Show(anim));
+
                 break;
         }
     }

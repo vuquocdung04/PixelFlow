@@ -110,19 +110,20 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
     public void Close(IShowAnimation anim)
     {
         KillCurrentTween();
-
-        if (_postedOpen)
-        {
-            _postedOpen = false;
-            this.PostEvent(EventID.POPUP_CLOSED);
-        }
+        if (_postedOpen) { _postedOpen = false; this.PostEvent(EventID.POPUP_CLOSED); }
 
         currentTween = anim.PlayClose(mainPanel, canvasGroup, durationAppeared);
-
         if (currentTween != null)
-            currentTween.OnComplete(InvokeOnClosed);
+            currentTween.OnComplete(() =>
+            {
+                canvasGroup.SetCanvasState(false, 0f);
+                InvokeOnClosed();
+            });
         else
+        {
+            canvasGroup.SetCanvasState(false, 0f);
             InvokeOnClosed();
+        }
     }
 
     private void InvokeOnClosed()
