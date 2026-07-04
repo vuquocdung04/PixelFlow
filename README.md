@@ -44,4 +44,4 @@ https://github.com/user-attachments/assets/cef09366-6b05-4698-9443-83a763398133
 
 A support tool for building levels — converts level layouts into JSON.
 
-![Level Editor Tool](Media/tool_level_editor.jpg)
+![Level Editor Tool](tool_level_editor.jpg)
