@@ -2702,7 +2702,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9f8da13e2532d0b47b0ded7bf66b0a8a, type: 2}
+  - {fileID: 2100000, guid: 67eda0165df64d1b96f94d98eb7dd893, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7536,7 +7536,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 35b072e7a7dfe0f429bf5123cfc9a433, type: 2}
+  - {fileID: 2100000, guid: 4bed91ccaa8e4470abc42da19ec18291, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -13233,6 +13233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IceProp
   iceVisual: {fileID: 6248032494675186538}
   iceTxt: {fileID: 1229224565235987446}
+  iceBreakFx: {fileID: 7966819927562594005}
   iceCount: 0
 --- !u!114 &7627086920839131232
 MonoBehaviour:
