@@ -1483,7 +1483,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AvatarBox
   mainPanel: {fileID: 3753596048189886350}
   canvasGroup: {fileID: 5874726691467934038}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnClose: {fileID: 7114729191733871946}
   btnSave: {fileID: 34825256767099578}

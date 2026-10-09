@@ -794,7 +794,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SettingGameBox
   mainPanel: {fileID: 3942472404607250162}
   canvasGroup: {fileID: 4016221224119122409}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnClose: {fileID: 4214896659231608515}
   btnReturnHome: {fileID: 4974112576923362601}

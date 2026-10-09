@@ -668,7 +668,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuyBoosterBox
   mainPanel: {fileID: 5770776630486670910}
   canvasGroup: {fileID: 6963217036628337716}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnClose: {fileID: 4374946237752897237}
   btnBuyByCoin: {fileID: 3192683083648490368}

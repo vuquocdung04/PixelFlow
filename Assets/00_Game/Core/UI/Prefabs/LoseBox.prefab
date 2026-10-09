@@ -1672,7 +1672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoseBox
   mainPanel: {fileID: 7619692336919603347}
   canvasGroup: {fileID: 2080593487363625506}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnClose: {fileID: 6866787214894946638}
   btnCloseByPanel: {fileID: 7715428641427821496}

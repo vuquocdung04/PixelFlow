@@ -20,12 +20,12 @@ public class QuitLevelBox : BaseBox<QuitLevelBox>
 
         btnRestart.OnClicked(delegate
         {
-            FXManager.Instance.LoadSceneWithIrisWipe(SceneName.GAME_PLAY);
+            FXManager.Instance.LoadSceneWithSquareWipe(SceneName.GAME_PLAY);
         });
 
         btnLeave.OnClicked(delegate
         {
-            FXManager.Instance.LoadSceneWithIrisWipe(SceneName.LOBBY_SCENE);
+            FXManager.Instance.LoadSceneWithSquareWipe(SceneName.LOBBY_SCENE);
         });
     }
 

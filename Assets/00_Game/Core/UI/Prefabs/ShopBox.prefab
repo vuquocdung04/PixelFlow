@@ -613,7 +613,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShopBox
   mainPanel: {fileID: 7167967995323038397}
   canvasGroup: {fileID: 7393627900265555739}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 1
   btnClose: {fileID: 4325908217883217173}
 --- !u!1 &629122530180066766

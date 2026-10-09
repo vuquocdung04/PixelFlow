@@ -43,7 +43,6 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
 
         await UniTask.WaitForEndOfFrame(this);
         await UniTask.Delay(500);
-        FXManager.Instance.isNextSceneReady = true;
         await UniTask.Delay(500);
         gameFlow.RequestResume();
     }

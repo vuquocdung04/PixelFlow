@@ -232,7 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BoosterUnlockBox
   mainPanel: {fileID: 2864898199277852948}
   canvasGroup: {fileID: 522228034787383283}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 1
   imgBooster: {fileID: 1544541312390097034}
   btnClaim: {fileID: 4214587063091529831}

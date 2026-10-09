@@ -245,7 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CheatBox
   mainPanel: {fileID: 3194477308490396298}
   canvasGroup: {fileID: 3264978952852454238}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnClose: {fileID: 2542530796686290052}
   btnNextLevel: {fileID: 8390354990516858728}

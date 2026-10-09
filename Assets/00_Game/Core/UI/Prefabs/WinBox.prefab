@@ -353,7 +353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WinBox
   mainPanel: {fileID: 1404481205891805048}
   canvasGroup: {fileID: 6232817985524949102}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnReward: {fileID: 2159546109208294479}
   coinTarget: {fileID: 2373180812480292509}

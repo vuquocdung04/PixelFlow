@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using System;
 
 public class GameManager : ManagerSingleton<GameManager>
 {
@@ -14,11 +15,10 @@ public class GameManager : ManagerSingleton<GameManager>
     [SerializeField] private LoadingBox loadingBox;
     public ToastManager toastManager;
 
-    public bool isSkipOutPhase;
-    public float loadingStepDuration = 1f;
-    public float loadingFadeOutDuration = 1f;
-
-    private AsyncOperationHandle<Sprite> _uiWarmupHandle;
+    public float loadingFadeOutDuration = 0.35f;
+    public float minimumLoadingDuration = 3f;
+    public ThreadPriority loadingPriority = ThreadPriority.BelowNormal;
+    public ThreadPriority finishLoadingPriority = ThreadPriority.Normal;
 
     protected override void OnAwake()
     {
@@ -28,7 +28,11 @@ public class GameManager : ManagerSingleton<GameManager>
     {
         Application.targetFrameRate = 60;
         loadingBox.Init();
-        var load50Task = loadingBox.LoadingAsync(0.5f, loadingStepDuration);
+        // Let Unity render the loading screen before doing initialization work.
+        await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+        Application.backgroundLoadingPriority = loadingPriority;
+        float loadingStartedAt = Time.realtimeSinceStartup;
+
         await GamePrefs.Init();
         //firebaseSetup.Init();
         //await UniTask.WaitUntil(() => firebaseSetup.IsActiveRemote);
@@ -38,40 +42,31 @@ public class GameManager : ManagerSingleton<GameManager>
         heartManager.Init();
         currencyManager.Init();
         toastManager.Init();
-        await WarmupUIAddressables();
-        await load50Task;
-        await loadingBox.LoadingAsync(1f, loadingStepDuration);
-        fxManager.PrepareWipeClosed();
-        await loadingBox.CloseAsync(loadingFadeOutDuration);
+        var sceneLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(SceneName.GAME_PLAY);
+        sceneLoad.allowSceneActivation = false;
+        fxManager.preparedSceneLoad = sceneLoad;
+        fxManager.preparedSceneName = SceneName.GAME_PLAY;
+        while (sceneLoad.progress < 0.9f || Time.realtimeSinceStartup - loadingStartedAt < minimumLoadingDuration)
+        {
+            if (loadingBox == null || loadingBox.fill == null)
+                return;
 
-        //Init final
-        fxManager.LoadSceneWithIrisWipe(SceneName.GAME_PLAY, isSkipOutPhase);
+            float realProgress = Mathf.Clamp01(sceneLoad.progress / 0.9f);
+            float timedProgress = minimumLoadingDuration > 0f
+                ? Mathf.Clamp01((Time.realtimeSinceStartup - loadingStartedAt) / minimumLoadingDuration)
+                : 1f;
+            loadingBox.fill.fillAmount = Mathf.Max(realProgress, timedProgress);
+            await UniTask.Yield();
+        }
+        if (loadingBox == null || loadingBox.fill == null)
+            return;
+
+        loadingBox.fill.fillAmount = 1f;
+        // Activate the prepared scene immediately once the bar reaches 100%.
+        Application.backgroundLoadingPriority = finishLoadingPriority;
+        sceneLoad.allowSceneActivation = true;
+        await UniTask.WaitUntil(() => sceneLoad.isDone);
     }
 
-    private async UniTask WarmupUIAddressables()
-    {
-        try
-        {
-            string key = "DummyWarmup";
 
-            _uiWarmupHandle = Addressables.LoadAssetAsync<Sprite>(key);
-            await _uiWarmupHandle.Task;
-
-            if (_uiWarmupHandle.Status == AsyncOperationStatus.Succeeded)
-                Debug.Log("[GameManager] Đã mount bundle popup (giữ qua dummy)");
-            else
-                Debug.LogWarning("[GameManager] Mount bundle thất bại; UI có thể delay lần mở đầu!");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"[GameManager] Lỗi khi thực hiện giữ ấm UI: {e.Message}");
-        }
-    }
-    private void OnDestroy()
-    {
-        if (_uiWarmupHandle.IsValid())
-        {
-            Addressables.Release(_uiWarmupHandle);
-        }
-    }
 }

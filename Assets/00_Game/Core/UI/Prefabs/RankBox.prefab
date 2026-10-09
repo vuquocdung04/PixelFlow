@@ -164,7 +164,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RankBox
   mainPanel: {fileID: 9025405575941039383}
   canvasGroup: {fileID: 3276145824427042102}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 1
 --- !u!114 &4768220447557236170
 MonoBehaviour:

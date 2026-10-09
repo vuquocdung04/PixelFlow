@@ -42,7 +42,6 @@ public class LobbyScene : MonoBehaviour
 
         await UniTask.WhenAll(lobbyTcs.Task);
 
-        FXManager.Instance.isNextSceneReady = true;
     }
 
     public void NavigateTo(ENavType type) => navController.NavigateTo(type);

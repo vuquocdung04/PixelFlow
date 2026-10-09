@@ -4256,7 +4256,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LobbyBox
   mainPanel: {fileID: 653043003057881228}
   canvasGroup: {fileID: 4940294620149877067}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 1
   levelNodes:
   - {fileID: 9122037055096906304}

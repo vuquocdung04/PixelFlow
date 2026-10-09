@@ -108,7 +108,7 @@ MonoBehaviour:
   mainPanel: {fileID: 1661143819629857506}
   canvasGroup: {fileID: 4819316579705317181}
   isAnim: 1
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   durationSlide: 0.2
   btnClose: {fileID: 3239126307242838030}
   btnCloseByPanel: {fileID: 8180058744384079222}

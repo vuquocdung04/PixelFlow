@@ -12,16 +12,16 @@ public class LoseBox : BaseBox<LoseBox>
     {
         btnClose.OnClicked(delegate
         {
-            FXManager.Instance.LoadSceneWithIrisWipe(SceneName.LOBBY_SCENE);
+            FXManager.Instance.LoadSceneWithSquareWipe(SceneName.LOBBY_SCENE);
         });
         btnCloseByPanel.OnClicked(delegate
         {
-            FXManager.Instance.LoadSceneWithIrisWipe(SceneName.LOBBY_SCENE);
+            FXManager.Instance.LoadSceneWithSquareWipe(SceneName.LOBBY_SCENE);
         });
         btnRetry.OnClicked(delegate
         {
             var heartAvaiable = HeartManager.Instance.TryUseHeart();
-            FXManager.Instance.LoadSceneWithIrisWipe(heartAvaiable ? SceneName.GAME_PLAY : SceneName.LOBBY_SCENE);
+            FXManager.Instance.LoadSceneWithSquareWipe(heartAvaiable ? SceneName.GAME_PLAY : SceneName.LOBBY_SCENE);
         });
         
     }

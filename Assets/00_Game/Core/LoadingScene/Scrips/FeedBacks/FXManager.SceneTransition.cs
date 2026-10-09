@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 public partial class FXManager
 {
+    private bool transitionPlaying;
+    public AsyncOperation preparedSceneLoad;
+    public string preparedSceneName;
     public Canvas wipeCanvas;
-    public float transitionDurationOut = 1f;
-    public float transitionDurationIn = 1f;
-    [HideInInspector] public bool isNextSceneReady;
+    public float transitionDurationOut = 0.45f;
+    public float transitionDurationIn = 0.35f;
 
     private Material cachedWipeMat;
 
@@ -18,33 +20,40 @@ public partial class FXManager
         get
         {
             if (cachedWipeMat == null)
-                cachedWipeMat = wipeCanvas.GetComponentInChildren<RawImage>().material;
+                cachedWipeMat = new Material(Resources.Load<Shader>("SquareWipe"));
+            wipeCanvas.GetComponentInChildren<Image>(true).material = cachedWipeMat;
             return cachedWipeMat;
         }
     }
 
-    public void LoadSceneWithIrisWipe(string sceneName, bool skipOutPhase = false)
+    public void LoadSceneWithSquareWipe(string sceneName)
     {
-        IrisWipeAsync(sceneName, skipOutPhase).Forget();
+        if (transitionPlaying) return;
+        transitionPlaying = true;
+        SquareWipeAsync(sceneName).Forget();
     }
 
-    private async UniTaskVoid IrisWipeAsync(string sceneName, bool skipOutPhase)
+    private async UniTaskVoid SquareWipeAsync(string sceneName)
     {
-        isNextSceneReady = false;
-
         SetupCanvasCamera();
+        SetWipeState(0f, 0f);
+        await WipeMat.DOFloat(1f, "_Progress", transitionDurationOut).ToUniTask();
 
-        if (skipOutPhase)
+        AsyncOperation asyncLoad = preparedSceneName == sceneName ? preparedSceneLoad : null;
+        preparedSceneLoad = null;
+        preparedSceneName = null;
+        if (asyncLoad == null || asyncLoad.isDone)
+            asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+
+        if (asyncLoad == null)
         {
-            SetWipeState(1f, 0f);
-        }
-        else
-        {
-            SetWipeState(0f, 0f);
-            await WipeMat.DOFloat(1.2f, "_Radius", transitionDurationOut).ToUniTask();
+            Debug.LogError($"[FXManager] Could not start loading scene: {sceneName}");
+            transitionPlaying = false;
+            return;
         }
 
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        if (!asyncLoad.isDone)
+            asyncLoad.allowSceneActivation = true;
         while (!asyncLoad.isDone)
         {
             await UniTask.Yield();
@@ -54,12 +63,12 @@ public partial class FXManager
         SetupCanvasCamera();
         SetWipeState(1f, 0f);
 
-        await UniTask.WaitUntil(() => isNextSceneReady);
-        // Chạy hiệu ứng mở ra
-        await WipeMat.DOFloat(1.2f, "_Radius", transitionDurationIn).ToUniTask();
+        // Scene is active and loaded; reveal immediately, as in DrinkPacking.
+        await WipeMat.DOFloat(1f, "_Progress", transitionDurationIn).ToUniTask();
 
         Debug.Log("Completed Transition");
         wipeCanvas.gameObject.SetActive(false);
+        transitionPlaying = false;
     }
 
     public void PrepareWipeClosed()
@@ -84,6 +93,6 @@ public partial class FXManager
     private void SetWipeState(float isInvert, float radius)
     {
         WipeMat.SetFloat("_IsInvert", isInvert);
-        WipeMat.SetFloat("_Radius", radius);
+        WipeMat.SetFloat("_Progress", radius);
     }
 }

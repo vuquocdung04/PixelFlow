@@ -747,8 +747,10 @@ MonoBehaviour:
   loadingBox: {fileID: 783918718}
   toastManager: {fileID: 175757017}
   isSkipOutPhase: 1
-  loadingStepDuration: 0.1
   loadingFadeOutDuration: 0.1
+  minimumLoadingDuration: 2
+  loadingPriority: 1
+  finishLoadingPriority: 2
 --- !u!1 &742814545
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,14 +2389,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798689fa1ad04b648520649d38657c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wipeCanvas: {fileID: 4322210418281459487}
+  transitionDurationOut: 0.45
+  transitionDurationIn: 0.35
+  isNextSceneReady: 0
   coinFlyPrefab: {fileID: 2139813145170573173, guid: e20ba0b3d6ece437f95b631a518e062b, type: 3}
   coinCount: 10
   spawnInterval: 0.05
   spreadRadius: 0.75
-  wipeCanvas: {fileID: 4322210418281459487}
-  transitionDurationOut: 1
-  transitionDurationIn: 1
-  isNextSceneReady: 0
 --- !u!224 &567450555056430888
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2509,24 +2511,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 5105282254964078957}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 2100000, guid: 766cf4843591c4041ae8ece05bc8fb6e, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.57254905}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 0}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &6574356035597218118
 GameObject:
   m_ObjectHideFlags: 0

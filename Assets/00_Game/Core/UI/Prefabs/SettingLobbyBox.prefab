@@ -931,7 +931,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SettingBox
   mainPanel: {fileID: 3168849978835483197}
   canvasGroup: {fileID: 8736448876474911964}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnClose: {fileID: 6488988384754828012}
   btnCloseByPanel: {fileID: 2301108069713318580}

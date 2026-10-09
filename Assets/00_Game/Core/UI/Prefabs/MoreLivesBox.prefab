@@ -1062,7 +1062,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MoreLivesBox
   mainPanel: {fileID: 434861975337488304}
   canvasGroup: {fileID: 6206740797029960229}
-  durationAppeared: 0.3
+  durationAppeared: 0.15
   animationType: 0
   btnClose: {fileID: 8811283943309724249}
   txtDisplayLives: {fileID: 1223374923339164199}

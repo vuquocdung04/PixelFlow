@@ -33,7 +33,7 @@ public class CheatBox : BaseBox<CheatBox>
     {
         if (int.TryParse(inputNextLevel.text, out int level))
             UseProfile.Level.Value = level;
-        FXManager.Instance.LoadSceneWithIrisWipe(SceneName.GAME_PLAY);
+        FXManager.Instance.LoadSceneWithSquareWipe(SceneName.GAME_PLAY);
     }
 
     private void OnClickWin()
