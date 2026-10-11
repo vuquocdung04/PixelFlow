@@ -53,7 +53,7 @@ public class LobbyBox : BaseBox<LobbyBox>
         for (int i = 0; i < levelNodes.Count; i++)
         {
             int level = currentLevel + i;
-            bool isHard = level % 3 == 0;
+            bool isHard = LevelController.IsHardLevel(level);
 
             levelNodes[i].Setup(level, isHard, mainHardSprite, lightHardSprite);
         }

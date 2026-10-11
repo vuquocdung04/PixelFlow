@@ -65,6 +65,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 966c779c9761bc645a7d6ae765e2aa5a
+    m_Address: HardLevelFx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9c86585c7c2c14403be009ded636b510
     m_Address: ShopBox
     m_ReadOnly: 0

@@ -19,6 +19,8 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
     public ShooterController shooterController;
     public BrickGrid brickGrid;
 
+    public LevelIntro levelIntro = new LevelIntro();
+
     protected override void OnAwake()
     {
         base.OnAwake();
@@ -38,7 +40,8 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
         conveyor.Init();
         waitAreaController.Init();
 
-         gameFlow.RequestPause();
+        gameFlow.RequestPause();
+        levelIntro.Prepare(levelController);
 
         AudioManager.Instance.PlayMusic("Normal Level Music (Cover) 1");
 
@@ -55,8 +58,9 @@ public class GamePlayController : LeaderSingleton<GamePlayController>
             BuyBoosterBox.Preload(),
             BoosterUnlockBox.Preload()).Forget();
 
-        await UniTask.Delay(500);
-        await UniTask.Delay(500);
+        await levelIntro.Play(gameScene.txtLevelDisplay);
+        if (LevelController.IsHardLevel(UseProfile.Level.Value))
+            await HardLevelFx.Play(gameScene.popupHolder);
         gameFlow.RequestResume();
     }
 }

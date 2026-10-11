@@ -52,6 +52,8 @@ public partial class LevelController : StaffSingleton<LevelController>
         }
     }
 
+    public static bool IsHardLevel(int level) => level % 3 == 0;
+
     private static int ScanMaxLevel()
     {
         int max = 0;
