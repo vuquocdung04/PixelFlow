@@ -2,7 +2,6 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using System;
 
 public class GameManager : ManagerSingleton<GameManager>
 {
@@ -15,10 +14,12 @@ public class GameManager : ManagerSingleton<GameManager>
     [SerializeField] private LoadingBox loadingBox;
     public ToastManager toastManager;
 
-    public float loadingFadeOutDuration = 0.35f;
-    public float minimumLoadingDuration = 3f;
-    public ThreadPriority loadingPriority = ThreadPriority.BelowNormal;
-    public ThreadPriority finishLoadingPriority = ThreadPriority.Normal;
+    public bool isSkipOutPhase;
+    [Min(0f)] public float loadingDuration = 1f;
+    public ThreadPriority loadPriority = ThreadPriority.BelowNormal;
+
+    private AsyncOperationHandle<Sprite> _uiWarmupHandle;
+
 
     protected override void OnAwake()
     {
@@ -28,11 +29,50 @@ public class GameManager : ManagerSingleton<GameManager>
     {
         Application.targetFrameRate = 60;
         loadingBox.Init();
-        // Let Unity render the loading screen before doing initialization work.
-        await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
-        Application.backgroundLoadingPriority = loadingPriority;
-        float loadingStartedAt = Time.realtimeSinceStartup;
 
+        var token = destroyCancellationToken;
+        var initTask = InitManagersAsync().Preserve();
+        AsyncOperation operation = null;
+
+        ThreadPriority previousPriority = Application.backgroundLoadingPriority;
+        Application.backgroundLoadingPriority = loadPriority;
+
+        try
+        {
+            float elapsed = 0f;
+
+            while (loadingBox.Progress < 1f)
+            {
+                await UniTask.NextFrame(token);
+                elapsed += Time.unscaledDeltaTime;
+
+                // Init xong mới preload: scene đang giữ ở 90% sẽ chặn các AsyncOperation khác (Addressables) xếp sau nó
+                if (operation == null && initTask.Status.IsCompleted())
+                {
+                    operation = fxManager.PreloadScene(SceneName.GAME_PLAY);
+                    if (operation == null) return;
+                }
+
+                // Nửa đầu thanh chờ init, nửa sau chờ scene load; không chạy nhanh hơn loadingDuration
+                float timeProgress = loadingDuration > 0f ? elapsed / loadingDuration : 1f;
+                float loadProgress = operation == null ? 0f : operation.progress / FXManager.SceneReadyProgress;
+
+                loadingBox.SetProgress(Mathf.Min(timeProgress, 0.5f + 0.5f * loadProgress));
+            }
+        }
+        finally
+        {
+            Application.backgroundLoadingPriority = previousPriority;
+        }
+
+        await initTask;
+
+        if (isSkipOutPhase) fxManager.PrepareCovered();
+        fxManager.LoadScene(operation, isSkipOutPhase);
+    }
+
+    private async UniTask InitManagersAsync()
+    {
         await GamePrefs.Init();
         //firebaseSetup.Init();
         //await UniTask.WaitUntil(() => firebaseSetup.IsActiveRemote);
@@ -42,31 +82,33 @@ public class GameManager : ManagerSingleton<GameManager>
         heartManager.Init();
         currencyManager.Init();
         toastManager.Init();
-        var sceneLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(SceneName.GAME_PLAY);
-        sceneLoad.allowSceneActivation = false;
-        fxManager.preparedSceneLoad = sceneLoad;
-        fxManager.preparedSceneName = SceneName.GAME_PLAY;
-        while (sceneLoad.progress < 0.9f || Time.realtimeSinceStartup - loadingStartedAt < minimumLoadingDuration)
-        {
-            if (loadingBox == null || loadingBox.fill == null)
-                return;
-
-            float realProgress = Mathf.Clamp01(sceneLoad.progress / 0.9f);
-            float timedProgress = minimumLoadingDuration > 0f
-                ? Mathf.Clamp01((Time.realtimeSinceStartup - loadingStartedAt) / minimumLoadingDuration)
-                : 1f;
-            loadingBox.fill.fillAmount = Mathf.Max(realProgress, timedProgress);
-            await UniTask.Yield();
-        }
-        if (loadingBox == null || loadingBox.fill == null)
-            return;
-
-        loadingBox.fill.fillAmount = 1f;
-        // Activate the prepared scene immediately once the bar reaches 100%.
-        Application.backgroundLoadingPriority = finishLoadingPriority;
-        sceneLoad.allowSceneActivation = true;
-        await UniTask.WaitUntil(() => sceneLoad.isDone);
+        await WarmupUIAddressables();
     }
 
+    private async UniTask WarmupUIAddressables()
+    {
+        try
+        {
+            string key = "DummyWarmup";
 
+            _uiWarmupHandle = Addressables.LoadAssetAsync<Sprite>(key);
+            await _uiWarmupHandle.Task;
+
+            if (_uiWarmupHandle.Status == AsyncOperationStatus.Succeeded)
+                Debug.Log("[GameManager] Đã mount bundle popup (giữ qua dummy)");
+            else
+                Debug.LogWarning("[GameManager] Mount bundle thất bại; UI có thể delay lần mở đầu!");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[GameManager] Lỗi khi thực hiện giữ ấm UI: {e.Message}");
+        }
+    }
+    private void OnDestroy()
+    {
+        if (_uiWarmupHandle.IsValid())
+        {
+            Addressables.Release(_uiWarmupHandle);
+        }
+    }
 }

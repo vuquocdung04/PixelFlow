@@ -1,6 +1,3 @@
-using System;
-using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +5,9 @@ public class LoadingBox : MonoBehaviour
 {
     public Image fill;
     public CanvasGroup canvasGroup;
+
+    public float Progress => fill.fillAmount;
+
     public void Init()
     {
         fill.fillAmount = 0f;
@@ -15,14 +15,10 @@ public class LoadingBox : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
     }
-    public async UniTask LoadingAsync(float target, float duration)
-    {
-        await fill.DOFillAmount(target, duration).SetEase(Ease.Linear).ToUniTask();
-    }
 
-    public async UniTask CloseAsync(float fadeOutDuration)
+    // Thanh chỉ tiến lên, không lùi
+    public void SetProgress(float value)
     {
-        await canvasGroup.DOFade(0f, fadeOutDuration).ToUniTask();
-        gameObject.SetActive(false);
+        fill.fillAmount = Mathf.Max(fill.fillAmount, Mathf.Clamp01(value));
     }
 }

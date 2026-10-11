@@ -13,7 +13,7 @@ public partial class FXManager : MonoBehaviour
     {
         Instance = this;
 
-        if (wipeCanvas.gameObject.activeInHierarchy) wipeCanvas.gameObject.SetActive(false);
+        square.Hide();
     }
 
     public async UniTaskVoid SpawnCoinFly(Vector3 spawnPos, Transform target, Action onEachArrived = null, Action onComplete = null)
@@ -34,6 +34,12 @@ public partial class FXManager : MonoBehaviour
 
         await UniTask.WhenAll(tasks);
         onComplete?.Invoke();
+    }
+
+    public float GetCoinFlowDuration()
+    {
+        if (coinCount <= 1) return 0.1f;
+        return (coinCount - 1) * spawnInterval;
     }
 
 

@@ -10,6 +10,7 @@ public class LobbyScene : MonoBehaviour
     public Button btnCoin;
     public async UniTask InitAsync()
     {
+        FXManager.Instance.HoldReveal();
         navController.Init();
 
         await PreLoad();
@@ -36,12 +37,19 @@ public class LobbyScene : MonoBehaviour
             lobbyTcs.TrySetResult();
         });
 
-        // _ = ShopBox.Setup(holder, _ => shopTcs.TrySetResult());
+        _ = ShopBox.Setup(holder, _ => shopTcs.TrySetResult());
+        _ = RankBox.Setup(holder, _ => rankTcs.TrySetResult());
 
-        // _ = RankBox.Setup(holder, _ => rankTcs.TrySetResult());
+        await UniTask.WhenAll(lobbyTcs.Task, shopTcs.Task, rankTcs.Task);
 
-        await UniTask.WhenAll(lobbyTcs.Task);
+        FXManager.Instance.NotifySceneReady();
 
+        // Load ngầm các popup mở từ lobby để lần đầu bấm không bị delay
+        UniTask.WhenAll(
+            SettingLobbyBox.Preload(),
+            AvatarBox.Preload(),
+            NoAdsBox.Preload(),
+            MoreLivesBox.Preload()).Forget();
     }
 
     public void NavigateTo(ENavType type) => navController.NavigateTo(type);

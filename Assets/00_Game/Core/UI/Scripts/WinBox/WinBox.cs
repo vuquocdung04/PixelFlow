@@ -34,7 +34,7 @@ public class WinBox : BaseBox<WinBox>
                 onEachArrived: PopCoinTarget,
                 onComplete: () =>
                 {
-                    FXManager.Instance.LoadSceneWithSquareWipe(targetScene);
+                    FXManager.Instance.LoadScene(targetScene);
                 }
             );
         });

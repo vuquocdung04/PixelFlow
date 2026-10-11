@@ -12,18 +12,40 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
 {
     // ========== SINGLETON & ADDRESSABLES ==========
     public static T Instance { get; private set; }
-    private static AsyncOperationHandle<GameObject> handle;
+
+    // Prefab load 1 lần rồi giữ suốt game (UI dùng lại nhiều lần, không unload/load lại mỗi scene)
+    private static AsyncOperationHandle<GameObject> prefabHandle;
     private static bool isInstantiating;
     private bool _postedOpen;
+    private Canvas _canvas;
 
     public static async UniTaskVoid Setup(Transform parent, System.Action<T> callback)
     {
-        string addressableKey = typeof(T).Name;
-        var instance = await GetInstanceAsync(addressableKey, parent);
+        bool isNew = Instance == null;
+        var instance = await GetInstanceAsync(parent);
+
+        // Frame Instantiate rất nặng -> chờ qua frame đó rồi mới chạy anim, tránh tween bị nhảy
+        if (isNew && instance != null) await UniTask.NextFrame();
         callback?.Invoke(instance);
     }
 
-    private static async UniTask<T> GetInstanceAsync(string addressableKey, Transform parent)
+    // Load sẵn prefab vào bộ nhớ (chưa Instantiate, chưa gọi Init) để lần mở đầu chỉ tốn Instantiate.
+    public static async UniTask Preload()
+    {
+        if (Instance != null) return;
+        await LoadPrefabAsync();
+    }
+
+    private static async UniTask<GameObject> LoadPrefabAsync()
+    {
+        if (!prefabHandle.IsValid())
+            prefabHandle = Addressables.LoadAssetAsync<GameObject>(typeof(T).Name);
+
+        await prefabHandle.Task;
+        return prefabHandle.Status == AsyncOperationStatus.Succeeded ? prefabHandle.Result : null;
+    }
+
+    private static async UniTask<T> GetInstanceAsync(Transform parent)
     {
         if (Instance != null) return Instance;
 
@@ -34,24 +56,25 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
         }
 
         isInstantiating = true;
-        handle = Addressables.InstantiateAsync(addressableKey, parent);
-        GameObject obj = await handle.Task;
+        GameObject prefab = await LoadPrefabAsync();
 
-        if (obj == null)
+        if (prefab == null || parent == null)
         {
-            Debug.LogError($"[BaseBox] Không tìm thấy key: {addressableKey}");
+            if (prefab == null) Debug.LogError($"[BaseBox] Không tìm thấy key: {typeof(T).Name}");
             isInstantiating = false;
             return null;
         }
 
-        Instance = obj.GetComponent<T>();
-        if (Instance == null)
+        // Instantiate đồng bộ ngay khi có prefab (nhanh hơn Addressables.InstantiateAsync)
+        var box = Instantiate(prefab, parent, false).GetComponent<T>();
+        if (box == null)
         {
-            Addressables.ReleaseInstance(obj);
+            Debug.LogError($"[BaseBox] Prefab '{typeof(T).Name}' thiếu component {typeof(T).Name}");
             isInstantiating = false;
             return null;
         }
 
+        Instance = box;
         Instance.ForceHide();
         Instance.Init();
         isInstantiating = false;
@@ -68,15 +91,13 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
             Instance = null;
             isInstantiating = false;
         }
-
-        if (handle.IsValid()) Addressables.ReleaseInstance(gameObject);
     }
 
     // ========== FIELDS ==========
     [Header("UI Animation Settings")]
     [SerializeField] protected RectTransform mainPanel;
     [SerializeField] protected CanvasGroup canvasGroup;
-    [SerializeField] protected float durationAppeared = 0.3f;
+    [SerializeField] protected float durationAppeared = 0.2f;
     [SerializeField] protected BoxAnimationType animationType = BoxAnimationType.Scale;
 
     private Tween currentTween;
@@ -90,8 +111,9 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
     public void Show(IShowAnimation anim)
     {
         _activeAnim = anim;
-        InitState();
         KillCurrentTween();
+        SetCanvasVisible(true);
+        InitState();
         transform.SetAsLastSibling();
 
         SceneUtils.ExecuteInScene(SceneName.GAME_PLAY, () =>
@@ -116,16 +138,15 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
         if (currentTween != null)
             currentTween.OnComplete(() =>
             {
-                canvasGroup.SetCanvasState(false, 0f);
+                ForceHide();
                 InvokeOnClosed();
             });
         else
         {
-            canvasGroup.SetCanvasState(false, 0f);
+            ForceHide();
             InvokeOnClosed();
         }
     }
-
     private void InvokeOnClosed()
     {
         var cb = OnClosed;
@@ -134,11 +155,26 @@ public abstract class BaseBox<T> : MonoBehaviour where T : BaseBox<T>
     }
 
     // ========== HELPERS ==========
-    private void ForceHide() => canvasGroup.SetCanvasState(false, 0f);
+    private void ForceHide()
+    {
+        canvasGroup.SetCanvasState(false, 0f);
+        SetCanvasVisible(false);
+    }
+
+    // Box ẩn thì tắt Canvas của nó: không render, không rebuild mỗi frame (alpha = 0 vẫn tốn như đang hiện).
+    // Không SetActive(false) để giữ nguyên OnEnable/OnDisable và các listener bên trong box.
+    private void SetCanvasVisible(bool visible)
+    {
+        if (_canvas == null) _canvas = GetComponent<Canvas>();
+        if (_canvas != null) _canvas.enabled = visible;
+    }
 
     private void KillCurrentTween()
     {
         currentTween?.Kill();
         currentTween = null;
+        // Anim show/close có thêm tween fade riêng trên canvasGroup -> kill luôn để không chồng nhau khi bấm nhanh
+        if (mainPanel != null) mainPanel.DOKill();
+        if (canvasGroup != null) canvasGroup.DOKill();
     }
 }
