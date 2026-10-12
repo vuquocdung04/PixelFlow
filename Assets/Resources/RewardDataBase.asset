@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75e1ff486e36a224b86ec57f3094d7a8, type: 3}
+  m_Name: RewardDataBase
+  m_EditorClassIdentifier: Assembly-CSharp::RewardDataBase
+  entries:
+  - type: 0
+    icon: {fileID: -2095720456, guid: a8e6bb8965fc83949be78fcb97deaa4d, type: 3}
+  - type: 1
+    icon: {fileID: 470011217, guid: f51097fdeb71afe4fa86f19d44d77725, type: 3}
+  - type: 2
+    icon: {fileID: 1783267453, guid: f51097fdeb71afe4fa86f19d44d77725, type: 3}
+  - type: 3
+    icon: {fileID: 691154259, guid: f51097fdeb71afe4fa86f19d44d77725, type: 3}
+  - type: 4
+    icon: {fileID: 21300000, guid: 8654de6b35ac9c04bad6e69d3310ae94, type: 3}
+  - type: 5
+    icon: {fileID: 21300000, guid: 9855d22c837b7e74fa95a025ff9573dc, type: 3}

@@ -12,9 +12,30 @@ public partial class FXManager
     [Min(0f)] public float revealHoldTimeout = 10f;
 
     private bool isTransitioning;
+    private bool isRevealing;
     private int revealHolds;
+    private System.Action onReveal;
 
     public bool IsTransitioning => isTransitioning;
+
+    // Chạy callback lúc màn che bắt đầu mở (không có chuyển scene thì chạy luôn).
+    // Dùng cho anim xuất hiện của scene mới để không bị diễn sau màn che.
+    public void WhenRevealing(System.Action callback)
+    {
+        if (callback == null) return;
+        if (!isTransitioning || isRevealing) callback();
+        else onReveal += callback;
+    }
+
+    public void CancelWhenRevealing(System.Action callback) => onReveal -= callback;
+
+    private void InvokeReveal()
+    {
+        isRevealing = true;
+        var cb = onReveal;
+        onReveal = null;
+        cb?.Invoke();
+    }
 
     // Scene mới gọi lúc bắt đầu init để giữ màn che, xong thì gọi NotifySceneReady
     public void HoldReveal()
@@ -101,6 +122,7 @@ public partial class FXManager
             await UniTask.NextFrame(token);
             await WaitRevealHoldsAsync(token);
 
+            InvokeReveal();
             await square.Reveal(transitionDurationIn);
         }
         finally
@@ -108,7 +130,13 @@ public partial class FXManager
             if (square != null) square.Hide();
 
             isTransitioning = false;
+            isRevealing = false;
             revealHolds = 0;
+
+            // Huỷ giữa chừng vẫn phải chạy các callback đang chờ
+            var cb = onReveal;
+            onReveal = null;
+            cb?.Invoke();
         }
     }
 

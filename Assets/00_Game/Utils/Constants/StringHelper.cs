@@ -32,6 +32,13 @@ public class StringHelper
 
     public const string LAST_TIME_LOGIN = "LastTimeLogin";
 
+    // Daily Login / Daily Reward
+    public const string DAILY_LOGIN_DAY = "DAILY_LOGIN_DAY";
+    public const string DAILY_LOGIN_CLAIM_DATE = "DAILY_LOGIN_CLAIM_DATE";
+    public const string DAILY_REWARD_NEXT_FREE = "DAILY_REWARD_NEXT_FREE";
+    public const string DAILY_REWARD_PROGRESS = "DAILY_REWARD_PROGRESS";
+    public const string DAILY_REWARD_DATE = "DAILY_REWARD_DATE";
+
 
     public const string IS_BACK_LOBBY_OPTION = "IS_BACK_LOBBY_OPTION";
 

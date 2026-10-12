@@ -21,6 +21,9 @@ public class LobbyBox : BaseBox<LobbyBox>
     [Header("Avatar")]
     public Image iconAvatar;
 
+    [Header("LiveOps")]
+    [SerializeField] private List<LiveOpItem> liveOps = new();
+
     protected override void Init()
     {
         var holder = LobbyController.Instance.topCanvas;
@@ -30,6 +33,9 @@ public class LobbyBox : BaseBox<LobbyBox>
         btnPlay.OnClicked(delegate { FXManager.Instance.LoadScene(SceneName.GAME_PLAY); });
 
         this.RegisterListener(EventID.CHANGE_AVATAR, OnAvatarChanged);
+
+        foreach (var liveOp in liveOps)
+            liveOp.Init();
 
         RefreshLevels();
         RefreshAvatar();

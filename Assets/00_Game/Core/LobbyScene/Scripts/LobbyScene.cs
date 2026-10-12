@@ -49,7 +49,10 @@ public class LobbyScene : MonoBehaviour
             SettingLobbyBox.Preload(),
             AvatarBox.Preload(),
             NoAdsBox.Preload(),
-            MoreLivesBox.Preload()).Forget();
+            MoreLivesBox.Preload(),
+            DailyLoginBox.Preload(),
+            DailyRewardBox.Preload(),
+            RewardBox.Preload()).Forget();
     }
 
     public void NavigateTo(ENavType type) => navController.NavigateTo(type);

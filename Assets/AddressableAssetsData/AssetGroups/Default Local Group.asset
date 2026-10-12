@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a49c92c3b4732549ab7679b2c90c07a
+    m_Address: RewardBox
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2986a114e4ba57443a52ae5c3867c920
     m_Address: BuyBoosterBox
     m_ReadOnly: 0
@@ -62,6 +67,16 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7d3513a169e2d43f1bd09717c46f2d67
     m_Address: CheatBox
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8aa4eda856d16c540b71c069172562b2
+    m_Address: DailyLoginBox
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8e75a512c36a4f54998d505ce1bd23d9
+    m_Address: DailyRewardBox
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

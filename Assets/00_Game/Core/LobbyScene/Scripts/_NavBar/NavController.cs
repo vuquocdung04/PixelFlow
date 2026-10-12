@@ -7,6 +7,8 @@ public class NavController : MonoBehaviour
 {
     public static NavController Instance { get; private set; }
     [SerializeField] private Sprite sprSelected;
+    [Tooltip("Sao bung ở icon tab vừa chọn")]
+    [SerializeField] private UIBurstEffect burst;
     public List<NavButton> navButtons;
     private Vector2 sizeSelected;
     private Vector2 sizeUnselected;
@@ -22,9 +24,9 @@ public class NavController : MonoBehaviour
             nav.SetupClick(delegate
             {
                 if (nav != currentNavSelected)
-                {
                     UpdateNavButtonState(nav);
-                }
+                else
+                    nav.Nudge();
             });
         }
         InitAfterLayoutAsync().Forget();
@@ -80,7 +82,15 @@ public class NavController : MonoBehaviour
         }
         HandleScreenSliding(navButton);
         currentNavSelected = navButton;
-        navButton.HandleSelected(true, sprSelected, sizeSelected, sizeUnselected);
+        navButton.HandleSelected(true, sprSelected, sizeSelected, sizeUnselected, animate: true);
+
+        // Icon đang nảy lên y=100 -> bắn sao ở vị trí đích
+        if (burst != null)
+        {
+            var icon = navButton.Icon;
+            Vector3 target = icon.parent.TransformPoint(new Vector3(icon.localPosition.x, 100f, 0f));
+            burst.Play(target);
+        }
     }
     private void HandleScreenSliding(NavButton clicked)
     {

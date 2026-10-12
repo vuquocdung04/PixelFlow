@@ -27,6 +27,13 @@ public static class UseProfile
     public static readonly PrefVar<bool> IsDoneBooster0 = new(StringHelper.IS_DONE_TUT_BOOSTER_0, false);
     public static readonly PrefVar<bool> IsDoneBooster1 = new(StringHelper.IS_DONE_TUT_BOOSTER_1, false);
     public static readonly PrefVar<bool> IsDoneBooster2 = new(StringHelper.IS_DONE_TUT_BOOSTER_2, false);
+
+    // --- DAILY LOGIN / DAILY REWARD ---
+    public static readonly PrefVar<int> DailyLoginDay = new(StringHelper.DAILY_LOGIN_DAY, 0);
+    public static readonly PrefVar<string> DailyLoginClaimDate = new(StringHelper.DAILY_LOGIN_CLAIM_DATE, "");
+    public static readonly PrefVar<long> DailyRewardNextFree = new(StringHelper.DAILY_REWARD_NEXT_FREE, 0L);
+    public static readonly PrefVar<int> DailyRewardProgress = new(StringHelper.DAILY_REWARD_PROGRESS, 0);
+    public static readonly PrefVar<string> DailyRewardDate = new(StringHelper.DAILY_REWARD_DATE, "");
     // ========================================================
     // --- XỬ LÝ THỜI GIAN (TÍCH HỢP TIMEMANAGER) ---
     // ========================================================
