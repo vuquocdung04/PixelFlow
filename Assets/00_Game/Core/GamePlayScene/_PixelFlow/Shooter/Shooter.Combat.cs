@@ -11,6 +11,11 @@ public partial class Shooter
     public ParticleSystem projectileFx;
     private bool _despawning;
     private Sequence shootSeq;
+
+    // Mỗi lần đi qua 1 đường thẳng chỉ bắn 1 viên: block sau lộ ra (outer mới) phải đợi lượt đi qua sau
+    private Side _curSide;
+    private int _curLine = -1;
+    private bool _firedOnLine;
     public void SetProjectileCount(int count)
     {
         projectileCount = count;
@@ -22,14 +27,35 @@ public partial class Shooter
         if (projectileCount <= 0) return;
 
         if (!BrickGrid.Instance.GetSideAndLine(transform.position, out var side, out int line))
+        {
+            _curLine = -1;
+            _firedOnLine = false;
             return;
+        }
+
+        if (side != _curSide || line != _curLine)
+        {
+            _curSide = side;
+            _curLine = line;
+            _firedOnLine = false;
+        }
+
+        if (_firedOnLine) return;
 
         Block outer = BrickGrid.Instance.GetOuterBlock(side, line);
         if (outer == null) return;
         if (outer.IsClaimed) return;
         if (outer.colorHex != colorHex) return;
 
+        _firedOnLine = true;
         Fire(outer);
+    }
+
+    // Vào băng chuyền lượt mới -> quên đường vừa bắn
+    public void ResetFireLine()
+    {
+        _curLine = -1;
+        _firedOnLine = false;
     }
 
     private void Fire(Block target)
@@ -76,6 +102,7 @@ public partial class Shooter
 
         Sequence seq = DOTween.Sequence();
         seq.Append(transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutQuad));
+        seq.AppendCallback(PlayDespawnFx); // nổ đúng lúc bắt đầu thu nhỏ
         seq.Append(transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack));
         seq.OnComplete(() => Destroy(gameObject));
     }

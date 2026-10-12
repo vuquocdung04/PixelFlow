@@ -27,6 +27,7 @@ public class NormalInputMode : InputMode
 
         if (Conveyor.Instance.itemSlots.Count == 0)
         {
+            shooter.PlayRejectWobble();
             Controller.PostEvent(EventID.CONVEYOR_NOT_ENOUGH_SLOT);
             return;
         }
@@ -47,6 +48,7 @@ public class NormalInputMode : InputMode
 
         if (Conveyor.Instance.itemSlots.Count < group.Count)
         {
+            clicked.PlayRejectWobble();
             Controller.PostEvent(EventID.CONVEYOR_NOT_ENOUGH_SLOT);
             return;
         }

@@ -10,7 +10,10 @@ public partial class Conveyor
 
     void OnLoopEntered(object _)
     {
+        // Vòng mới dùng tốc độ mới; slot đang chạy giữa vòng cũng tăng tốc luôn
         itemPathSpeed *= loopSpeedMultiplier;
+        foreach (var slot in GetComponentsInChildren<ItemSlot>())
+            slot.SpeedUpPath(loopSpeedMultiplier);
     }
 
     void SendSlotAlongPath(ItemSlot slot, Shooter shooter)

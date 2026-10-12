@@ -98,20 +98,25 @@ public partial class Conveyor
     }
 
 
+    // Slot chạy tới đầu băng chuyền và bắt đầu chạy path TRƯỚC khi shooter đáp;
+    // shooter bám theo ItemParent đang di chuyển nên đáp vào là hoà luôn vào tốc độ băng chuyền (không giật).
     private void LaunchShooterOnSlot(ItemSlot slot, Shooter shooter, float delay = 0f)
     {
         Vector3 pathStart = itemPath[0].position;
-        slot.PrepareToReceive(pathStart, shooter.jumpDuration * 0.8f);
 
-        void JumpAndDock() => shooter.JumpTo(pathStart, () =>
+        void Launch()
         {
-            slot.DockShooter(shooter);
-            shooter.SetAnimState(ShooterAnimState.Combat);
-            SendSlotAlongPath(slot, shooter);
-        });
+            float total = shooter.LaunchTo(slot.itemParent, () =>
+            {
+                slot.DockShooter(shooter);
+                shooter.SetAnimState(ShooterAnimState.Combat);
+            });
 
-        if (delay > 0f) DOVirtual.DelayedCall(delay, JumpAndDock);
-        else JumpAndDock();
+            slot.PrepareToReceive(pathStart, total * 0.72f, () => SendSlotAlongPath(slot, shooter));
+        }
+
+        if (delay > 0f) DOVirtual.DelayedCall(delay, Launch);
+        else Launch();
     }
 
     private void UpdateCountText()

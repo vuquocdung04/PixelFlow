@@ -13211,6 +13211,18 @@ MonoBehaviour:
   blockSFX: {fileID: 8300000, guid: 00de2b2270a6afc4f9ab84c20e9680df, type: 3}
   jumpDuration: 0.4
   currentAnimState: 0
+  scalePivot: {fileID: 7356645364163060449}
+  launchDuration: {x: 0.32, y: 0.5}
+  launchFarDistance: 10
+  launchHeightRatio: 0.35
+  launchHeightRange: {x: 1.2, y: 3.2}
+  launchSpin: 360
+  anticipation: 0.07
+  landFx: {fileID: 3777388911991253085, guid: 0f5adeb78d3168642bdffc4cea2123d9, type: 3}
+  landSFX: {fileID: 0}
+  landFxTint: 0.45
+  despawnFx: {fileID: 3137429243836076330, guid: e1c0f9eaa5a1737418d9f39255551965, type: 3}
+  despawnSFX: {fileID: 0}
   colorHex: 
   projectileCount: 0
   shootPoint: {fileID: 1828378023827881423}
@@ -13234,6 +13246,8 @@ MonoBehaviour:
   iceVisual: {fileID: 6248032494675186538}
   iceTxt: {fileID: 1229224565235987446}
   iceBreakFx: {fileID: 7966819927562594005}
+  iceChipScale: 0.2
+  iceChipSpread: 4
   iceCount: 0
 --- !u!114 &7627086920839131232
 MonoBehaviour:
@@ -13248,6 +13262,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlindProp
   blindVisual: {fileID: 3156214551843462113}
+  revealParticleCount: 8
+  revealParticleLifetime: 0.45
 --- !u!114 &6702808165160339111
 MonoBehaviour:
   m_ObjectHideFlags: 0

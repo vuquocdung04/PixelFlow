@@ -82,6 +82,7 @@ public partial class Shooter : MonoBehaviour
     private void OnDestroy()
     {
         transform.DOKill();
+        KillLaunch();
         shootSeq?.Kill();
         _wobbleTween?.Kill();
         stateTween?.Kill();
