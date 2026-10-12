@@ -52,6 +52,7 @@ public class LobbyScene : MonoBehaviour
             MoreLivesBox.Preload(),
             DailyLoginBox.Preload(),
             DailyRewardBox.Preload(),
+            WeekQuestBox.Preload(),
             RewardBox.Preload()).Forget();
     }
 

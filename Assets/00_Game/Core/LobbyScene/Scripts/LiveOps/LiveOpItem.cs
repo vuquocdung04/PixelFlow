@@ -33,6 +33,7 @@ public class LiveOpItem : MonoBehaviour
 
         btnMain.OnClicked(OnClickMain);
         this.RegisterListener(EventID.DAILY_CHANGED, OnDailyChanged);
+        this.RegisterListener(EventID.WEEK_QUEST_CHANGED, OnDailyChanged);
         Refresh();
     }
 
@@ -45,7 +46,9 @@ public class LiveOpItem : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (_init) this.RemoveListener(EventID.DAILY_CHANGED, OnDailyChanged);
+        if (!_init) return;
+        this.RemoveListener(EventID.DAILY_CHANGED, OnDailyChanged);
+        this.RemoveListener(EventID.WEEK_QUEST_CHANGED, OnDailyChanged);
     }
 
     private void OnDailyChanged(object _) => Refresh();

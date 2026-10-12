@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fdecd865b5f63146aa35e9d36ed649b, type: 3}
+  m_Name: WeekQuestData
+  m_EditorClassIdentifier: Assembly-CSharp::WeekQuestData
+  milestones:
+  - coin: 300
+    rewards:
+    - type: 1
+      amount: 1
+  - coin: 800
+    rewards:
+    - type: 0
+      amount: 200
+    - type: 2
+      amount: 1
+  - coin: 1500
+    rewards:
+    - type: 0
+      amount: 300
+    - type: 5
+      amount: 30
+    - type: 3
+      amount: 1
+  - coin: 3000
+    rewards:
+    - type: 1
+      amount: 1
+    - type: 2
+      amount: 1
+    - type: 3
+      amount: 1
+  - coin: 5000
+    rewards:
+    - type: 0
+      amount: 1500
+    - type: 5
+      amount: 60
+  - coin: 8000
+    rewards:
+    - type: 1
+      amount: 2
+    - type: 2
+      amount: 2
+    - type: 3
+      amount: 2
